@@ -189,6 +189,18 @@
         .border-custom { border-color: var(--border-main); }
         .text-custom-main { color: var(--text-main); }
         .text-custom-dim { color: var(--text-dim); }
+
+        /* Compact Tactical Overrides */
+        .tactical-coord-btn {
+            width: 48px;
+            height: 48px;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
     </style>
 </head>
 <body class="min-h-screen custom-scrollbar pb-32">
@@ -257,6 +269,7 @@
         </div>
     </aside>
 
+    <!-- Header Section -->
     <header class="max-w-[1700px] mx-auto px-6 pt-12 pb-8">
         <div class="flex justify-between items-center mb-10 px-4">
             <div class="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-600">
@@ -300,7 +313,7 @@
         <div id="activeTags" class="flex flex-wrap gap-3 mb-8 min-h-[30px] px-2 justify-center"></div>
         <div id="resultsInfo" class="mb-8 px-6 text-[11px] font-black uppercase tracking-[0.3em] text-red-500 hidden border-l-4 border-red-500 bg-red-500/5 py-3"></div>
 
-        <div id="ingredientGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"></div>
+        <div id="ingredientGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
 
         <div id="emptyState" class="hidden flex flex-col items-center justify-center py-64 text-custom-dim">
             <div class="w-24 h-24 bg-custom-input rounded-[2.5rem] flex items-center justify-center mb-8 shadow-2xl border border-custom">
@@ -378,7 +391,6 @@
                 htoiArray.forEach(item => { if (item.name) normHtoi[item.name.trim().toLowerCase()] = item; });
             }
 
-            // Build Global Telemetry
             const sharedTelemetry = {}; 
             Object.values(dropsMap).forEach(dropArray => {
                 if (!Array.isArray(dropArray)) return;
@@ -400,7 +412,6 @@
                 });
             });
 
-            // Master keys across all 4 sources
             const allKeys = new Set([
                 ...Object.keys(normIngredients), 
                 ...Object.keys(normDrops), 
@@ -423,7 +434,6 @@
                     drops: [], searchStr: "" 
                 };
 
-                // Merge Wynncraft Stats
                 if (wData.identifications) {
                     Object.entries(wData.identifications).forEach(([label, value]) => {
                         if (value !== 0) {
@@ -436,7 +446,6 @@
                     });
                 }
 
-                // Handle Sources
                 const combinedSources = new Map();
                 if (Array.isArray(dropEntries)) {
                     dropEntries.forEach(d => {
@@ -520,63 +529,75 @@
                 grid.innerHTML = data.map((item) => {
                     const cardCoordsRegistry = new Set();
                     return `
-                    <div class="zest-card rounded-[2.5rem] p-6 flex flex-col gap-6 shadow-xl">
+                    <div class="zest-card rounded-[1.5rem] p-4 flex flex-col gap-4 shadow-xl">
                         <div class="flex justify-between items-start">
                             <div class="overflow-hidden">
-                                <h3 class="text-base font-black text-custom-main leading-tight uppercase tracking-tight mb-2 truncate">${item.name}</h3>
+                                <h3 class="text-sm font-black text-custom-main leading-tight uppercase tracking-tight mb-1 truncate">${item.name}</h3>
                                 <div class="flex items-center gap-2">
-                                    <span class="text-[10px] font-black text-red-500 bg-red-500/10 px-2 py-1 rounded-lg leading-none">LV ${item.level}</span>
-                                    <div class="flex gap-1 text-amber-500">
-                                        ${item.tier >= 0 ? Array(item.tier).fill(0).map(() => `<i class="fas fa-star text-[9px]"></i>`).join('') : '<span class="text-[8px] text-zinc-600 font-bold tracking-tighter">UNRANKED</span>'}
+                                    <span class="text-[9px] font-black text-red-500 bg-red-500/10 px-1.5 py-0.5 rounded leading-none">LV ${item.level}</span>
+                                    <div class="flex gap-0.5 text-amber-500">
+                                        ${item.tier >= 0 ? Array(item.tier).fill(0).map(() => `<i class="fas fa-star text-[8px]"></i>`).join('') : '<span class="text-[7px] text-zinc-600 font-bold tracking-tighter leading-none">UNRANKED</span>'}
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="space-y-5">
-                            <div class="space-y-1.5">
-                                <p class="text-[9px] font-black text-custom-dim uppercase tracking-[0.2em] border-b border-custom pb-2 mb-2">Properties</p>
-                                ${item.stats.length === 0 ? '<p class="text-[11px] italic text-zinc-700 opacity-50">Passive Record.</p>' : item.stats.map(s => `
-                                    <div class="flex justify-between text-[13px] font-bold py-1 border-b border-custom border-opacity-10 last:border-0">
-                                        <span class="text-custom-dim">${s.label}</span>
-                                        <span class="${s.pos ? 'stat-pos' : 'stat-neg'}">${s.value}</span>
+                        <div class="space-y-4">
+                            <div class="space-y-1">
+                                <p class="text-[8px] font-black text-custom-dim uppercase tracking-[0.2em] border-b border-custom pb-1 mb-1">Properties</p>
+                                ${item.stats.length === 0 ? '<p class="text-[10px] italic text-zinc-700 opacity-50">Passive Record.</p>' : item.stats.map(s => `
+                                    <div class="flex justify-between text-[11px] font-bold py-0.5 last:border-0">
+                                        <span class="text-custom-dim truncate pr-2">${s.label}</span>
+                                        <span class="${s.pos ? 'stat-pos' : 'stat-neg'} shrink-0">${s.value}</span>
                                     </div>
                                 `).join('')}
                             </div>
 
-                            <div class="space-y-3">
-                                <p class="text-[9px] font-black text-custom-dim uppercase tracking-[0.2em] border-b border-custom pb-2 mb-2">Last Seen</p>
-                                ${item.drops.length === 0 ? `<p class="text-[11px] italic text-custom-dim opacity-40">No telemetry logs.</p>` : item.drops.map(drop => {
+                            <div class="space-y-2">
+                                <p class="text-[8px] font-black text-custom-dim uppercase tracking-[0.2em] border-b border-custom pb-1 mb-1">Last Seen</p>
+                                ${item.drops.length === 0 ? `<p class="text-[10px] italic text-custom-dim opacity-40">No telemetry logs.</p>` : item.drops.map(drop => {
                                     const mainScreenshot = drop.screenshots ? drop.screenshots.split(',')[0].trim() : null;
                                     const coordsHtml = drop.allCoords.map(c => {
                                         const key = getCoordKey(c);
                                         if (cardCoordsRegistry.has(key)) return '';
                                         cardCoordsRegistry.add(key);
                                         const hasY = isNum(c.y);
-                                        return `<button onclick="copyToClipboard('${c.x}', ${hasY ? c.y : 'null'}, '${c.z}')" class="zest-btn flex items-center justify-center gap-3 bg-red-600 !border-red-400 !text-white hover:bg-red-500 py-3.5 rounded-xl cursor-pointer shadow-lg group mx-0.5 mt-2 first:mt-0"><i class="fas fa-crosshairs text-base group-hover:rotate-90 transition-transform"></i><span class="font-black text-[11px] font-mono tracking-widest">${hasY ? `${c.x}, ${c.y}, ${c.z}` : `${c.x}, ${c.z}`}</span></button>`;
+                                        const displayLabel = hasY ? `${c.x}, ${c.y}, ${c.z}` : `${c.x}, ${c.z}`;
+                                        return `
+                                            <button 
+                                                onclick="copyToClipboard('${c.x}', ${hasY ? c.y : 'null'}, '${c.z}')" 
+                                                class="tactical-coord-btn zest-btn rounded-lg bg-red-600 !border-red-400 !text-white hover:bg-red-500 shadow-sm" 
+                                                title="Target: ${displayLabel}"
+                                            >
+                                                <i class="fas fa-crosshairs text-xs"></i>
+                                                <span class="text-[6px] font-black uppercase mt-0.5 truncate max-w-full px-0.5">${displayLabel}</span>
+                                            </button>
+                                        `;
                                     }).join('');
 
                                     return `
-                                    <div class="space-y-4 bg-custom-main bg-opacity-40 p-5 rounded-2xl border border-custom border-opacity-30">
+                                    <div class="space-y-2 bg-custom-main bg-opacity-40 p-3 rounded-xl border border-custom border-opacity-30">
                                         <div class="flex justify-between items-start gap-2">
                                             <div class="flex-1 min-w-0">
-                                                <p class="text-custom-main font-black text-sm leading-tight break-words">${drop.name}</p>
-                                                <div class="flex items-start gap-1.5 text-custom-dim text-[10px] font-bold mt-1.5">
+                                                <p class="text-custom-main font-black text-[11px] leading-tight break-words">${drop.name}</p>
+                                                <div class="flex items-start gap-1 text-custom-dim text-[9px] font-bold mt-1">
                                                     <i class="fas fa-map-marker-alt text-red-500/50 mt-0.5"></i>
-                                                    <span class="break-words">${drop.location || 'Undisclosed Area'}</span>
+                                                    <span class="break-words leading-none">${drop.location || 'Undisclosed Area'}</span>
                                                 </div>
                                             </div>
-                                            ${mainScreenshot ? `<a href="${mainScreenshot}" target="_blank" class="zest-btn p-2.5 rounded-xl !bg-red-500/10 !text-red-500 !border-red-500/30 hover:!bg-red-500 hover:!text-white transition-all shadow-sm shrink-0" title="Intel Feed"><i class="fas fa-image"></i></a>` : ''}
+                                            ${mainScreenshot ? `<a href="${mainScreenshot}" target="_blank" class="zest-btn p-1.5 rounded-lg !bg-red-500/10 !text-red-500 !border-red-500/30 hover:!bg-red-500 hover:!text-white transition-all shadow-sm shrink-0" title="Intel Feed"><i class="fas fa-image text-xs"></i></a>` : ''}
                                         </div>
-                                        <div class="grid grid-cols-1 gap-1 px-1">${coordsHtml}</div>
+                                        <div class="flex flex-wrap gap-1.5 pt-1">
+                                            ${coordsHtml}
+                                        </div>
                                     </div>
                                 `;}).join('')}
                             </div>
                         </div>
 
-                        <div class="mt-auto pt-4 border-t border-custom border-opacity-50 flex flex-wrap gap-2">
-                            ${item.professions.length === 0 ? '<span class="text-[7px] text-zinc-800 font-bold uppercase tracking-widest">Generic Entry</span>' : item.professions.map(p => `
-                                <span class="text-[7px] text-custom-dim font-black px-2.5 py-1.5 rounded-lg bg-custom-input border border-custom uppercase tracking-tighter">${p}</span>
+                        <div class="mt-auto pt-2 border-t border-custom border-opacity-50 flex flex-wrap gap-1">
+                            ${item.professions.length === 0 ? '<span class="text-[7px] text-zinc-800 font-bold uppercase tracking-widest">Generic</span>' : item.professions.map(p => `
+                                <span class="text-[7px] text-custom-dim font-black px-1.5 py-0.5 rounded-md bg-custom-input border border-custom uppercase tracking-tighter leading-none">${p}</span>
                             `).join('')}
                         </div>
                     </div>
