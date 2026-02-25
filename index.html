@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SWIPU WAS IN THE EPPY FILES</title>
+    <title>Swipu was in the Epstein Files</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -149,7 +149,7 @@
     <div id="toast">Copied Compass Command!</div>
 
     <header class="sticky top-0 z-50 glass-header">
-        <div class="max-w-[1400px] mx-auto px-6 py-6">
+        <div class="max-w-[1600px] mx-auto px-6 py-6">
             <!-- Main Header Grid -->
             <div class="grid grid-cols-1 lg:grid-cols-3 items-center gap-6">
                 
@@ -169,10 +169,10 @@
                     <div class="bg-gradient-to-tr from-indigo-500 to-cyan-400 p-3 rounded-2xl shadow-2xl mb-2">
                         <i class="fas fa-lemon text-white text-3xl"></i>
                     </div>
-                    <h1 class="text-3xl lg:text-4xl font-black tracking-tighter leading-tight text-white">
-                        Swipu Was In The <span class="animated-title uppercase">Epstein Files</span>
+                    <h1 class="text-3xl lg:text-5xl font-black tracking-tighter leading-tight text-white">
+                        Swipu has been found in the <span class="animated-title uppercase">Epstein files</span>
                     </h1>
-                    <p class="text-[10px] font-bold text-zinc-500 uppercase tracking-[0.4em] mt-1">But We Forgive Swipu</p>
+                    <p class="text-[10px] font-bold text-zinc-500 uppercase tracking-[0.4em] mt-1">Curated Inventory Explorer</p>
                 </div>
 
                 <!-- Right: Dashboard Toggle -->
@@ -240,12 +240,12 @@
         </div>
     </header>
 
-    <main class="max-w-[1400px] mx-auto p-6 lg:p-10">
+    <main class="max-w-[1700px] mx-auto p-6 lg:p-10">
         <!-- Active Tags -->
         <div id="activeTags" class="flex flex-wrap gap-2 mb-10 min-h-[30px]"></div>
 
-        <!-- Ingredient Grid (Zoomed-in look: 3 Columns) -->
-        <div id="ingredientGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+        <!-- Ingredient Grid (Adjusted look: 4 Columns) -->
+        <div id="ingredientGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
 
         <div id="emptyState" class="hidden flex flex-col items-center justify-center py-48 text-zinc-700">
             <div class="w-24 h-24 bg-zinc-800 rounded-3xl flex items-center justify-center mb-6 shadow-xl border border-zinc-700">
@@ -259,7 +259,6 @@
     <script>
         /**
          * Curated Items of Interest hardcoding list.
-         * These names will be used to filter the incoming JSON data.
          */
         const INTEREST_NAMES = new Set([
             "Adamastor's Faceplate", "Ancient Heart", "Archaic Medallion", "Bat Heart", "Borange Fluff",
@@ -381,53 +380,53 @@
             } else {
                 document.getElementById('emptyState').classList.add('hidden');
                 grid.innerHTML = data.map((item, idx) => `
-                    <div class="zest-card rounded-3xl p-7 flex flex-col gap-6">
+                    <div class="zest-card rounded-[2rem] p-5 flex flex-col gap-5">
                         <div class="flex justify-between items-start">
-                            <div>
-                                <h3 class="text-xl font-black text-white leading-tight uppercase tracking-tight mb-2">${item.name}</h3>
-                                <div class="flex items-center gap-3">
-                                    <span class="text-xs font-black text-indigo-400 bg-indigo-500/10 px-3 py-1.5 rounded-lg leading-none">LV ${item.level}</span>
-                                    <div class="flex gap-1 text-amber-500">
-                                        ${Array(item.tier).fill(0).map(() => `<i class="fas fa-star text-sm"></i>`).join('')}
+                            <div class="overflow-hidden">
+                                <h3 class="text-base font-black text-white leading-tight uppercase tracking-tight mb-1.5 truncate">${item.name}</h3>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-[10px] font-black text-indigo-400 bg-indigo-500/10 px-2 py-1 rounded-md leading-none">LV ${item.level}</span>
+                                    <div class="flex gap-0.5 text-amber-500">
+                                        ${Array(item.tier).fill(0).map(() => `<i class="fas fa-star text-[10px]"></i>`).join('')}
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="space-y-6">
-                            <div class="space-y-2">
-                                <p class="text-[10px] font-black text-zinc-600 uppercase tracking-widest border-b border-zinc-800 pb-2 mb-2">Detailed Properties</p>
+                        <div class="space-y-4">
+                            <div class="space-y-1.5">
+                                <p class="text-[9px] font-black text-zinc-600 uppercase tracking-widest border-b border-zinc-800 pb-1.5 mb-1.5">Properties</p>
                                 ${item.stats.map(s => `
-                                    <div class="flex justify-between text-sm font-bold py-1.5 border-b border-zinc-800/30">
+                                    <div class="flex justify-between text-[13px] font-bold py-1 border-b border-zinc-800/20 last:border-0">
                                         <span class="text-zinc-500">${s.label}</span>
                                         <span class="${s.pos ? 'stat-pos' : 'stat-neg'}">${s.value}</span>
                                     </div>
                                 `).join('')}
                             </div>
 
-                            <div class="space-y-3">
-                                <p class="text-[10px] font-black text-zinc-600 uppercase tracking-widest border-b border-zinc-800 pb-2 mb-2">Location Logistics</p>
-                                ${item.drops.length === 0 ? `<p class="text-xs italic text-zinc-800">No telemetry data available.</p>` : item.drops.map(drop => `
-                                    <div class="space-y-3 bg-zinc-900/40 p-5 rounded-2xl border border-zinc-800/50">
+                            <div class="space-y-2">
+                                <p class="text-[9px] font-black text-zinc-600 uppercase tracking-widest border-b border-zinc-800 pb-1.5 mb-1.5">Location</p>
+                                ${item.drops.length === 0 ? `<p class="text-[11px] italic text-zinc-800">No telemetry data.</p>` : item.drops.map(drop => `
+                                    <div class="space-y-2 bg-zinc-900/40 p-4 rounded-xl border border-zinc-800/40">
                                         <div>
-                                            <p class="text-zinc-200 font-black text-base">${drop.name}</p>
-                                            <p class="text-zinc-500 text-[10px] font-bold uppercase tracking-tight">${drop.location}</p>
+                                            <p class="text-zinc-200 font-bold text-sm truncate">${drop.name}</p>
+                                            <p class="text-zinc-600 text-[9px] font-bold uppercase tracking-tight truncate">${drop.location}</p>
                                         </div>
                                         <div 
                                             onclick="copyToClipboard('${drop.coords.x}', '${drop.coords.z}')"
-                                            class="zest-btn flex items-center justify-center gap-3 bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-4 rounded-xl cursor-pointer shadow-lg border border-indigo-400 group"
+                                            class="zest-btn flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-2.5 rounded-lg cursor-pointer shadow-md border border-indigo-400 group"
                                         >
-                                            <i class="fas fa-crosshairs text-xl group-hover:rotate-90 transition-transform"></i>
-                                            <span class="font-black text-xs font-mono tracking-widest">/compass ${drop.coords.x}, ${drop.coords.z}</span>
+                                            <i class="fas fa-crosshairs text-base group-hover:rotate-90 transition-transform"></i>
+                                            <span class="font-black text-[10px] font-mono tracking-widest truncate">/compass ${drop.coords.x}, ${drop.coords.z}</span>
                                         </div>
                                     </div>
                                 `).join('')}
                             </div>
                         </div>
 
-                        <div class="mt-auto pt-4 border-t border-zinc-800/50 flex flex-wrap gap-2">
+                        <div class="mt-auto pt-3 border-t border-zinc-800/50 flex flex-wrap gap-1.5">
                             ${item.professions.map(p => `
-                                <span class="text-[9px] text-zinc-500 font-black px-2.5 py-1.5 rounded-lg bg-zinc-950 border border-zinc-800 uppercase tracking-widest">${p}</span>
+                                <span class="text-[8px] text-zinc-600 font-black px-2 py-1 rounded-md bg-zinc-950 border border-zinc-800 uppercase tracking-widest">${p}</span>
                             `).join('')}
                         </div>
                     </div>
@@ -440,7 +439,7 @@
             const container = document.getElementById('activeTags');
             const tags = [];
             if (STATE.search) tags.push({ id: 'search', label: `SEARCH: ${STATE.search}` });
-            if (STATE.interestOnly) tags.push({ id: 'interest', label: `★ ITEMS OF INTEREST` });
+            if (STATE.interestOnly) tags.push({ id: 'interest', label: `★ INTEREST` });
             if (STATE.minLv > 0 || STATE.maxLv < 100) tags.push({ id: 'lv', label: `L${STATE.minLv}-${STATE.maxLv}` });
             STATE.tiers.forEach(t => tags.push({ id: `tier-${t}`, label: `T${t}` }));
             STATE.profs.forEach(p => tags.push({ id: `prof-${p}`, label: p }));
