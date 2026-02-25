@@ -47,8 +47,8 @@
     </div>
 
     <script>
-        // Updated to the official ingredient search endpoint
-        const API_URL = 'https://api.wynncraft.com/v3/ingredient/search/all';
+        // Switched to the Full Item Database endpoint
+        const API_URL = 'https://api.wynncraft.com/v3/item/database?fullResult';
         let ingredients = [];
 
         async function init() {
@@ -59,11 +59,16 @@
                 if (!response.ok) throw new Error('API Error');
                 const data = await response.json();
                 
-                // The /v3/ingredient/search/all endpoint returns an object where keys are names
-                // or an array depending on the exact v3 sub-version. We handle both.
-                ingredients = Array.isArray(data) ? data : Object.values(data);
+                // Convert object to array and filter for objects that contain 'tier' or 'skills'
+                // This identifies crafting ingredients specifically within the full database.
+                const allItems = Object.values(data);
+                ingredients = allItems.filter(item => 
+                    item.type === 'Ingredient' || 
+                    item.isIngredient || 
+                    (item.tier !== undefined && item.skills)
+                );
 
-                statusEl.innerText = `Loaded ${ingredients.length} ingredients`;
+                statusEl.innerText = `Loaded ${ingredients.length} ingredients from full database`;
                 render();
             } catch (e) {
                 statusEl.innerText = "Error loading data. The Wynncraft API might be down or rate-limited.";
@@ -90,7 +95,7 @@
                         <div class="text-xs opacity-80 font-black">T${ing.tier || 0}</div>
                     </div>
                     <div class="text-[10px] opacity-60 mb-3 uppercase tracking-widest font-bold">
-                        Lv. ${ing.level || 0} • ${ing.isIngredient ? 'Ingredient' : 'Material'}
+                        Lv. ${ing.level || ing.lvl || 0} • ${ing.type || 'Ingredient'}
                     </div>
                     <div class="space-y-1 text-sm flex-grow">
                         ${ing.identifications ? Object.entries(ing.identifications).map(([k, v]) => `
