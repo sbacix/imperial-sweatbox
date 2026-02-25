@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Swipu's Zestshop</title>
+    <title>SWIPU WAS IN THE EPPY FILES</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -24,7 +24,7 @@
         }
 
         .custom-scrollbar::-webkit-scrollbar {
-            width: 4px;
+            width: 6px;
         }
         .custom-scrollbar::-webkit-scrollbar-track {
             background: #121214;
@@ -39,10 +39,18 @@
 
         /* Chroma Glow Cycle Animation */
         @keyframes glowCycle {
-            0% { box-shadow: 0 12px 25px -8px var(--zest-indigo); border-color: #6366f1; }
-            33% { box-shadow: 0 12px 25px -8px var(--zest-purple); border-color: #a855f7; }
-            66% { box-shadow: 0 12px 25px -8px var(--zest-cyan); border-color: #22d3ee; }
-            100% { box-shadow: 0 12px 25px -8px var(--zest-indigo); border-color: #6366f1; }
+            0% { box-shadow: 0 15px 35px -10px var(--zest-indigo); border-color: #6366f1; }
+            33% { box-shadow: 0 15px 35px -10px var(--zest-purple); border-color: #a855f7; }
+            66% { box-shadow: 0 15px 35px -10px var(--zest-cyan); border-color: #22d3ee; }
+            100% { box-shadow: 0 15px 35px -10px var(--zest-indigo); border-color: #6366f1; }
+        }
+
+        /* Girly Title Color Cycle */
+        @keyframes titleCycle {
+            0% { color: #a855f7; } /* Purple */
+            33% { color: #ec4899; } /* Pink */
+            66% { color: #22d3ee; } /* Cyan */
+            100% { color: #ec4899; } /* Pink back */
         }
 
         .zest-card {
@@ -53,14 +61,18 @@
         }
 
         .zest-card:hover {
-            transform: translateY(-6px);
+            transform: translateY(-8px);
             animation: glowCycle 4s infinite linear;
             z-index: 10;
         }
 
+        .animated-title {
+            animation: titleCycle 6s infinite ease-in-out;
+        }
+
         .glass-header {
-            background: rgba(18, 18, 20, 0.9);
-            backdrop-filter: blur(12px);
+            background: rgba(18, 18, 20, 0.95);
+            backdrop-filter: blur(16px);
             border-bottom: 1px solid #2d2d31;
         }
 
@@ -72,7 +84,7 @@
         }
 
         #filterDrawer.open {
-            max-height: 1000px;
+            max-height: 1200px;
             opacity: 1;
         }
 
@@ -84,29 +96,29 @@
 
         select {
             appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2352525b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2371717a'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
             background-repeat: no-repeat;
-            background-position: right 0.5rem center;
-            background-size: 0.8rem;
+            background-position: right 0.75rem center;
+            background-size: 1rem;
         }
 
         #toast {
             visibility: hidden;
-            min-width: 200px;
+            min-width: 280px;
             background: #1c1c1f;
             color: #fff;
             text-align: center;
-            border-radius: 8px;
-            padding: 10px;
+            border-radius: 12px;
+            padding: 16px;
             position: fixed;
             z-index: 100;
             left: 50%;
             transform: translateX(-50%);
-            bottom: 30px;
-            font-size: 11px;
-            font-weight: 700;
-            box-shadow: 0 15px 20px rgba(0, 0, 0, 0.4);
-            border: 1px solid #3f3f46;
+            bottom: 40px;
+            font-size: 14px;
+            font-weight: 800;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+            border: 1px solid #4f46e5;
             opacity: 0;
             transition: opacity 0.3s, bottom 0.3s;
         }
@@ -114,206 +126,218 @@
         #toast.show {
             visibility: visible;
             opacity: 1;
-            bottom: 40px;
+            bottom: 50px;
         }
 
         .zest-btn {
-            transition: all 0.2s ease;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .zest-btn:hover {
             filter: brightness(1.2);
+            transform: scale(1.02);
+        }
+
+        .interest-toggle.active {
+            background-color: #4f46e5;
+            border-color: #6366f1;
+            color: white;
         }
     </style>
 </head>
-<body class="min-h-screen custom-scrollbar">
+<body class="min-h-screen custom-scrollbar pb-20">
 
-    <div id="toast">Copied to Clipboard!</div>
+    <div id="toast">Copied Compass Command!</div>
 
     <header class="sticky top-0 z-50 glass-header">
-        <div class="max-w-[1800px] mx-auto px-4 py-2.5">
-            <div class="flex items-center justify-between gap-4">
-                <!-- Branding -->
-                <div class="flex items-center gap-2 shrink-0">
-                    <div class="bg-gradient-to-tr from-indigo-500 to-cyan-500 p-1.5 rounded-lg shadow-lg">
-                        <i class="fas fa-lemon text-white text-sm"></i>
-                    </div>
-                    <div class="flex flex-col">
-                        <h1 class="text-sm font-black tracking-tight leading-none text-zinc-100">
-                            Swipu's <span class="text-indigo-400 uppercase">Zestshop</span>
-                        </h1>
-                    </div>
-                </div>
-
-                <!-- Search -->
-                <div class="flex-1 max-w-lg relative">
-                    <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-zinc-600 text-xs"></i>
+        <div class="max-w-[1400px] mx-auto px-6 py-6">
+            <!-- Main Header Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 items-center gap-6">
+                
+                <!-- Left: Search -->
+                <div class="relative order-2 lg:order-1">
+                    <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 text-base"></i>
                     <input 
                         type="text" 
                         id="globalSearch"
-                        placeholder="Search items..."
-                        class="w-full bg-zinc-900/50 border border-zinc-800 rounded-lg py-1.5 pl-9 pr-3 focus:outline-none focus:ring-1 focus:ring-indigo-500/50 transition-all text-xs text-zinc-100 placeholder:text-zinc-600"
+                        placeholder="Search for ingredients..."
+                        class="w-full bg-zinc-900 border border-zinc-800 rounded-xl py-3.5 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all text-sm text-zinc-100 placeholder:text-zinc-600"
                     >
                 </div>
 
-                <!-- Filter Toggle -->
-                <button id="toggleFilters" class="zest-btn flex items-center gap-2 px-3 py-1.5 bg-zinc-900 border border-zinc-800 rounded-lg font-black text-[10px] uppercase tracking-widest text-zinc-400">
-                    <i class="fas fa-sliders-h text-indigo-500"></i>
-                    <span>Filters</span>
-                    <i id="chevron" class="fas fa-chevron-down text-[7px] ml-1 transition-transform"></i>
-                </button>
+                <!-- Center: Branding (Centered & Bigger Title) -->
+                <div class="flex flex-col items-center text-center order-1 lg:order-2">
+                    <div class="bg-gradient-to-tr from-indigo-500 to-cyan-400 p-3 rounded-2xl shadow-2xl mb-2">
+                        <i class="fas fa-lemon text-white text-3xl"></i>
+                    </div>
+                    <h1 class="text-3xl lg:text-4xl font-black tracking-tighter leading-tight text-white">
+                        Swipu's <span class="animated-title uppercase">Zestshop</span>
+                    </h1>
+                    <p class="text-[10px] font-bold text-zinc-500 uppercase tracking-[0.4em] mt-1">Curated Inventory Explorer</p>
+                </div>
+
+                <!-- Right: Dashboard Toggle -->
+                <div class="flex justify-end order-3">
+                    <button id="toggleFilters" class="zest-btn flex items-center gap-3 px-6 py-3.5 bg-zinc-900 border border-zinc-800 rounded-xl font-black text-sm uppercase tracking-widest text-zinc-300">
+                        <i class="fas fa-sliders-h text-indigo-500"></i>
+                        <span>Dashboard</span>
+                        <i id="chevron" class="fas fa-chevron-down text-[10px] ml-1 transition-transform"></i>
+                    </button>
+                </div>
             </div>
 
-            <!-- Drawer -->
-            <div id="filterDrawer" class="mt-2 border-t border-zinc-900">
-                <div class="py-4 space-y-4">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div class="space-y-2">
-                            <label class="block text-[9px] font-black text-zinc-600 uppercase tracking-widest">Level Range</label>
-                            <div class="flex items-center gap-2">
-                                <input type="number" id="minLevel" value="0" class="w-full bg-zinc-950 border border-zinc-800 rounded py-1 px-2 text-[11px] font-bold outline-none">
-                                <input type="number" id="maxLevel" value="100" class="w-full bg-zinc-950 border border-zinc-800 rounded py-1 px-2 text-[11px] font-bold outline-none">
+            <!-- Drawer (Dashboard) -->
+            <div id="filterDrawer" class="mt-6 border-t border-zinc-800">
+                <div class="py-8 space-y-8">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <!-- Level Range -->
+                        <div class="space-y-4">
+                            <label class="block text-xs font-black text-zinc-500 uppercase tracking-widest">Level Range</label>
+                            <div class="flex items-center gap-3">
+                                <input type="number" id="minLevel" value="0" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-3 px-4 text-sm font-bold outline-none focus:border-indigo-500">
+                                <span class="text-zinc-700 font-bold">—</span>
+                                <input type="number" id="maxLevel" value="100" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-3 px-4 text-sm font-bold outline-none focus:border-indigo-500">
                             </div>
                         </div>
 
-                        <div class="space-y-2">
-                            <label class="block text-[9px] font-black text-zinc-600 uppercase tracking-widest">Tiers</label>
-                            <div class="flex gap-1" id="tierFilters">
-                                <button data-tier="1" class="tier-btn flex-1 py-1 rounded border border-zinc-800 bg-zinc-950 text-[10px] font-black">T1</button>
-                                <button data-tier="2" class="tier-btn flex-1 py-1 rounded border border-zinc-800 bg-zinc-950 text-[10px] font-black">T2</button>
-                                <button data-tier="3" class="tier-btn flex-1 py-1 rounded border border-zinc-800 bg-zinc-950 text-[10px] font-black">T3</button>
+                        <!-- Tiers -->
+                        <div class="space-y-4">
+                            <label class="block text-xs font-black text-zinc-500 uppercase tracking-widest">Ingredient Tiers</label>
+                            <div class="flex gap-2" id="tierFilters">
+                                <button data-tier="1" class="tier-btn flex-1 py-3 rounded-lg border border-zinc-800 bg-zinc-950 text-xs font-black uppercase tracking-widest">Tier 1</button>
+                                <button data-tier="2" class="tier-btn flex-1 py-3 rounded-lg border border-zinc-800 bg-zinc-950 text-xs font-black uppercase tracking-widest">Tier 2</button>
+                                <button data-tier="3" class="tier-btn flex-1 py-3 rounded-lg border border-zinc-800 bg-zinc-950 text-xs font-black uppercase tracking-widest">Tier 3</button>
                             </div>
                         </div>
 
-                        <div class="space-y-2">
-                            <label class="block text-[9px] font-black text-zinc-600 uppercase tracking-widest">Professions</label>
-                            <div id="professionFilters" class="flex flex-wrap gap-1 max-h-20 overflow-y-auto pr-1 custom-scrollbar"></div>
+                        <!-- Quick Action: Items of Interest -->
+                        <div class="space-y-4">
+                            <label class="block text-xs font-black text-zinc-500 uppercase tracking-widest text-indigo-400">Curated Filters</label>
+                            <button id="interestToggle" class="interest-toggle zest-btn w-full py-3 rounded-lg border border-zinc-800 bg-zinc-950 text-xs font-black uppercase tracking-widest text-zinc-400">
+                                <i class="fas fa-star mr-2"></i> Items of Interest
+                            </button>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-2">
-                        <select id="posStat1" class="w-full bg-zinc-950 border border-zinc-800 rounded py-1.5 px-2 text-[10px] font-black text-emerald-500 outline-none"><option value="">+ Stat 1</option></select>
-                        <select id="posStat2" class="w-full bg-zinc-950 border border-zinc-800 rounded py-1.5 px-2 text-[10px] font-black text-emerald-500 outline-none"><option value="">+ Stat 2</option></select>
-                        <select id="negStat1" class="w-full bg-zinc-950 border border-zinc-800 rounded py-1.5 px-2 text-[10px] font-black text-rose-500 outline-none"><option value="">- Stat 1</option></select>
-                        <select id="negStat2" class="w-full bg-zinc-950 border border-zinc-800 rounded py-1.5 px-2 text-[10px] font-black text-rose-500 outline-none"><option value="">- Stat 2</option></select>
+                    <!-- Statistics & Professions -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 pt-4">
+                        <div class="space-y-4">
+                            <label class="block text-xs font-black text-zinc-500 uppercase tracking-widest">Professions</label>
+                            <div id="professionFilters" class="flex flex-wrap gap-2 max-h-32 overflow-y-auto pr-2 custom-scrollbar"></div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="space-y-4">
+                                <label class="block text-xs font-black text-zinc-500 uppercase tracking-widest text-emerald-500">Positive Stats</label>
+                                <select id="posStat1" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-3 px-4 text-xs font-black text-emerald-500 outline-none"><option value="">Stat 1</option></select>
+                            </div>
+                            <div class="space-y-4">
+                                <label class="block text-xs font-black text-zinc-500 uppercase tracking-widest text-rose-500">Negative Stats</label>
+                                <select id="negStat1" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg py-3 px-4 text-xs font-black text-rose-500 outline-none"><option value="">Stat 1</option></select>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </header>
 
-    <main class="max-w-[1800px] mx-auto p-4">
-        <div id="activeTags" class="flex flex-wrap gap-1 mb-4 min-h-[20px]"></div>
+    <main class="max-w-[1400px] mx-auto p-6 lg:p-10">
+        <!-- Active Tags -->
+        <div id="activeTags" class="flex flex-wrap gap-2 mb-10 min-h-[30px]"></div>
 
-        <div id="ingredientGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-3"></div>
+        <!-- Ingredient Grid (Zoomed-in look: 3 Columns) -->
+        <div id="ingredientGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
 
-        <div id="emptyState" class="hidden flex flex-col items-center justify-center py-32 text-zinc-700">
-            <p class="text-sm font-black uppercase tracking-widest mb-4">No Zest Found</p>
-            <button onclick="clearAllFilters()" class="text-indigo-500 hover:underline text-[10px] font-black uppercase">Reset Filters</button>
+        <div id="emptyState" class="hidden flex flex-col items-center justify-center py-48 text-zinc-700">
+            <div class="w-24 h-24 bg-zinc-800 rounded-3xl flex items-center justify-center mb-6 shadow-xl border border-zinc-700">
+                <i class="fas fa-ghost text-4xl opacity-30"></i>
+            </div>
+            <p class="text-xl font-black uppercase tracking-widest mb-2 text-zinc-400">No Ingredients Match</p>
+            <button onclick="clearAllFilters()" class="text-indigo-500 hover:text-indigo-400 text-xs font-black uppercase tracking-[0.3em] underline">Reset Inventory</button>
         </div>
     </main>
 
     <script>
-        // Global Data Storage
+        /**
+         * Curated Items of Interest hardcoding list.
+         * These names will be used to filter the incoming JSON data.
+         */
+        const INTEREST_NAMES = new Set([
+            "Adamastor's Faceplate", "Ancient Heart", "Archaic Medallion", "Bat Heart", "Borange Fluff",
+            "Cat Food", "Cataratite", "Coalescence", "Colossus' Shard", "Contraband Absinthe",
+            "Contraband Hibiscus", "Creepvine Cluster", "Cursed Wings", "Cyclone Blue Leaves",
+            "Death Whistle Leaf", "Decaying Heart", "Defiled Luxroot", "Defishious", "Dernic Parasite",
+            "Doom Stone", "Draconic Bone Marrow", "Earthly Aura", "Elephelk Trunk", "Enhanced Behaviour Microchip",
+            "Enhanced Potential Microchip", "Evolving Spores", "Eye of The Beast", "Fairy Powder",
+            "Farcor's Trust", "Fiery Aura", "Flow of Fate", "Gilded Bark", "Glacial Anomaly",
+            "Glowing Tree Sap", "Haleva Plant", "Haphazard Serum", "Ice Cream Sandwich", "Kerasot Sporehead",
+            "Large Titanium Chunk", "Lashing Hellfire", "Lithoflesh", "Letvus Delight", "Lunar Charm",
+            "Luxrooot Cuttings", "Mangrove Root", "Mellow Mango", "Myconid Spores", "Myocardial Leg",
+            "Naval Stone", "Nightmare Fuel", "Nivlan Honey", "Obelisk Core", "Plane of Nonexistence",
+            "Pride of the Heights", "Prismatic Spores", "Red Mercury", "Remedial Paste", "Ritual Catalyst",
+            "Rock-Hard Beak", "Sentient Leukocyte", "Serpent Tongue", "Shattered Dawnlight", "Shrieker's Head",
+            "Smokebomb", "Soulbound Cinders", "Tentacle", "Throbbing Avos Heart", "Unicorn Horn",
+            "Watery Aura", "Windy Aura", "World Illuminator"
+        ]);
+
         let RAW_DATA = [];
 
-        // App State
         const STATE = {
             search: "", minLv: 0, maxLv: 100, tiers: new Set(), profs: new Set(),
-            posStat1: "", posStat2: "", negStat1: "", negStat2: "",
-            allProfs: [],
-            allPosStats: [],
-            allNegStats: []
+            posStat1: "", negStat1: "", interestOnly: false,
+            allProfs: [], allPosStats: [], allNegStats: []
         };
 
-        /**
-         * Dynamic Data Loading Logic
-         */
         async function loadShopData() {
             try {
                 const [ingredientsRes, dropsRes] = await Promise.all([
                     fetch('ingredients.json'),
                     fetch('drops.json')
                 ]);
-
-                if (!ingredientsRes.ok || !dropsRes.ok) {
-                    throw new Error(`HTTP Error: Ingredients(${ingredientsRes.status}), Drops(${dropsRes.status})`);
-                }
-
+                if (!ingredientsRes.ok || !dropsRes.ok) throw new Error("Fetch failed");
                 const ingredientsJson = await ingredientsRes.json();
                 const dropsJson = await dropsRes.json();
-
                 processJsonData(ingredientsJson, dropsJson);
             } catch (error) {
-                console.error("Critical Failure Loading Swipu's Inventory:", error);
-                showToast("Failed to load shop data.");
+                console.error(error);
+                showToast("Data Load Error");
             }
         }
 
-        /**
-         * Transformation Engine
-         */
         function processJsonData(ingredients, dropsMap) {
             const processed = [];
-
             for (const [ingName, ingData] of Object.entries(ingredients)) {
-                // Map Ingredient properties
                 const item = {
                     name: ingName,
                     tier: ingData.tier,
-                    level: ingData.lvl, // Pull lvl → level
-                    professions: ingData.profs, // Pull profs → professions
+                    level: ingData.lvl,
+                    professions: ingData.profs,
                     stats: ingData.stats || [],
                     drops: []
                 };
-
-                // Pull drop data if exists
                 const dropEntries = dropsMap[ingName];
                 if (dropEntries && Array.isArray(dropEntries)) {
                     item.drops = dropEntries.map(d => {
-                        let location = "";
-                        let coords = { x: 0, y: 0, z: 0 };
-
+                        let loc = "";
+                        let coords = { x: 0, z: 0 };
                         if (d.details) {
-                            location = d.details.location || "";
-                            
-                            // Coordinate Selection Logic
-                            const srcCoords = d.details.coords;
-                            if (srcCoords) {
-                                const checkNonZero = (c) => 
-                                    (c.x !== undefined && Number(c.x) !== 0) || 
-                                    (c.y !== undefined && Number(c.y) !== 0) || 
-                                    (c.z !== undefined && Number(c.z) !== 0);
-
-                                if (Array.isArray(srcCoords)) {
-                                    const valid = srcCoords.find(checkNonZero);
-                                    if (valid) {
-                                        coords = { x: Number(valid.x), y: Number(valid.y), z: Number(valid.z) };
-                                    }
-                                } else if (checkNonZero(srcCoords)) {
-                                    coords = { x: Number(srcCoords.x), y: Number(srcCoords.y), z: Number(srcCoords.z) };
+                            loc = d.details.location || "";
+                            const src = d.details.coords;
+                            if (src) {
+                                if (Array.isArray(src)) {
+                                    const valid = src.find(c => Number(c.x) !== 0 || Number(c.z) !== 0);
+                                    if (valid) coords = { x: Number(valid.x), z: Number(valid.z) };
+                                } else if (Number(src.x) !== 0 || Number(src.z) !== 0) {
+                                    coords = { x: Number(src.x), z: Number(src.z) };
                                 }
                             }
                         }
-
-                        return {
-                            type: d.type || "unknown",
-                            name: d.name || "Unknown Source",
-                            location: location,
-                            coords: coords
-                        };
+                        return { name: d.name, location: loc, coords };
                     });
                 }
-
                 processed.push(item);
             }
-
-            // Update Global Reference
             RAW_DATA = processed;
-
-            // Recompute dynamic state
             computeDynamicState();
-            
-            // Initial UI Setup and Render
             initDynamicUI();
             render();
         }
@@ -324,122 +348,86 @@
             STATE.allNegStats = [...new Set(RAW_DATA.flatMap(i => i.stats.filter(s => !s.pos).map(s => s.label)))].sort();
         }
 
-        /**
-         * Dynamic UI Population
-         */
         function initDynamicUI() {
-            // Populate Professions
             const profContainer = document.getElementById('professionFilters');
-            profContainer.innerHTML = STATE.allProfs.map(p => 
-                `<button data-prof="${p}" class="prof-chip zest-btn px-2 py-1 rounded bg-zinc-950 border border-zinc-800 text-[8px] font-black text-zinc-600 uppercase tracking-tighter whitespace-nowrap">${p}</button>`
-            ).join('');
-
-            // Populate Stat Selects
-            const p1 = document.getElementById('posStat1');
-            const p2 = document.getElementById('posStat2');
-            const n1 = document.getElementById('negStat1');
-            const n2 = document.getElementById('negStat2');
-
-            // Reset options
-            [p1, p2, n1, n2].forEach(sel => {
-                const first = sel.options[0].text;
-                sel.innerHTML = `<option value="">${first}</option>`;
-            });
-
-            STATE.allPosStats.forEach(s => {
-                const opt = `<option value="${s}">${s}</option>`;
-                p1.innerHTML += opt;
-                p2.innerHTML += opt;
-            });
-
-            STATE.allNegStats.forEach(s => {
-                const opt = `<option value="${s}">${s}</option>`;
-                n1.innerHTML += opt;
-                n2.innerHTML += opt;
-            });
+            profContainer.innerHTML = STATE.allProfs.map(p => `<button data-prof="${p}" class="prof-chip zest-btn px-3 py-2 rounded-lg bg-zinc-950 border border-zinc-800 text-[10px] font-black text-zinc-500 uppercase tracking-widest whitespace-nowrap">${p}</button>`).join('');
+            
+            const ps = document.getElementById('posStat1');
+            const ns = document.getElementById('negStat1');
+            STATE.allPosStats.forEach(s => ps.innerHTML += `<option value="${s}">${s}</option>`);
+            STATE.allNegStats.forEach(s => ns.innerHTML += `<option value="${s}">${s}</option>`);
         }
 
-        /**
-         * Filtering Logic
-         */
         function filterData() {
             const query = STATE.search.toLowerCase();
             return RAW_DATA.filter(item => {
-                const matchesSearch = !query || 
-                    item.name.toLowerCase().includes(query) || 
-                    item.professions.some(p => p.toLowerCase().includes(query)) || 
-                    item.stats.some(s => s.label.toLowerCase().includes(query));
-
+                const matchesSearch = !query || item.name.toLowerCase().includes(query) || item.professions.some(p => p.toLowerCase().includes(query)) || item.stats.some(s => s.label.toLowerCase().includes(query));
                 const matchesLevel = item.level >= STATE.minLv && item.level <= STATE.maxLv;
                 const matchesTier = STATE.tiers.size === 0 || STATE.tiers.has(item.tier.toString());
                 const matchesProf = STATE.profs.size === 0 || item.professions.some(p => STATE.profs.has(p));
-                
-                const hasPos1 = !STATE.posStat1 || item.stats.some(s => s.label === STATE.posStat1 && s.pos);
-                const hasPos2 = !STATE.posStat2 || item.stats.some(s => s.label === STATE.posStat2 && s.pos);
-                const hasNeg1 = !STATE.negStat1 || item.stats.some(s => s.label === STATE.negStat1 && !s.pos);
-                const hasNeg2 = !STATE.negStat2 || item.stats.some(s => s.label === STATE.negStat2 && !s.pos);
-
-                return matchesSearch && matchesLevel && matchesTier && matchesProf && hasPos1 && hasPos2 && hasNeg1 && hasNeg2;
+                const matchesStatP = !STATE.posStat1 || item.stats.some(s => s.label === STATE.posStat1 && s.pos);
+                const matchesStatN = !STATE.negStat1 || item.stats.some(s => s.label === STATE.negStat1 && !s.pos);
+                const matchesInterest = !STATE.interestOnly || INTEREST_NAMES.has(item.name);
+                return matchesSearch && matchesLevel && matchesTier && matchesProf && matchesStatP && matchesStatN && matchesInterest;
             });
         }
 
-        /**
-         * Render Layer
-         */
         function render() {
             const grid = document.getElementById('ingredientGrid');
             const data = filterData();
-            
             if (data.length === 0) {
                 grid.innerHTML = "";
                 document.getElementById('emptyState').classList.remove('hidden');
             } else {
                 document.getElementById('emptyState').classList.add('hidden');
                 grid.innerHTML = data.map((item, idx) => `
-                    <div class="zest-card rounded-xl p-3 flex flex-col gap-3">
-                        <div class="flex justify-between items-start gap-1">
-                            <div class="overflow-hidden">
-                                <h3 class="text-[11px] font-black text-white truncate leading-tight uppercase tracking-tight">${item.name}</h3>
-                                <div class="flex items-center gap-1.5 mt-1">
-                                    <span class="text-[8px] font-black text-indigo-400 bg-indigo-500/10 px-1 py-0.5 rounded leading-none">LV ${item.level}</span>
-                                    <div class="flex gap-0.5">
-                                        ${Array(item.tier).fill(0).map(() => `<i class="fas fa-star text-amber-500 text-[7px]"></i>`).join('')}
+                    <div class="zest-card rounded-3xl p-7 flex flex-col gap-6">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="text-xl font-black text-white leading-tight uppercase tracking-tight mb-2">${item.name}</h3>
+                                <div class="flex items-center gap-3">
+                                    <span class="text-xs font-black text-indigo-400 bg-indigo-500/10 px-3 py-1.5 rounded-lg leading-none">LV ${item.level}</span>
+                                    <div class="flex gap-1 text-amber-500">
+                                        ${Array(item.tier).fill(0).map(() => `<i class="fas fa-star text-sm"></i>`).join('')}
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="grid grid-cols-1 gap-3">
-                            <div class="space-y-1">
-                                <p class="text-[8px] font-black text-zinc-700 uppercase tracking-widest border-b border-zinc-800 pb-1 mb-1">Stats</p>
+                        <div class="space-y-6">
+                            <div class="space-y-2">
+                                <p class="text-[10px] font-black text-zinc-600 uppercase tracking-widest border-b border-zinc-800 pb-2 mb-2">Detailed Properties</p>
                                 ${item.stats.map(s => `
-                                    <div class="flex justify-between text-[10px] font-bold leading-none py-0.5">
-                                        <span class="text-zinc-500 truncate pr-1">${s.label}</span>
-                                        <span class="${s.pos ? 'stat-pos' : 'stat-neg'} shrink-0">${s.value}</span>
+                                    <div class="flex justify-between text-sm font-bold py-1.5 border-b border-zinc-800/30">
+                                        <span class="text-zinc-500">${s.label}</span>
+                                        <span class="${s.pos ? 'stat-pos' : 'stat-neg'}">${s.value}</span>
                                     </div>
                                 `).join('')}
                             </div>
 
-                            <div class="space-y-1">
-                                <p class="text-[8px] font-black text-zinc-700 uppercase tracking-widest border-b border-zinc-800 pb-1 mb-1">Source</p>
-                                ${item.drops.length === 0 ? `<p class="text-[8px] italic text-zinc-800">No known drops</p>` : item.drops.map(drop => `
-                                    <div class="text-[9px] space-y-1 leading-tight">
-                                        <p class="text-zinc-300 font-bold truncate">${drop.name}</p>
+                            <div class="space-y-3">
+                                <p class="text-[10px] font-black text-zinc-600 uppercase tracking-widest border-b border-zinc-800 pb-2 mb-2">Location Logistics</p>
+                                ${item.drops.length === 0 ? `<p class="text-xs italic text-zinc-800">No telemetry data available.</p>` : item.drops.map(drop => `
+                                    <div class="space-y-3 bg-zinc-900/40 p-5 rounded-2xl border border-zinc-800/50">
+                                        <div>
+                                            <p class="text-zinc-200 font-black text-base">${drop.name}</p>
+                                            <p class="text-zinc-500 text-[10px] font-bold uppercase tracking-tight">${drop.location}</p>
+                                        </div>
                                         <div 
                                             onclick="copyToClipboard('${drop.coords.x}', '${drop.coords.z}')"
-                                            class="inline-flex items-center gap-1.5 bg-zinc-950 hover:bg-zinc-800 hover:text-white px-1.5 py-1 rounded cursor-pointer transition-all font-mono text-zinc-500 border border-zinc-900"
+                                            class="zest-btn flex items-center justify-center gap-3 bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-4 rounded-xl cursor-pointer shadow-lg border border-indigo-400 group"
                                         >
-                                            <i class="fas fa-crosshairs text-[8px] text-indigo-500"></i>
-                                            <span class="text-[8px] font-black">${drop.coords.x}, ${drop.coords.z}</span>
+                                            <i class="fas fa-crosshairs text-xl group-hover:rotate-90 transition-transform"></i>
+                                            <span class="font-black text-xs font-mono tracking-widest">/compass ${drop.coords.x}, ${drop.coords.z}</span>
                                         </div>
                                     </div>
                                 `).join('')}
                             </div>
                         </div>
 
-                        <div class="mt-auto pt-2 border-t border-zinc-800 flex flex-wrap gap-1">
+                        <div class="mt-auto pt-4 border-t border-zinc-800/50 flex flex-wrap gap-2">
                             ${item.professions.map(p => `
-                                <span class="text-[7px] text-zinc-600 font-black px-1 py-0.5 rounded bg-zinc-950 border border-zinc-900 uppercase tracking-tight">${p}</span>
+                                <span class="text-[9px] text-zinc-500 font-black px-2.5 py-1.5 rounded-lg bg-zinc-950 border border-zinc-800 uppercase tracking-widest">${p}</span>
                             `).join('')}
                         </div>
                     </div>
@@ -451,114 +439,79 @@
         function renderTags() {
             const container = document.getElementById('activeTags');
             const tags = [];
-            if (STATE.search) tags.push({ id: 'search', label: `${STATE.search}` });
+            if (STATE.search) tags.push({ id: 'search', label: `SEARCH: ${STATE.search}` });
+            if (STATE.interestOnly) tags.push({ id: 'interest', label: `★ ITEMS OF INTEREST` });
             if (STATE.minLv > 0 || STATE.maxLv < 100) tags.push({ id: 'lv', label: `L${STATE.minLv}-${STATE.maxLv}` });
             STATE.tiers.forEach(t => tags.push({ id: `tier-${t}`, label: `T${t}` }));
             STATE.profs.forEach(p => tags.push({ id: `prof-${p}`, label: p }));
-            if (STATE.posStat1) tags.push({ id: 'posStat1', label: `+${STATE.posStat1}` });
-            if (STATE.posStat2) tags.push({ id: 'posStat2', label: `+${STATE.posStat2}` });
-            if (STATE.negStat1) tags.push({ id: 'negStat1', label: `-${STATE.negStat1}` });
-            if (STATE.negStat2) tags.push({ id: 'negStat2', label: `-${STATE.negStat2}` });
 
             container.innerHTML = tags.map(t => `
-                <div class="flex items-center gap-1.5 px-2 py-0.5 bg-zinc-900 border border-zinc-800 text-zinc-400 rounded text-[8px] font-black uppercase tracking-widest">
+                <div class="flex items-center gap-2 px-3 py-1.5 bg-zinc-800 border border-zinc-700 text-zinc-300 rounded-lg text-[10px] font-black uppercase tracking-widest shadow-md">
                     ${t.label}
-                    <button onclick="removeFilter('${t.id}')" class="hover:text-indigo-500 transition-colors"><i class="fas fa-times"></i></button>
+                    <button onclick="removeFilter('${t.id}')" class="hover:text-indigo-400 transition-colors"><i class="fas fa-times"></i></button>
                 </div>
             `).join('');
         }
 
-        /**
-         * Clipboard and Feedback Utilities
-         */
         function copyToClipboard(x, z) {
             const command = `/compass ${x},${z}`;
-            const textArea = document.createElement("textarea");
-            textArea.value = command;
-            textArea.style.position = "fixed";
-            textArea.style.left = "-9999px";
-            document.body.appendChild(textArea);
-            textArea.select();
-            try {
-                document.execCommand('copy');
-                showToast(`COPIED COMPASS: ${x}, ${z}`);
-            } catch (err) {}
-            document.body.removeChild(textArea);
+            const ta = document.createElement("textarea");
+            ta.value = command; ta.style.position = "fixed"; ta.style.left = "-9999px";
+            document.body.appendChild(ta); ta.select();
+            try { document.execCommand('copy'); showToast(`COPIED COMPASS COMMAND: ${x}, ${z}`); } catch (err) {}
+            document.body.removeChild(ta);
         }
 
-        function showToast(message) {
-            const toast = document.getElementById("toast");
-            toast.textContent = message;
-            toast.classList.add("show");
-            setTimeout(() => toast.classList.remove("show"), 1500);
+        function showToast(msg) {
+            const t = document.getElementById("toast");
+            t.textContent = msg; t.classList.add("show");
+            setTimeout(() => t.classList.remove("show"), 2500);
         }
 
-        /**
-         * Filter Interactions
-         */
         function removeFilter(id) {
             if (id === 'search') { STATE.search = ""; document.getElementById('globalSearch').value = ""; }
+            else if (id === 'interest') { STATE.interestOnly = false; document.getElementById('interestToggle').classList.remove('active'); }
             else if (id === 'lv') { STATE.minLv = 0; STATE.maxLv = 100; document.getElementById('minLevel').value = 0; document.getElementById('maxLevel').value = 100; }
-            else if (id.startsWith('tier-')) { 
-                const t = id.split('-')[1]; 
-                STATE.tiers.delete(t); 
-                document.querySelector(`.tier-btn[data-tier="${t}"]`).classList.remove('bg-indigo-600', 'text-white'); 
-            }
-            else if (id.startsWith('prof-')) { 
-                const p = id.split('-')[1]; 
-                STATE.profs.delete(p); 
-                const chip = document.querySelector(`.prof-chip[data-prof="${p}"]`); 
-                if (chip) chip.classList.remove('bg-indigo-600', 'text-white'); 
-            }
-            else if (id.startsWith('posStat') || id.startsWith('negStat')) { 
-                STATE[id] = ""; 
-                document.getElementById(id).value = ""; 
-            }
+            else if (id.startsWith('tier-')) { const t = id.split('-')[1]; STATE.tiers.delete(t); document.querySelector(`.tier-btn[data-tier="${t}"]`).classList.remove('bg-indigo-600', 'text-white'); }
+            else if (id.startsWith('prof-')) { const p = id.split('-')[1]; STATE.profs.delete(p); const chip = document.querySelector(`.prof-chip[data-prof="${p}"]`); if (chip) chip.classList.remove('bg-indigo-600', 'text-white'); }
             render();
         }
 
         function clearAllFilters() {
-            STATE.search = ""; STATE.minLv = 0; STATE.maxLv = 100; STATE.tiers.clear(); STATE.profs.clear();
-            STATE.posStat1 = ""; STATE.posStat2 = ""; STATE.negStat1 = ""; STATE.negStat2 = "";
+            STATE.search = ""; STATE.minLv = 0; STATE.maxLv = 100; STATE.interestOnly = false;
+            STATE.tiers.clear(); STATE.profs.clear(); STATE.posStat1 = ""; STATE.negStat1 = "";
             document.getElementById('globalSearch').value = "";
-            document.getElementById('minLevel').value = 0; document.getElementById('maxLevel').value = 100;
+            document.getElementById('interestToggle').classList.remove('active');
             document.querySelectorAll('.tier-btn, .prof-chip').forEach(el => el.classList.remove('bg-indigo-600', 'text-white'));
             document.querySelectorAll('select').forEach(s => s.value = "");
             render();
         }
 
-        /**
-         * Initialization
-         */
         window.addEventListener('DOMContentLoaded', () => {
-            // Start Async Load
             loadShopData();
-
-            // Setup persistent listeners
             document.getElementById('toggleFilters').addEventListener('click', () => {
                 const isOpen = document.getElementById('filterDrawer').classList.toggle('open');
                 document.getElementById('chevron').style.transform = isOpen ? 'rotate(180deg)' : 'rotate(0deg)';
             });
-
             document.getElementById('globalSearch').addEventListener('input', e => { STATE.search = e.target.value; render(); });
             document.getElementById('minLevel').addEventListener('input', e => { STATE.minLv = parseInt(e.target.value || 0); render(); });
             document.getElementById('maxLevel').addEventListener('input', e => { STATE.maxLv = parseInt(e.target.value || 100); render(); });
-
-            ['posStat1', 'posStat2', 'negStat1', 'negStat2'].forEach(id => {
-                document.getElementById(id).addEventListener('change', e => { STATE[id] = e.target.value; render(); });
+            document.getElementById('posStat1').addEventListener('change', e => { STATE.posStat1 = e.target.value; render(); });
+            document.getElementById('negStat1').addEventListener('change', e => { STATE.negStat1 = e.target.value; render(); });
+            
+            document.getElementById('interestToggle').addEventListener('click', e => {
+                STATE.interestOnly = !STATE.interestOnly;
+                e.target.classList.toggle('active', STATE.interestOnly);
+                render();
             });
 
             document.querySelectorAll('.tier-btn').forEach(b => b.addEventListener('click', () => {
-                const t = b.dataset.tier;
-                if (STATE.tiers.has(t)) STATE.tiers.delete(t); else STATE.tiers.add(t);
+                const t = b.dataset.tier; if (STATE.tiers.has(t)) STATE.tiers.delete(t); else STATE.tiers.add(t);
                 b.classList.toggle('bg-indigo-600'); b.classList.toggle('text-white'); render();
             }));
-
             document.getElementById('professionFilters').addEventListener('click', e => {
-                const b = e.target.closest('.prof-chip'); 
-                if (!b) return;
-                const p = b.dataset.prof; 
-                if (STATE.profs.has(p)) STATE.profs.delete(p); else STATE.profs.add(p);
+                const b = e.target.closest('.prof-chip'); if (!b) return;
+                const p = b.dataset.prof; if (STATE.profs.has(p)) STATE.profs.delete(p); else STATE.profs.add(p);
                 b.classList.toggle('bg-indigo-600'); b.classList.toggle('text-white'); render();
             });
         });
