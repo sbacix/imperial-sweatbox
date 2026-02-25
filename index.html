@@ -86,7 +86,6 @@
             border: 2px solid var(--border-main);
             border-radius: 2rem;
             position: relative;
-            overflow: hidden;
         }
 
         .dashboard-container::before {
@@ -95,6 +94,7 @@
             top: 0; left: 0; right: 0; height: 4px;
             background: linear-gradient(90deg, #a855f7, #ec4899, #22d3ee);
             opacity: 0.7;
+            border-radius: 2rem 2rem 0 0;
         }
 
         #filterDrawer {
@@ -179,9 +179,7 @@
 
     <div id="toast">Copied Tactical Coordinates!</div>
 
-    <!-- Static Dashboard (Not Sticky) -->
     <header class="max-w-[1700px] mx-auto px-6 pt-12 pb-8">
-        <!-- Developer Credit Watermark -->
         <div class="flex justify-between items-center mb-10 px-4">
             <div class="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-600">
                 <span class="animated-text">Slopcoded</span> for your sake by <span class="animated-text">Sbacix</span>
@@ -193,18 +191,16 @@
 
         <div class="dashboard-container shadow-2xl">
             <div class="p-8 lg:p-12">
-                <!-- Branding Header -->
                 <div class="flex flex-col items-center text-center mb-12">
                     <div class="bg-gradient-to-tr from-indigo-500 to-cyan-400 p-4 rounded-3xl shadow-2xl mb-4">
                         <i class="fas fa-database text-white text-4xl"></i>
                     </div>
                     <h1 class="text-4xl lg:text-7xl font-black tracking-tighter leading-tight text-custom-main uppercase">
-                        Property of <span class="animated-text">Imperial</span>
+                        Database of <span class="animated-text">Imperial</span>
                     </h1>
                     <p class="text-[12px] font-black text-indigo-500 uppercase tracking-[0.6em] mt-2">Work In Progress</p>
                 </div>
 
-                <!-- Primary Controls -->
                 <div class="grid grid-cols-1 lg:grid-cols-4 items-center gap-6">
                     <div class="lg:col-span-3 relative">
                         <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-zinc-500 text-xl"></i>
@@ -222,7 +218,6 @@
                     </button>
                 </div>
 
-                <!-- Expanded Settings -->
                 <div id="filterDrawer" class="mt-8 pt-8 border-t border-custom border-opacity-40">
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
                         <div class="space-y-4">
@@ -275,7 +270,6 @@
         </div>
     </header>
 
-    <!-- Content Feed -->
     <main class="max-w-[1700px] mx-auto px-6">
         <div id="activeTags" class="flex flex-wrap gap-3 mb-8 min-h-[30px] px-2"></div>
         <div id="resultsInfo" class="mb-6 px-4 text-[11px] font-black uppercase tracking-[0.3em] text-indigo-500 hidden border-l-4 border-indigo-500 bg-indigo-500/5 py-2"></div>
@@ -372,14 +366,31 @@
                     stats: ingData.stats || [],
                     drops: [], searchStr: "" 
                 };
+
+                // Deduplicate Drop Sources for an item (Group by Name + Location)
                 if (Array.isArray(dropEntries)) {
-                    item.drops = dropEntries.map(d => ({ 
-                        name: d.name || "Unknown Entity", 
-                        location: d.details ? (d.details.location || "") : "", 
-                        allCoords: sharedTelemetry[(d.name || "").trim().toLowerCase()] || [],
-                        screenshots: d.details ? (d.details.screenshots || "") : "" 
+                    const sourceMap = new Map();
+                    dropEntries.forEach(d => {
+                        const sName = (d.name || "Unknown Source").trim();
+                        const sLoc = (d.details ? d.details.location || "" : "").trim();
+                        const sKey = `${sName}|${sLoc}`;
+
+                        if (!sourceMap.has(sKey)) {
+                            sourceMap.set(sKey, {
+                                name: sName,
+                                location: sLoc,
+                                mobKey: sName.toLowerCase(),
+                                screenshots: d.details ? (d.details.screenshots || "") : ""
+                            });
+                        }
+                    });
+
+                    item.drops = Array.from(sourceMap.values()).map(source => ({
+                        ...source,
+                        allCoords: sharedTelemetry[source.mobKey] || []
                     }));
                 }
+
                 item.searchStr = [item.name, ...item.professions, ...item.stats.map(s => s.label), ...item.drops.map(d => d.name + ' ' + d.location)].join(' ').toLowerCase();
                 processed.push(item);
             }
@@ -462,22 +473,22 @@
                                 ${item.drops.length === 0 ? `<p class="text-[11px] italic text-custom-dim opacity-40">No telemetry logs.</p>` : item.drops.map(drop => {
                                     const mainScreenshot = drop.screenshots ? drop.screenshots.split(',')[0].trim() : null;
                                     return `
-                                    <div class="space-y-3 bg-custom-main bg-opacity-40 p-4 rounded-2xl border border-custom border-opacity-30">
+                                    <div class="space-y-4 bg-custom-main bg-opacity-40 p-5 rounded-2xl border border-custom border-opacity-30">
                                         <div class="flex justify-between items-start gap-2">
-                                            <div class="overflow-hidden">
+                                            <div class="flex-1">
                                                 <p class="text-custom-main font-black text-sm truncate leading-tight">${drop.name}</p>
-                                                <div class="flex items-center gap-1.5 text-custom-dim text-[10px] font-bold mt-1">
+                                                <div class="flex items-center gap-1.5 text-custom-dim text-[10px] font-bold mt-1.5">
                                                     <i class="fas fa-map-marker-alt text-indigo-500/50"></i>
                                                     <span class="truncate">${drop.location || 'Undisclosed Area'}</span>
                                                 </div>
                                             </div>
-                                            ${mainScreenshot ? `<a href="${mainScreenshot}" target="_blank" class="zest-btn p-2.5 rounded-xl !bg-pink-500/10 !text-pink-500 !border-pink-500/30 hover:!bg-pink-500 hover:!text-white transition-all shadow-sm" title="Intel Feed"><i class="fas fa-image"></i></a>` : ''}
+                                            ${mainScreenshot ? `<a href="${mainScreenshot}" target="_blank" class="zest-btn p-2.5 rounded-xl !bg-pink-500/10 !text-pink-500 !border-pink-500/30 hover:!bg-pink-500 hover:!text-white transition-all shadow-sm shrink-0" title="Intel Feed"><i class="fas fa-image"></i></a>` : ''}
                                         </div>
-                                        <div class="grid grid-cols-1 gap-2">
+                                        <div class="grid grid-cols-1 gap-3 px-1">
                                             ${drop.allCoords.map(c => {
                                                 const hasY = isNum(c.y);
                                                 const label = hasY ? `${c.x}, ${c.y}, ${c.z}` : `${c.x}, ${c.z}`;
-                                                return `<button onclick="copyToClipboard('${c.x}', ${hasY ? c.y : 'null'}, '${c.z}')" class="zest-btn flex items-center justify-center gap-3 bg-indigo-600 !border-indigo-400 !text-white hover:bg-indigo-500 py-3 rounded-xl cursor-pointer shadow-lg group"><i class="fas fa-crosshairs text-base group-hover:rotate-90 transition-transform"></i><span class="font-black text-[11px] font-mono tracking-widest">${label}</span></button>`;
+                                                return `<button onclick="copyToClipboard('${c.x}', ${hasY ? c.y : 'null'}, '${c.z}')" class="zest-btn flex items-center justify-center gap-3 bg-indigo-600 !border-indigo-400 !text-white hover:bg-indigo-500 py-3.5 rounded-xl cursor-pointer shadow-lg group mx-0.5"><i class="fas fa-crosshairs text-base group-hover:rotate-90 transition-transform"></i><span class="font-black text-[11px] font-mono tracking-widest">${label}</span></button>`;
                                             }).join('')}
                                         </div>
                                     </div>
