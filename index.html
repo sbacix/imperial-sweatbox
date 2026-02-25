@@ -361,14 +361,51 @@
             }
         }
 
+        /**
+         * Normalizes data merging to handle whitespace and casing issues in JSON keys
+         * and implements coordinate sharing between mobs.
+         */
         function processJsonData(ingredients, dropsMap) {
             const processed = [];
+            
+            // 1. Create normalized maps for reliable lookup
             const normIngredients = {};
             Object.keys(ingredients).forEach(k => normIngredients[k.trim().toLowerCase()] = { ...ingredients[k], originalName: k });
             
             const normDrops = {};
             Object.keys(dropsMap).forEach(k => normDrops[k.trim().toLowerCase()] = dropsMap[k]);
 
+            // 2. Build a Global Telemetry Database (Shared Coords across all items by Mob Name)
+            const sharedTelemetry = {}; // Map of mobName -> Array of coordinate objects
+
+            Object.values(dropsMap).forEach(dropArray => {
+                if (!Array.isArray(dropArray)) return;
+                dropArray.forEach(d => {
+                    if (!d.name) return;
+                    const mobKey = d.name.trim().toLowerCase();
+                    if (!sharedTelemetry[mobKey]) sharedTelemetry[mobKey] = [];
+                    
+                    if (d.details && d.details.coords) {
+                        const rawCoords = d.details.coords;
+                        const checkNonZero = (c) => Number(c.x) !== 0 || Number(c.y) !== 0 || Number(c.z) !== 0;
+
+                        const addCoord = (c) => {
+                            if (checkNonZero(c)) {
+                                const coordStr = `${Number(c.x)},${Number(c.y)},${Number(c.z)}`;
+                                // Check for existing to avoid duplicates
+                                if (!sharedTelemetry[mobKey].find(existing => `${existing.x},${existing.y},${existing.z}` === coordStr)) {
+                                    sharedTelemetry[mobKey].push({ x: Number(c.x), y: Number(c.y), z: Number(c.z) });
+                                }
+                            }
+                        };
+
+                        if (Array.isArray(rawCoords)) rawCoords.forEach(addCoord);
+                        else addCoord(rawCoords);
+                    }
+                });
+            });
+
+            // 3. Unified key set from both files
             const allKeys = new Set([
                 ...Object.keys(normIngredients),
                 ...Object.keys(normDrops)
@@ -389,25 +426,13 @@
 
                 if (Array.isArray(dropEntries)) {
                     item.drops = dropEntries.map(d => {
-                        let loc = "";
-                        let validCoords = [];
-                        let screenshots = "";
+                        let loc = d.details ? (d.details.location || "") : "";
+                        let screenshots = d.details ? (d.details.screenshots || "") : "";
                         
-                        if (d.details) {
-                            loc = d.details.location || "";
-                            screenshots = d.details.screenshots || "";
-                            const rawCoords = d.details.coords;
-                            if (rawCoords) {
-                                const checkNonZero = (c) => Number(c.x) !== 0 || Number(c.y) !== 0 || Number(c.z) !== 0;
-                                if (Array.isArray(rawCoords)) {
-                                    validCoords = rawCoords.filter(checkNonZero).map(c => ({
-                                        x: Number(c.x), y: Number(c.y), z: Number(c.z)
-                                    }));
-                                } else if (checkNonZero(rawCoords)) {
-                                    validCoords = [{ x: Number(rawCoords.x), y: Number(rawCoords.y), z: Number(rawCoords.z) }];
-                                }
-                            }
-                        }
+                        // Handshake Logic: Pull coordinates from the shared telemetry database
+                        const mobKey = (d.name || "").trim().toLowerCase();
+                        let validCoords = sharedTelemetry[mobKey] || [];
+
                         return { 
                             name: d.name || "Unknown Source", 
                             location: loc, 
@@ -418,6 +443,7 @@
                 }
                 processed.push(item);
             }
+
             RAW_DATA = processed;
             computeDynamicState();
             initDynamicUI();
