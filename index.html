@@ -56,10 +56,10 @@
             100% { box-shadow: 0 15px 35px -10px var(--zest-indigo); border-color: #6366f1; }
         }
 
-        @keyframes fieryCycle {
+        @keyframes titleCycle {
             0% { color: #ef4444; text-shadow: 0 0 10px rgba(239, 68, 68, 0.3); } 
-            33% { color: #f97316; text-shadow: 0 0 15px rgba(249, 115, 22, 0.4); } 
-            66% { color: #facc15; text-shadow: 0 0 10px rgba(250, 204, 21, 0.3); } 
+            25% { color: #f97316; text-shadow: 0 0 15px rgba(249, 115, 22, 0.4); } 
+            50% { color: #facc15; text-shadow: 0 0 10px rgba(250, 204, 21, 0.3); } 
             75% { color: #f97316; text-shadow: 0 0 15px rgba(249, 115, 22, 0.4); }
             100% { color: #ef4444; text-shadow: 0 0 10px rgba(239, 68, 68, 0.3); } 
         }
@@ -195,8 +195,10 @@
 
     <div id="toast">Copied Tactical Coordinates!</div>
 
+    <!-- Sidebar Overlay -->
     <div id="sidebarOverlay" class="fixed inset-0 bg-black/60 z-40 opacity-0 pointer-events-none"></div>
 
+    <!-- Slide-out Sidebar Dashboard -->
     <aside id="filterSidebar" class="fixed inset-y-0 left-0 w-80 md:w-96 z-50 transform -translate-x-full border-r border-custom shadow-2xl flex flex-col">
         <div class="p-6 border-b border-custom flex justify-between items-center bg-custom-input/20">
             <h2 class="text-xs font-black uppercase tracking-[0.3em] text-red-500">Command Console</h2>
@@ -255,6 +257,7 @@
         </div>
     </aside>
 
+    <!-- Main Content (Static at top) -->
     <header class="max-w-[1700px] mx-auto px-6 pt-12 pb-8">
         <div class="flex justify-between items-center mb-10 px-4">
             <div class="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-600">
@@ -294,6 +297,7 @@
         </div>
     </header>
 
+    <!-- Content Feed -->
     <main class="max-w-[1700px] mx-auto px-6">
         <div id="activeTags" class="flex flex-wrap gap-3 mb-8 min-h-[30px] px-2 justify-center"></div>
         <div id="resultsInfo" class="mb-8 px-6 text-[11px] font-black uppercase tracking-[0.3em] text-red-500 hidden border-l-4 border-red-500 bg-red-500/5 py-3"></div>
@@ -360,7 +364,6 @@
             const normDrops = {};
             Object.keys(dropsMap).forEach(k => normDrops[k.trim().toLowerCase()] = dropsMap[k]);
             
-            // Map for HTOI supplemental data
             const normHtoi = {};
             if (Array.isArray(htoiArray)) {
                 htoiArray.forEach(item => {
@@ -407,7 +410,6 @@
 
                 const combinedSources = new Map();
 
-                // 1. Process drops.json data
                 if (Array.isArray(dropEntries)) {
                     dropEntries.forEach(d => {
                         const sName = (d.name || "Unknown Source").trim();
@@ -423,8 +425,6 @@
                     });
                 }
 
-                // 2. Process htoi.json supplemental data
-                // Loop through all keys in the htoi object that aren't metadata
                 const metaFields = ['id', 'name', 'level'];
                 Object.keys(hData).forEach(field => {
                     if (!metaFields.includes(field) && hData[field]) {
@@ -444,9 +444,7 @@
                                     }
                                 });
                             }
-                        } catch (e) {
-                            // If it's not valid JSON, treat it as a raw string if it's a field of interest
-                        }
+                        } catch (e) {}
                     }
                 });
 
@@ -539,11 +537,11 @@
                                     return `
                                     <div class="space-y-4 bg-custom-main bg-opacity-40 p-5 rounded-2xl border border-custom border-opacity-30">
                                         <div class="flex justify-between items-start gap-2">
-                                            <div class="flex-1">
-                                                <p class="text-custom-main font-black text-sm truncate leading-tight">${drop.name}</p>
-                                                <div class="flex items-center gap-1.5 text-custom-dim text-[10px] font-bold mt-1.5">
-                                                    <i class="fas fa-map-marker-alt text-red-500/50"></i>
-                                                    <span class="truncate">${drop.location || 'Undisclosed Area'}</span>
+                                            <div class="flex-1 min-w-0">
+                                                <p class="text-custom-main font-black text-sm leading-tight break-words">${drop.name}</p>
+                                                <div class="flex items-start gap-1.5 text-custom-dim text-[10px] font-bold mt-1.5">
+                                                    <i class="fas fa-map-marker-alt text-red-500/50 mt-0.5"></i>
+                                                    <span class="break-words">${drop.location || 'Undisclosed Area'}</span>
                                                 </div>
                                             </div>
                                             ${mainScreenshot ? `<a href="${mainScreenshot}" target="_blank" class="zest-btn p-2.5 rounded-xl !bg-red-500/10 !text-red-500 !border-red-500/30 hover:!bg-red-500 hover:!text-white transition-all shadow-sm shrink-0" title="Intel Feed"><i class="fas fa-image"></i></a>` : ''}
@@ -562,7 +560,7 @@
 
                         <div class="mt-auto pt-4 border-t border-custom border-opacity-50 flex flex-wrap gap-2">
                             ${item.professions.length === 0 ? '<span class="text-[8px] text-zinc-800 font-bold uppercase tracking-widest">Generic Entry</span>' : item.professions.map(p => `
-                                <span class="text-[8px] text-custom-dim font-black px-2.5 py-1.5 rounded-lg bg-custom-input border border-custom uppercase tracking-tighter">${p}</span>
+                                <span class="text-[7px] text-custom-dim font-black px-2.5 py-1.5 rounded-lg bg-custom-input border border-custom uppercase tracking-tighter">${p}</span>
                             `).join('')}
                         </div>
                     </div>
