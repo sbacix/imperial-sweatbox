@@ -257,7 +257,6 @@
         </div>
     </aside>
 
-    <!-- Main Content (Static at top) -->
     <header class="max-w-[1700px] mx-auto px-6 pt-12 pb-8">
         <div class="flex justify-between items-center mb-10 px-4">
             <div class="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-600">
@@ -297,7 +296,6 @@
         </div>
     </header>
 
-    <!-- Content Feed -->
     <main class="max-w-[1700px] mx-auto px-6">
         <div id="activeTags" class="flex flex-wrap gap-3 mb-8 min-h-[30px] px-2 justify-center"></div>
         <div id="resultsInfo" class="mb-8 px-6 text-[11px] font-black uppercase tracking-[0.3em] text-red-500 hidden border-l-4 border-red-500 bg-red-500/5 py-3"></div>
@@ -347,22 +345,28 @@
 
         async function loadShopData() {
             try {
-                const [ingredientsRes, dropsRes, htoiRes] = await Promise.all([
+                const [ingredientsRes, dropsRes, htoiRes, wynnRes] = await Promise.all([
                     fetch('ingredients.json'), 
                     fetch('drops.json'),
-                    fetch('htoi.json')
+                    fetch('htoi.json'),
+                    fetch('https://api.wynncraft.com/v3/item/database?fullResult')
                 ]);
-                if (!ingredientsRes.ok || !dropsRes.ok || !htoiRes.ok) throw new Error("Link to database unstable");
-                processJsonData(await ingredientsRes.json(), await dropsRes.json(), await htoiRes.json());
-            } catch (error) { console.error(error); showToast("Link to Mainframe Severed"); }
+                
+                const ingredients = ingredientsRes.ok ? await ingredientsRes.json() : {};
+                const drops = dropsRes.ok ? await dropsRes.json() : {};
+                const htoi = htoiRes.ok ? await htoiRes.json() : [];
+                const wynnItems = wynnRes.ok ? await wynnRes.json() : {};
+
+                processJsonData(ingredients, drops, htoi, wynnItems);
+            } catch (error) { 
+                console.error(error); 
+                showToast("System Link Unstable - Local Buffer Only"); 
+            }
         }
 
-        /**
-         * Generates a unique string key for a coordinate object to facilitate deduplication.
-         */
         const getCoordKey = (c) => `${Number(c.x)}|${isNum(c.y) ? Number(c.y) : 'N'}|${Number(c.z)}`;
 
-        function processJsonData(ingredients, dropsMap, htoiArray) {
+        function processJsonData(ingredients, dropsMap, htoiArray, wynnItems) {
             const processed = [];
             const normIngredients = {};
             Object.keys(ingredients).forEach(k => normIngredients[k.trim().toLowerCase()] = { ...ingredients[k], originalName: k });
@@ -371,75 +375,78 @@
             
             const normHtoi = {};
             if (Array.isArray(htoiArray)) {
-                htoiArray.forEach(item => {
-                    if (item.name) normHtoi[item.name.trim().toLowerCase()] = item;
-                });
+                htoiArray.forEach(item => { if (item.name) normHtoi[item.name.trim().toLowerCase()] = item; });
             }
 
+            // Build Global Telemetry
             const sharedTelemetry = {}; 
-
-            // 1. Build a CLEAN Global Telemetry Database
             Object.values(dropsMap).forEach(dropArray => {
                 if (!Array.isArray(dropArray)) return;
                 dropArray.forEach(d => {
                     if (!d.name) return;
                     const mobKey = d.name.trim().toLowerCase();
                     if (!sharedTelemetry[mobKey]) sharedTelemetry[mobKey] = [];
-                    
                     if (d.details && d.details.coords) {
                         const rawCoords = d.details.coords;
                         const isLegit = (c) => isNum(c.x) && isNum(c.z) && (Number(c.x) !== 0 || Number(c.z) !== 0);
-
                         const addUniqueCoord = (c) => {
                             if (isLegit(c)) {
                                 const coordObj = { x: Number(c.x), y: isNum(c.y) ? Number(c.y) : null, z: Number(c.z) };
-                                const key = getCoordKey(coordObj);
-                                // Ensure this specific mob doesn't already have this coordinate in the global map
-                                if (!sharedTelemetry[mobKey].some(ex => getCoordKey(ex) === key)) {
-                                    sharedTelemetry[mobKey].push(coordObj);
-                                }
+                                if (!sharedTelemetry[mobKey].some(ex => getCoordKey(ex) === getCoordKey(coordObj))) sharedTelemetry[mobKey].push(coordObj);
                             }
                         };
-                        if (Array.isArray(rawCoords)) rawCoords.forEach(addUniqueCoord); 
-                        else addUniqueCoord(rawCoords);
+                        if (Array.isArray(rawCoords)) rawCoords.forEach(addUniqueCoord); else addUniqueCoord(rawCoords);
                     }
                 });
             });
 
-            const allKeys = new Set([...Object.keys(normIngredients), ...Object.keys(normDrops), ...Object.keys(normHtoi)]);
+            // Master keys across all 4 sources
+            const allKeys = new Set([
+                ...Object.keys(normIngredients), 
+                ...Object.keys(normDrops), 
+                ...Object.keys(normHtoi),
+                ...Object.keys(wynnItems).map(k => k.trim().toLowerCase())
+            ]);
+
             for (const key of allKeys) {
                 const ingData = normIngredients[key] || {};
                 const dropEntries = normDrops[key] || [];
                 const hData = normHtoi[key] || {};
+                const wData = wynnItems[Object.keys(wynnItems).find(wk => wk.trim().toLowerCase() === key)] || {};
 
                 const item = {
-                    name: ingData.originalName || hData.name || Object.keys(dropsMap).find(orig => orig.trim().toLowerCase() === key) || key,
+                    name: ingData.originalName || wData.name || hData.name || key,
                     tier: ingData.tier !== undefined ? Number(ingData.tier) : -1,
-                    level: Number(ingData.lvl || hData.level) || 0,
+                    level: Number(ingData.lvl || wData.level || hData.level) || 0,
                     professions: ingData.profs || [],
                     stats: ingData.stats || [],
                     drops: [], searchStr: "" 
                 };
 
-                const combinedSources = new Map();
-
-                // Group sources to avoid identical mob+location boxes
-                if (Array.isArray(dropEntries)) {
-                    dropEntries.forEach(d => {
-                        const sName = (d.name || "Unknown Source").trim();
-                        const sLoc = (d.details ? d.details.location || "" : "").trim();
-                        const sKey = `${sName}|${sLoc}`;
-                        if (!combinedSources.has(sKey)) {
-                            combinedSources.set(sKey, {
-                                name: sName, location: sLoc,
-                                mobKey: sName.toLowerCase(),
-                                screenshots: d.details ? (d.details.screenshots || "") : ""
+                // Merge Wynncraft Stats
+                if (wData.identifications) {
+                    Object.entries(wData.identifications).forEach(([label, value]) => {
+                        if (value !== 0) {
+                            item.stats.push({ 
+                                label: label.replace(/([A-Z])/g, ' $1').trim(), 
+                                value: value > 0 ? `+${value}%` : `${value}%`, 
+                                pos: value > 0 
                             });
                         }
                     });
                 }
 
-                // Append HTOI data
+                // Handle Sources
+                const combinedSources = new Map();
+                if (Array.isArray(dropEntries)) {
+                    dropEntries.forEach(d => {
+                        const sName = (d.name || "Unknown Source").trim();
+                        const sLoc = (d.details ? d.details.location || "" : "").trim();
+                        const sKey = `${sName}|${sLoc}`;
+                        if (!combinedSources.has(sKey)) combinedSources.set(sKey, { name: sName, location: sLoc, mobKey: sName.toLowerCase(), screenshots: d.details ? (d.details.screenshots || "") : "" });
+                    });
+                }
+
                 const metaFields = ['id', 'name', 'level'];
                 Object.keys(hData).forEach(field => {
                     if (!metaFields.includes(field) && hData[field]) {
@@ -450,24 +457,14 @@
                                     const sName = (entry.name || entry.description || field.toUpperCase()).trim();
                                     const sLoc = (entry.location || "").trim();
                                     const sKey = `${sName}|${sLoc}`;
-                                    if (!combinedSources.has(sKey)) {
-                                        combinedSources.set(sKey, {
-                                            name: sName, location: sLoc,
-                                            mobKey: sName.toLowerCase(),
-                                            screenshots: ""
-                                        });
-                                    }
+                                    if (!combinedSources.has(sKey)) combinedSources.set(sKey, { name: sName, location: sLoc, mobKey: sName.toLowerCase(), screenshots: "" });
                                 });
                             }
                         } catch (e) {}
                     }
                 });
 
-                item.drops = Array.from(combinedSources.values()).map(source => ({
-                    ...source,
-                    allCoords: sharedTelemetry[source.mobKey] || []
-                }));
-
+                item.drops = Array.from(combinedSources.values()).map(source => ({ ...source, allCoords: sharedTelemetry[source.mobKey] || [] }));
                 item.searchStr = [item.name, ...item.professions, ...item.stats.map(s => s.label), ...item.drops.map(d => d.name + ' ' + d.location)].join(' ').toLowerCase();
                 processed.push(item);
             }
@@ -485,7 +482,7 @@
 
         function initDynamicUI() {
             const pc = document.getElementById('professionFilters');
-            pc.innerHTML = STATE.allProfs.map(p => `<button data-prof="${p}" class="prof-chip zest-btn px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest whitespace-nowrap">${p}</button>`).join('');
+            pc.innerHTML = STATE.allProfs.map(p => `<button data-prof="${p}" class="prof-chip zest-btn px-3 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest whitespace-nowrap">${p}</button>`).join('');
             const ps = document.getElementById('posStat1'), ns = document.getElementById('negStat1');
             ps.innerHTML = '<option value="">Select Protocol</option>'; ns.innerHTML = '<option value="">Select Protocol</option>';
             STATE.allPosStats.forEach(s => ps.innerHTML += `<option value="${s}">${s}</option>`);
@@ -520,11 +517,8 @@
             if (data.length === 0) { grid.innerHTML = ""; document.getElementById('emptyState').classList.remove('hidden'); }
             else {
                 document.getElementById('emptyState').classList.add('hidden');
-                grid.innerHTML = data.map((item, idx) => {
-                    // --- CARD LEVEL COORDINATE REGISTRY ---
-                    // This tracks coordinates already used for buttons on THIS SPECIFIC CARD
+                grid.innerHTML = data.map((item) => {
                     const cardCoordsRegistry = new Set();
-
                     return `
                     <div class="zest-card rounded-[2.5rem] p-6 flex flex-col gap-6 shadow-xl">
                         <div class="flex justify-between items-start">
@@ -554,16 +548,12 @@
                                 <p class="text-[9px] font-black text-custom-dim uppercase tracking-[0.2em] border-b border-custom pb-2 mb-2">Last Seen</p>
                                 ${item.drops.length === 0 ? `<p class="text-[11px] italic text-custom-dim opacity-40">No telemetry logs.</p>` : item.drops.map(drop => {
                                     const mainScreenshot = drop.screenshots ? drop.screenshots.split(',')[0].trim() : null;
-                                    
-                                    // Generate coordinates HTML, filtering against the registry
                                     const coordsHtml = drop.allCoords.map(c => {
                                         const key = getCoordKey(c);
-                                        if (cardCoordsRegistry.has(key)) return ''; // Skip duplicates on this card
+                                        if (cardCoordsRegistry.has(key)) return '';
                                         cardCoordsRegistry.add(key);
-
                                         const hasY = isNum(c.y);
-                                        const label = hasY ? `${c.x}, ${c.y}, ${c.z}` : `${c.x}, ${c.z}`;
-                                        return `<button onclick="copyToClipboard('${c.x}', ${hasY ? c.y : 'null'}, '${c.z}')" class="zest-btn flex items-center justify-center gap-3 bg-red-600 !border-red-400 !text-white hover:bg-red-500 py-3.5 rounded-xl cursor-pointer shadow-lg group mx-0.5 mt-2 first:mt-0"><i class="fas fa-crosshairs text-base group-hover:rotate-90 transition-transform"></i><span class="font-black text-[11px] font-mono tracking-widest">${label}</span></button>`;
+                                        return `<button onclick="copyToClipboard('${c.x}', ${hasY ? c.y : 'null'}, '${c.z}')" class="zest-btn flex items-center justify-center gap-3 bg-red-600 !border-red-400 !text-white hover:bg-red-500 py-3.5 rounded-xl cursor-pointer shadow-lg group mx-0.5 mt-2 first:mt-0"><i class="fas fa-crosshairs text-base group-hover:rotate-90 transition-transform"></i><span class="font-black text-[11px] font-mono tracking-widest">${hasY ? `${c.x}, ${c.y}, ${c.z}` : `${c.x}, ${c.z}`}</span></button>`;
                                     }).join('');
 
                                     return `
@@ -578,16 +568,14 @@
                                             </div>
                                             ${mainScreenshot ? `<a href="${mainScreenshot}" target="_blank" class="zest-btn p-2.5 rounded-xl !bg-red-500/10 !text-red-500 !border-red-500/30 hover:!bg-red-500 hover:!text-white transition-all shadow-sm shrink-0" title="Intel Feed"><i class="fas fa-image"></i></a>` : ''}
                                         </div>
-                                        <div class="grid grid-cols-1 gap-1 px-1">
-                                            ${coordsHtml}
-                                        </div>
+                                        <div class="grid grid-cols-1 gap-1 px-1">${coordsHtml}</div>
                                     </div>
                                 `;}).join('')}
                             </div>
                         </div>
 
                         <div class="mt-auto pt-4 border-t border-custom border-opacity-50 flex flex-wrap gap-2">
-                            ${item.professions.length === 0 ? '<span class="text-[8px] text-zinc-800 font-bold uppercase tracking-widest">Generic Entry</span>' : item.professions.map(p => `
+                            ${item.professions.length === 0 ? '<span class="text-[7px] text-zinc-800 font-bold uppercase tracking-widest">Generic Entry</span>' : item.professions.map(p => `
                                 <span class="text-[7px] text-custom-dim font-black px-2.5 py-1.5 rounded-lg bg-custom-input border border-custom uppercase tracking-tighter">${p}</span>
                             `).join('')}
                         </div>
@@ -628,19 +616,9 @@
         }
 
         function toggleSidebar(open) {
-            const sidebar = document.getElementById('filterSidebar');
-            const overlay = document.getElementById('sidebarOverlay');
-            if (sidebar && overlay) {
-                if (open) {
-                    sidebar.classList.add('open');
-                    overlay.classList.add('opacity-100');
-                    overlay.classList.remove('pointer-events-none');
-                } else {
-                    sidebar.classList.remove('open');
-                    overlay.classList.remove('opacity-100');
-                    overlay.classList.add('pointer-events-none');
-                }
-            }
+            const sidebar = document.getElementById('filterSidebar'), overlay = document.getElementById('sidebarOverlay');
+            if (open) { sidebar.classList.add('open'); overlay.classList.replace('opacity-0', 'opacity-100'); overlay.classList.remove('pointer-events-none'); }
+            else { sidebar.classList.remove('open'); overlay.classList.replace('opacity-100', 'opacity-0'); overlay.classList.add('pointer-events-none'); }
         }
 
         function removeFilter(id) {
@@ -669,24 +647,14 @@
             document.querySelectorAll('#toggleFilters').forEach(btn => btn.addEventListener('click', () => toggleSidebar(true)));
             document.getElementById('closeSidebar').addEventListener('click', () => toggleSidebar(false));
             document.getElementById('sidebarOverlay').addEventListener('click', () => toggleSidebar(false));
-
             const performSearch = debounce((val) => { STATE.search = val; render(); }, 250);
             document.getElementById('globalSearch').addEventListener('input', e => performSearch(e.target.value));
             document.getElementById('minLevel').addEventListener('input', e => { STATE.minLv = parseInt(e.target.value || 0); render(); });
             document.getElementById('maxLevel').addEventListener('input', e => { STATE.maxLv = parseInt(e.target.value || 115); render(); });
             document.getElementById('posStat1').addEventListener('change', e => { STATE.posStat1 = e.target.value; render(); });
             document.getElementById('negStat1').addEventListener('change', e => { STATE.negStat1 = e.target.value; render(); });
-            
-            document.getElementById('interestToggle').addEventListener('click', e => {
-                STATE.interestOnly = !STATE.interestOnly;
-                e.target.classList.toggle('active', STATE.interestOnly);
-                render();
-            });
-            document.getElementById('coordsToggle').addEventListener('click', e => {
-                STATE.coordsOnly = !STATE.coordsOnly;
-                e.target.classList.toggle('active', STATE.coordsOnly);
-                render();
-            });
+            document.getElementById('interestToggle').addEventListener('click', e => { STATE.interestOnly = !STATE.interestOnly; e.target.classList.toggle('active', STATE.interestOnly); render(); });
+            document.getElementById('coordsToggle').addEventListener('click', e => { STATE.coordsOnly = !STATE.coordsOnly; e.target.classList.toggle('active', STATE.coordsOnly); render(); });
             document.querySelectorAll('.tier-btn').forEach(b => b.addEventListener('click', () => {
                 const t = b.dataset.tier; if (STATE.tiers.has(t)) STATE.tiers.delete(t); else STATE.tiers.add(t);
                 b.classList.toggle('bg-red-600'); b.classList.toggle('text-white'); render();
