@@ -352,10 +352,15 @@
                     fetch('drops.json'),
                     fetch('htoi.json')
                 ]);
-                if (!ingredientsRes.ok || !dropsRes.ok || !htoiRes.ok) throw new Error("Connection unstable");
+                if (!ingredientsRes.ok || !dropsRes.ok || !htoiRes.ok) throw new Error("Link to database unstable");
                 processJsonData(await ingredientsRes.json(), await dropsRes.json(), await htoiRes.json());
             } catch (error) { console.error(error); showToast("Link to Mainframe Severed"); }
         }
+
+        /**
+         * Generates a unique string key for a coordinate object to facilitate deduplication.
+         */
+        const getCoordKey = (c) => `${Number(c.x)}|${isNum(c.y) ? Number(c.y) : 'N'}|${Number(c.z)}`;
 
         function processJsonData(ingredients, dropsMap, htoiArray) {
             const processed = [];
@@ -372,23 +377,31 @@
             }
 
             const sharedTelemetry = {}; 
+
+            // 1. Build a CLEAN Global Telemetry Database
             Object.values(dropsMap).forEach(dropArray => {
                 if (!Array.isArray(dropArray)) return;
                 dropArray.forEach(d => {
                     if (!d.name) return;
                     const mobKey = d.name.trim().toLowerCase();
                     if (!sharedTelemetry[mobKey]) sharedTelemetry[mobKey] = [];
+                    
                     if (d.details && d.details.coords) {
                         const rawCoords = d.details.coords;
                         const isLegit = (c) => isNum(c.x) && isNum(c.z) && (Number(c.x) !== 0 || Number(c.z) !== 0);
-                        const addCoord = (c) => {
+
+                        const addUniqueCoord = (c) => {
                             if (isLegit(c)) {
                                 const coordObj = { x: Number(c.x), y: isNum(c.y) ? Number(c.y) : null, z: Number(c.z) };
-                                const coordStr = `${coordObj.x},${coordObj.y},${coordObj.z}`;
-                                if (!sharedTelemetry[mobKey].find(ex => `${ex.x},${ex.y},${ex.z}` === coordStr)) sharedTelemetry[mobKey].push(coordObj);
+                                const key = getCoordKey(coordObj);
+                                // Ensure this specific mob doesn't already have this coordinate in the global map
+                                if (!sharedTelemetry[mobKey].some(ex => getCoordKey(ex) === key)) {
+                                    sharedTelemetry[mobKey].push(coordObj);
+                                }
                             }
                         };
-                        if (Array.isArray(rawCoords)) rawCoords.forEach(addCoord); else addCoord(rawCoords);
+                        if (Array.isArray(rawCoords)) rawCoords.forEach(addUniqueCoord); 
+                        else addUniqueCoord(rawCoords);
                     }
                 });
             });
@@ -410,6 +423,7 @@
 
                 const combinedSources = new Map();
 
+                // Group sources to avoid identical mob+location boxes
                 if (Array.isArray(dropEntries)) {
                     dropEntries.forEach(d => {
                         const sName = (d.name || "Unknown Source").trim();
@@ -425,6 +439,7 @@
                     });
                 }
 
+                // Append HTOI data
                 const metaFields = ['id', 'name', 'level'];
                 Object.keys(hData).forEach(field => {
                     if (!metaFields.includes(field) && hData[field]) {
@@ -470,7 +485,7 @@
 
         function initDynamicUI() {
             const pc = document.getElementById('professionFilters');
-            pc.innerHTML = STATE.allProfs.map(p => `<button data-prof="${p}" class="prof-chip zest-btn px-3 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest whitespace-nowrap">${p}</button>`).join('');
+            pc.innerHTML = STATE.allProfs.map(p => `<button data-prof="${p}" class="prof-chip zest-btn px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest whitespace-nowrap">${p}</button>`).join('');
             const ps = document.getElementById('posStat1'), ns = document.getElementById('negStat1');
             ps.innerHTML = '<option value="">Select Protocol</option>'; ns.innerHTML = '<option value="">Select Protocol</option>';
             STATE.allPosStats.forEach(s => ps.innerHTML += `<option value="${s}">${s}</option>`);
@@ -505,7 +520,12 @@
             if (data.length === 0) { grid.innerHTML = ""; document.getElementById('emptyState').classList.remove('hidden'); }
             else {
                 document.getElementById('emptyState').classList.add('hidden');
-                grid.innerHTML = data.map((item, idx) => `
+                grid.innerHTML = data.map((item, idx) => {
+                    // --- CARD LEVEL COORDINATE REGISTRY ---
+                    // This tracks coordinates already used for buttons on THIS SPECIFIC CARD
+                    const cardCoordsRegistry = new Set();
+
+                    return `
                     <div class="zest-card rounded-[2.5rem] p-6 flex flex-col gap-6 shadow-xl">
                         <div class="flex justify-between items-start">
                             <div class="overflow-hidden">
@@ -534,6 +554,18 @@
                                 <p class="text-[9px] font-black text-custom-dim uppercase tracking-[0.2em] border-b border-custom pb-2 mb-2">Last Seen</p>
                                 ${item.drops.length === 0 ? `<p class="text-[11px] italic text-custom-dim opacity-40">No telemetry logs.</p>` : item.drops.map(drop => {
                                     const mainScreenshot = drop.screenshots ? drop.screenshots.split(',')[0].trim() : null;
+                                    
+                                    // Generate coordinates HTML, filtering against the registry
+                                    const coordsHtml = drop.allCoords.map(c => {
+                                        const key = getCoordKey(c);
+                                        if (cardCoordsRegistry.has(key)) return ''; // Skip duplicates on this card
+                                        cardCoordsRegistry.add(key);
+
+                                        const hasY = isNum(c.y);
+                                        const label = hasY ? `${c.x}, ${c.y}, ${c.z}` : `${c.x}, ${c.z}`;
+                                        return `<button onclick="copyToClipboard('${c.x}', ${hasY ? c.y : 'null'}, '${c.z}')" class="zest-btn flex items-center justify-center gap-3 bg-red-600 !border-red-400 !text-white hover:bg-red-500 py-3.5 rounded-xl cursor-pointer shadow-lg group mx-0.5 mt-2 first:mt-0"><i class="fas fa-crosshairs text-base group-hover:rotate-90 transition-transform"></i><span class="font-black text-[11px] font-mono tracking-widest">${label}</span></button>`;
+                                    }).join('');
+
                                     return `
                                     <div class="space-y-4 bg-custom-main bg-opacity-40 p-5 rounded-2xl border border-custom border-opacity-30">
                                         <div class="flex justify-between items-start gap-2">
@@ -546,12 +578,8 @@
                                             </div>
                                             ${mainScreenshot ? `<a href="${mainScreenshot}" target="_blank" class="zest-btn p-2.5 rounded-xl !bg-red-500/10 !text-red-500 !border-red-500/30 hover:!bg-red-500 hover:!text-white transition-all shadow-sm shrink-0" title="Intel Feed"><i class="fas fa-image"></i></a>` : ''}
                                         </div>
-                                        <div class="grid grid-cols-1 gap-3 px-1">
-                                            ${drop.allCoords.map(c => {
-                                                const hasY = isNum(c.y);
-                                                const label = hasY ? `${c.x}, ${c.y}, ${c.z}` : `${c.x}, ${c.z}`;
-                                                return `<button onclick="copyToClipboard('${c.x}', ${hasY ? c.y : 'null'}, '${c.z}')" class="zest-btn flex items-center justify-center gap-3 bg-red-600 !border-red-400 !text-white hover:bg-red-500 py-3.5 rounded-xl cursor-pointer shadow-lg group mx-0.5"><i class="fas fa-crosshairs text-base group-hover:rotate-90 transition-transform"></i><span class="font-black text-[11px] font-mono tracking-widest">${label}</span></button>`;
-                                            }).join('')}
+                                        <div class="grid grid-cols-1 gap-1 px-1">
+                                            ${coordsHtml}
                                         </div>
                                     </div>
                                 `;}).join('')}
@@ -564,7 +592,7 @@
                             `).join('')}
                         </div>
                     </div>
-                `).join('');
+                `;}).join('');
             }
             renderTags();
         }
