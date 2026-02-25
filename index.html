@@ -313,7 +313,7 @@
         <div id="activeTags" class="flex flex-wrap gap-3 mb-8 min-h-[30px] px-2 justify-center"></div>
         <div id="resultsInfo" class="mb-8 px-6 text-[11px] font-black uppercase tracking-[0.3em] text-red-500 hidden border-l-4 border-red-500 bg-red-500/5 py-3"></div>
 
-        <div id="ingredientGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
+        <div id="ingredientGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"></div>
 
         <div id="emptyState" class="hidden flex flex-col items-center justify-center py-64 text-custom-dim">
             <div class="w-24 h-24 bg-custom-input rounded-[2.5rem] flex items-center justify-center mb-8 shadow-2xl border border-custom">
@@ -357,24 +357,37 @@
         }
 
         async function loadShopData() {
+            let ingredients = {}, drops = {}, htoi = [], wynnItems = {};
+            
+            // 1. Fetch Local Files (Mandatory Cluster)
             try {
-                const [ingredientsRes, dropsRes, htoiRes, wynnRes] = await Promise.all([
+                const [resI, resD, resH] = await Promise.all([
                     fetch('ingredients.json'), 
                     fetch('drops.json'),
-                    fetch('htoi.json'),
-                    fetch('https://api.wynncraft.com/v3/item/database?fullResult')
+                    fetch('htoi.json')
                 ]);
-                
-                const ingredients = ingredientsRes.ok ? await ingredientsRes.json() : {};
-                const drops = dropsRes.ok ? await dropsRes.json() : {};
-                const htoi = htoiRes.ok ? await htoiRes.json() : [];
-                const wynnItems = wynnRes.ok ? await wynnRes.json() : {};
-
-                processJsonData(ingredients, drops, htoi, wynnItems);
+                if (resI.ok) ingredients = await resI.json();
+                if (resD.ok) drops = await resD.json();
+                if (resH.ok) htoi = await resH.json();
             } catch (error) { 
-                console.error(error); 
-                showToast("System Link Unstable - Local Buffer Only"); 
+                console.error("Local Files Error:", error);
+                showToast("System Buffer Offline");
             }
+
+            // 2. Fetch External API (Optional Cluster - Won't break app if fails)
+            try {
+                const wynnRes = await fetch('https://api.wynncraft.com/v3/item/database?fullResult');
+                if (wynnRes.ok) {
+                    wynnItems = await wynnRes.json();
+                } else {
+                    console.warn("Wynn API unreachable");
+                    showToast("External Link Unstable - Local Data Only");
+                }
+            } catch (error) {
+                console.warn("Wynn API CORS or Network Failure:", error);
+            }
+
+            processJsonData(ingredients, drops, htoi, wynnItems);
         }
 
         const getCoordKey = (c) => `${Number(c.x)}|${isNum(c.y) ? Number(c.y) : 'N'}|${Number(c.z)}`;
@@ -412,18 +425,26 @@
                 });
             });
 
+            const wynnKeys = (wynnItems && typeof wynnItems === 'object') ? Object.keys(wynnItems).map(k => k.trim().toLowerCase()) : [];
+
             const allKeys = new Set([
                 ...Object.keys(normIngredients), 
                 ...Object.keys(normDrops), 
                 ...Object.keys(normHtoi),
-                ...Object.keys(wynnItems).map(k => k.trim().toLowerCase())
+                ...wynnKeys
             ]);
 
             for (const key of allKeys) {
                 const ingData = normIngredients[key] || {};
                 const dropEntries = normDrops[key] || [];
                 const hData = normHtoi[key] || {};
-                const wData = wynnItems[Object.keys(wynnItems).find(wk => wk.trim().toLowerCase() === key)] || {};
+                
+                // Safe lookup for Wynn Items
+                let wData = {};
+                if (wynnItems && typeof wynnItems === 'object') {
+                    const originalWynnKey = Object.keys(wynnItems).find(wk => wk.trim().toLowerCase() === key);
+                    if (originalWynnKey) wData = wynnItems[originalWynnKey];
+                }
 
                 const item = {
                     name: ingData.originalName || wData.name || hData.name || key,
@@ -547,8 +568,8 @@
                                 <p class="text-[8px] font-black text-custom-dim uppercase tracking-[0.2em] border-b border-custom pb-1 mb-1">Properties</p>
                                 ${item.stats.length === 0 ? '<p class="text-[10px] italic text-zinc-700 opacity-50">Passive Record.</p>' : item.stats.map(s => `
                                     <div class="flex justify-between text-[11px] font-bold py-0.5 last:border-0">
-                                        <span class="text-custom-dim truncate pr-2">${s.label}</span>
-                                        <span class="${s.pos ? 'stat-pos' : 'stat-neg'} shrink-0">${s.value}</span>
+                                        <span class="text-custom-dim truncate pr-2 font-medium">${s.label}</span>
+                                        <span class="${s.pos ? 'stat-pos' : 'stat-neg'} shrink-0 font-bold">${s.value}</span>
                                     </div>
                                 `).join('')}
                             </div>
@@ -579,7 +600,7 @@
                                     <div class="space-y-2 bg-custom-main bg-opacity-40 p-3 rounded-xl border border-custom border-opacity-30">
                                         <div class="flex justify-between items-start gap-2">
                                             <div class="flex-1 min-w-0">
-                                                <p class="text-custom-main font-black text-[11px] leading-tight break-words">${drop.name}</p>
+                                                <p class="text-custom-main font-black text-[11px] leading-tight break-words font-semibold">${drop.name}</p>
                                                 <div class="flex items-start gap-1 text-custom-dim text-[9px] font-bold mt-1">
                                                     <i class="fas fa-map-marker-alt text-red-500/50 mt-0.5"></i>
                                                     <span class="break-words leading-none">${drop.location || 'Undisclosed Area'}</span>
@@ -674,8 +695,16 @@
             document.getElementById('maxLevel').addEventListener('input', e => { STATE.maxLv = parseInt(e.target.value || 115); render(); });
             document.getElementById('posStat1').addEventListener('change', e => { STATE.posStat1 = e.target.value; render(); });
             document.getElementById('negStat1').addEventListener('change', e => { STATE.negStat1 = e.target.value; render(); });
-            document.getElementById('interestToggle').addEventListener('click', e => { STATE.interestOnly = !STATE.interestOnly; e.target.classList.toggle('active', STATE.interestOnly); render(); });
-            document.getElementById('coordsToggle').addEventListener('click', e => { STATE.coordsOnly = !STATE.coordsOnly; e.target.classList.toggle('active', STATE.coordsOnly); render(); });
+            document.getElementById('interestToggle').addEventListener('click', e => {
+                STATE.interestOnly = !STATE.interestOnly;
+                e.target.classList.toggle('active', STATE.interestOnly);
+                render();
+            });
+            document.getElementById('coordsToggle').addEventListener('click', e => {
+                STATE.coordsOnly = !STATE.coordsOnly;
+                e.target.classList.toggle('active', STATE.coordsOnly);
+                render();
+            });
             document.querySelectorAll('.tier-btn').forEach(b => b.addEventListener('click', () => {
                 const t = b.dataset.tier; if (STATE.tiers.has(t)) STATE.tiers.delete(t); else STATE.tiers.add(t);
                 b.classList.toggle('bg-red-600'); b.classList.toggle('text-white'); render();
