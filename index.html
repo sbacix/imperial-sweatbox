@@ -10,12 +10,12 @@
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 
         :root {
-            --bg-main: #121214; 
-            --bg-card: #1c1c1f; 
-            --bg-input: #09090b;
-            --text-main: #ececec;
-            --text-dim: #71717a;
-            --border-main: #2d2d31;
+            --bg-main: #0c0c0e; 
+            --bg-card: #16161a; 
+            --bg-input: #050506;
+            --text-main: #f0f0f2;
+            --text-dim: #636370;
+            --border-main: #242429;
             
             --zest-indigo: rgba(99, 102, 241, 0.5);
             --zest-purple: rgba(168, 85, 247, 0.5);
@@ -23,12 +23,12 @@
         }
 
         body.light {
-            --bg-main: #f4f4f5; 
+            --bg-main: #f8f8fa; 
             --bg-card: #ffffff; 
-            --bg-input: #fafafa;
-            --text-main: #18181b;
-            --text-dim: #a1a1aa;
-            --border-main: #e4e4e7;
+            --bg-input: #f0f0f3;
+            --text-main: #121214;
+            --text-dim: #9494a3;
+            --border-main: #e2e2e9;
             
             --zest-indigo: rgba(99, 102, 241, 0.2);
             --zest-purple: rgba(168, 85, 247, 0.2);
@@ -39,22 +39,15 @@
             font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: var(--bg-main);
             color: var(--text-main);
-            transition: background-color 0.3s ease, color 0.3s ease;
+            transition: background-color 0.4s ease;
         }
 
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 6px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: var(--bg-main);
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: var(--border-main);
-            border-radius: 10px;
-        }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: var(--bg-main); }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: var(--border-main); border-radius: 10px; }
 
         .stat-pos { color: #10b981; }
-        .stat-neg { color: #f43f5e; }
+        .stat-neg { color: #fb7185; }
 
         @keyframes glowCycle {
             0% { box-shadow: 0 15px 35px -10px var(--zest-indigo); border-color: #6366f1; }
@@ -84,47 +77,41 @@
             z-index: 10;
         }
 
-        .animated-title {
+        .animated-text {
             animation: titleCycle 6s infinite ease-in-out;
         }
 
-        .glass-header {
-            background: var(--bg-main);
-            backdrop-filter: blur(16px);
-            border-bottom: 1px solid var(--border-main);
-            opacity: 0.98;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        .dashboard-container {
+            background: var(--bg-card);
+            border: 2px solid var(--border-main);
+            border-radius: 2rem;
+            position: relative;
+            overflow: hidden;
         }
 
-        header.compact {
-            padding-top: 0.75rem;
-            padding-bottom: 0.75rem;
-        }
-
-        header.compact .branding-large {
-            display: none;
-        }
-
-        header.compact .branding-small {
-            display: flex;
+        .dashboard-container::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 4px;
+            background: linear-gradient(90deg, #a855f7, #ec4899, #22d3ee);
+            opacity: 0.7;
         }
 
         #filterDrawer {
             max-height: 0;
             overflow: hidden;
-            transition: max-height 0.4s ease-in-out, opacity 0.3s ease;
+            transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease;
             opacity: 0;
         }
 
         #filterDrawer.open {
-            max-height: 1200px;
+            max-height: 1400px;
             opacity: 1;
         }
 
         input[type="number"]::-webkit-inner-spin-button,
         input[type="number"]::-webkit-outer-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
+            -webkit-appearance: none; margin: 0;
         }
 
         select {
@@ -150,7 +137,7 @@
             bottom: 40px;
             font-size: 14px;
             font-weight: 800;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
             border: 1px solid #4f46e5;
             opacity: 0;
             transition: opacity 0.3s, bottom 0.3s;
@@ -188,110 +175,98 @@
         .text-custom-dim { color: var(--text-dim); }
     </style>
 </head>
-<body class="min-h-screen custom-scrollbar pb-20">
+<body class="min-h-screen custom-scrollbar pb-32">
 
-    <div id="toast">Copied Compass Command!</div>
+    <div id="toast">Copied Tactical Coordinates!</div>
 
-    <header id="mainHeader" class="sticky top-0 z-50 glass-header">
+    <!-- Static Dashboard (Not Sticky) -->
+    <header class="max-w-[1700px] mx-auto px-6 pt-12 pb-8">
         <!-- Developer Credit Watermark -->
-        <div class="absolute top-2 left-4 text-[9px] font-black uppercase tracking-widest text-zinc-600 opacity-60 z-10">
-            <span class="animated-title">Slopcoded</span> for your sake by <span class="animated-title">Sbacix</span>
+        <div class="flex justify-between items-center mb-10 px-4">
+            <div class="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-600">
+                <span class="animated-text">Slopcoded</span> for your sake by <span class="animated-text">Sbacix</span>
+            </div>
+            <button id="themeToggle" class="zest-btn flex items-center justify-center w-10 h-10 rounded-full text-indigo-500 shadow-sm" title="Toggle Theme">
+                <i class="fas fa-moon" id="themeIcon"></i>
+            </button>
         </div>
 
-        <div class="max-w-[1700px] mx-auto px-6 py-6 transition-all duration-300" id="headerContent">
-            
-            <!-- Branding Row (Large) -->
-            <div class="flex flex-col items-center text-center mb-6 branding-large">
-                <div class="bg-gradient-to-tr from-indigo-500 to-cyan-400 p-3 rounded-2xl shadow-2xl mb-2">
-                    <i class="fas fa-database text-white text-3xl"></i>
-                </div>
-                <h1 class="text-3xl lg:text-6xl font-black tracking-tighter leading-tight text-custom-main uppercase">
-                    Library of <span class="animated-title">Imperial</span>
-                </h1>
-                <p class="text-[11px] font-black text-indigo-400 uppercase tracking-[0.5em] mt-1">Work In Progress</p>
-            </div>
-
-            <!-- Dashboard Interaction Row -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 items-center gap-6">
-                
-                <!-- Left: Branding Small & Search -->
-                <div class="flex items-center gap-4 order-2 lg:order-1">
-                    <div class="hidden branding-small items-center gap-2 shrink-0">
-                        <i class="fas fa-database text-indigo-500 text-xl"></i>
-                        <span class="text-xs font-black uppercase animated-title hidden sm:inline">The Database</span>
+        <div class="dashboard-container shadow-2xl">
+            <div class="p-8 lg:p-12">
+                <!-- Branding Header -->
+                <div class="flex flex-col items-center text-center mb-12">
+                    <div class="bg-gradient-to-tr from-indigo-500 to-cyan-400 p-4 rounded-3xl shadow-2xl mb-4">
+                        <i class="fas fa-database text-white text-4xl"></i>
                     </div>
-                    <div class="relative flex-1">
-                        <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 text-base"></i>
+                    <h1 class="text-4xl lg:text-7xl font-black tracking-tighter leading-tight text-custom-main uppercase">
+                        Property of <span class="animated-text">Imperial</span>
+                    </h1>
+                    <p class="text-[12px] font-black text-indigo-500 uppercase tracking-[0.6em] mt-2">Work In Progress</p>
+                </div>
+
+                <!-- Primary Controls -->
+                <div class="grid grid-cols-1 lg:grid-cols-4 items-center gap-6">
+                    <div class="lg:col-span-3 relative">
+                        <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-zinc-500 text-xl"></i>
                         <input 
                             type="text" 
                             id="globalSearch"
-                            placeholder="Search names, mobs, or telemetry..."
-                            class="w-full bg-custom-input border border-custom rounded-xl py-3.5 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all text-sm text-custom-main placeholder:text-zinc-500"
+                            placeholder="Initialize query for names, entities, or locations..."
+                            class="w-full bg-custom-input border border-custom rounded-2xl py-5 pl-14 pr-6 focus:outline-none focus:ring-4 focus:ring-indigo-500/10 transition-all text-base text-custom-main placeholder:text-zinc-600 font-medium"
                         >
                     </div>
-                </div>
-
-                <div class="hidden lg:block lg:order-2 branding-large"></div>
-
-                <!-- Right: Theme & Dashboard Toggles -->
-                <div class="flex justify-end items-center gap-3 order-3">
-                    <button id="themeToggle" class="zest-btn flex items-center justify-center w-12 h-12 rounded-xl text-indigo-500 shadow-sm" title="Toggle Theme">
-                        <i class="fas fa-moon text-lg" id="themeIcon"></i>
-                    </button>
-                    <button id="toggleFilters" class="zest-btn flex items-center gap-3 px-6 py-3 rounded-xl font-black text-xs uppercase tracking-widest whitespace-nowrap">
+                    <button id="toggleFilters" class="zest-btn flex items-center justify-center gap-4 py-5 rounded-2xl font-black text-sm uppercase tracking-widest">
                         <i class="fas fa-sliders-h text-indigo-500"></i>
-                        <span>Dashboard</span>
-                        <i id="chevron" class="fas fa-chevron-down text-[10px] ml-1 transition-transform"></i>
+                        <span>System Filters</span>
+                        <i id="chevron" class="fas fa-chevron-down text-[10px] transition-transform"></i>
                     </button>
                 </div>
-            </div>
 
-            <!-- Drawer -->
-            <div id="filterDrawer" class="mt-6 border-t border-custom">
-                <div class="py-8 space-y-8">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Expanded Settings -->
+                <div id="filterDrawer" class="mt-8 pt-8 border-t border-custom border-opacity-40">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
                         <div class="space-y-4">
-                            <label class="block text-xs font-black text-custom-dim uppercase tracking-widest">Level Range</label>
-                            <div class="flex items-center gap-3">
-                                <input type="number" id="minLevel" value="0" class="w-full bg-custom-input border border-custom rounded-lg py-3 px-4 text-sm font-bold outline-none focus:border-indigo-500">
-                                <span class="text-custom-dim font-bold">—</span>
-                                <input type="number" id="maxLevel" value="115" class="w-full bg-custom-input border border-custom rounded-lg py-3 px-4 text-sm font-bold outline-none focus:border-indigo-500">
+                            <label class="block text-[11px] font-black text-custom-dim uppercase tracking-[0.2em]">Level Range Parameters</label>
+                            <div class="flex items-center gap-4">
+                                <input type="number" id="minLevel" value="0" class="w-full bg-custom-input border border-custom rounded-xl py-4 px-5 text-sm font-bold outline-none focus:border-indigo-500">
+                                <span class="text-custom-dim font-bold text-xl opacity-30">/</span>
+                                <input type="number" id="maxLevel" value="115" class="w-full bg-custom-input border border-custom rounded-xl py-4 px-5 text-sm font-bold outline-none focus:border-indigo-500">
                             </div>
                         </div>
                         <div class="space-y-4">
-                            <label class="block text-xs font-black text-custom-dim uppercase tracking-widest">Ingredient Tiers</label>
+                            <label class="block text-[11px] font-black text-custom-dim uppercase tracking-[0.2em]">Quality Tiering</label>
                             <div class="flex gap-2" id="tierFilters">
-                                <button data-tier="0" class="tier-btn flex-1 py-3 rounded-lg border border-custom bg-custom-input text-xs font-black uppercase tracking-widest">T0</button>
-                                <button data-tier="1" class="tier-btn flex-1 py-3 rounded-lg border border-custom bg-custom-input text-xs font-black uppercase tracking-widest">T1</button>
-                                <button data-tier="2" class="tier-btn flex-1 py-3 rounded-lg border border-custom bg-custom-input text-xs font-black uppercase tracking-widest">T2</button>
-                                <button data-tier="3" class="tier-btn flex-1 py-3 rounded-lg border border-custom bg-custom-input text-xs font-black uppercase tracking-widest">T3</button>
+                                <button data-tier="0" class="tier-btn flex-1 py-4 rounded-xl border border-custom bg-custom-input text-xs font-black">T0</button>
+                                <button data-tier="1" class="tier-btn flex-1 py-4 rounded-xl border border-custom bg-custom-input text-xs font-black">T1</button>
+                                <button data-tier="2" class="tier-btn flex-1 py-4 rounded-xl border border-custom bg-custom-input text-xs font-black">T2</button>
+                                <button data-tier="3" class="tier-btn flex-1 py-4 rounded-xl border border-custom bg-custom-input text-xs font-black">T3</button>
                             </div>
                         </div>
                         <div class="space-y-4">
-                            <label class="block text-xs font-black text-custom-dim uppercase tracking-widest text-indigo-400">Curated Filters</label>
+                            <label class="block text-[11px] font-black text-indigo-400 uppercase tracking-[0.2em]">Priority Protocols</label>
                             <div class="flex gap-3">
-                                <button id="interestToggle" class="interest-toggle zest-btn flex-1 py-3 rounded-lg text-xs font-black uppercase tracking-widest">
+                                <button id="interestToggle" class="interest-toggle zest-btn flex-1 py-4 rounded-xl text-[10px] font-black uppercase tracking-widest">
                                     <i class="fas fa-star mr-2"></i> INTEREST
                                 </button>
-                                <button id="coordsToggle" class="coords-toggle zest-btn flex-1 py-3 rounded-lg text-xs font-black uppercase tracking-widest">
+                                <button id="coordsToggle" class="coords-toggle zest-btn flex-1 py-4 rounded-xl text-[10px] font-black uppercase tracking-widest">
                                     <i class="fas fa-crosshairs mr-2"></i> COORDS
                                 </button>
                             </div>
                         </div>
                     </div>
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 pt-4 border-t border-custom border-opacity-30">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 pt-10 border-t border-custom border-opacity-30 mt-10">
                         <div class="space-y-4">
-                            <label class="block text-xs font-black text-custom-dim uppercase tracking-widest">Professions</label>
-                            <div id="professionFilters" class="flex flex-wrap gap-2 max-h-32 overflow-y-auto pr-2 custom-scrollbar"></div>
+                            <label class="block text-[11px] font-black text-custom-dim uppercase tracking-[0.2em]">Authorized Professions</label>
+                            <div id="professionFilters" class="flex flex-wrap gap-2 max-h-40 overflow-y-auto pr-2 custom-scrollbar"></div>
                         </div>
-                        <div class="grid grid-cols-2 gap-4">
+                        <div class="grid grid-cols-2 gap-6">
                             <div class="space-y-4">
-                                <label class="block text-xs font-black text-emerald-500 uppercase tracking-widest">Positive Stats</label>
-                                <select id="posStat1" class="w-full bg-custom-input border border-custom rounded-lg py-3 px-4 text-xs font-black text-emerald-500 outline-none"><option value="">Stat 1</option></select>
+                                <label class="block text-[11px] font-black text-emerald-500 uppercase tracking-[0.2em]">Buff Affinity</label>
+                                <select id="posStat1" class="w-full bg-custom-input border border-custom rounded-xl py-4 px-5 text-xs font-black text-emerald-500 outline-none"><option value="">Select Protocol</option></select>
                             </div>
                             <div class="space-y-4">
-                                <label class="block text-xs font-black text-rose-500 uppercase tracking-widest">Negative Stats</label>
-                                <select id="negStat1" class="w-full bg-custom-input border border-custom rounded-lg py-3 px-4 text-xs font-black text-rose-500 outline-none"><option value="">Stat 1</option></select>
+                                <label class="block text-[11px] font-black text-rose-500 uppercase tracking-[0.2em]">De-Buff Affinity</label>
+                                <select id="negStat1" class="w-full bg-custom-input border border-custom rounded-xl py-4 px-5 text-xs font-black text-rose-500 outline-none"><option value="">Select Protocol</option></select>
                             </div>
                         </div>
                     </div>
@@ -300,27 +275,23 @@
         </div>
     </header>
 
-    <main class="max-w-[1700px] mx-auto p-6 lg:p-10">
-        <div id="activeTags" class="flex flex-wrap gap-2 mb-10 min-h-[30px]"></div>
-        
-        <!-- Results Counter for UX -->
-        <div id="resultsInfo" class="mb-4 text-[10px] font-black uppercase tracking-widest text-custom-dim hidden"></div>
+    <!-- Content Feed -->
+    <main class="max-w-[1700px] mx-auto px-6">
+        <div id="activeTags" class="flex flex-wrap gap-3 mb-8 min-h-[30px] px-2"></div>
+        <div id="resultsInfo" class="mb-6 px-4 text-[11px] font-black uppercase tracking-[0.3em] text-indigo-500 hidden border-l-4 border-indigo-500 bg-indigo-500/5 py-2"></div>
 
-        <div id="ingredientGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
+        <div id="ingredientGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"></div>
 
-        <div id="emptyState" class="hidden flex flex-col items-center justify-center py-48 text-custom-dim">
-            <div class="w-24 h-24 bg-custom-input rounded-3xl flex items-center justify-center mb-6 shadow-xl border border-custom">
-                <i class="fas fa-search text-4xl opacity-30"></i>
+        <div id="emptyState" class="hidden flex flex-col items-center justify-center py-64 text-custom-dim">
+            <div class="w-24 h-24 bg-custom-input rounded-[2.5rem] flex items-center justify-center mb-8 shadow-2xl border border-custom">
+                <i class="fas fa-search-minus text-4xl opacity-20"></i>
             </div>
-            <p class="text-xl font-black uppercase tracking-widest mb-2">No Records Found</p>
-            <button onclick="clearAllFilters()" class="text-indigo-500 hover:text-indigo-400 text-xs font-black uppercase tracking-[0.3em] underline">Reset Inventory</button>
+            <p class="text-2xl font-black uppercase tracking-[0.3em] mb-4">Null Records Found</p>
+            <button onclick="clearAllFilters()" class="text-indigo-500 hover:text-indigo-400 text-[11px] font-black uppercase tracking-[0.5em] underline">Re-Initialize Inventory</button>
         </div>
     </main>
 
     <script>
-        /**
-         * ITEMS OF INTEREST - EDIT THIS LIST MANUALLY
-         */
         const MANUAL_INTEREST_LIST = [
             "Adamastor's Faceplate", "Ancient Heart", "Archaic Medallion", "Bat Heart", "Borange Fluff",
             "Cat Food", "Cataratite", "Coalescence", "Colossus' Shard", "Contraband Absinthe",
@@ -340,120 +311,78 @@
         ];
 
         const INTEREST_NAMES = new Set(MANUAL_INTEREST_LIST.map(n => n.trim().toLowerCase()));
-
         let RAW_DATA = [];
-
         const STATE = {
             search: "", minLv: 0, maxLv: 115, tiers: new Set(), profs: new Set(),
             posStat1: "", negStat1: "", interestOnly: false, coordsOnly: false, theme: "dark",
             allProfs: [], allPosStats: [], allNegStats: []
         };
 
-        // Utility: Finite Number Check
         const isNum = (v) => v !== null && v !== undefined && v !== "" && isFinite(Number(v));
-
         function debounce(func, wait) {
-            let timeout;
-            return function(...args) {
-                clearTimeout(timeout);
-                timeout = setTimeout(() => func.apply(this, args), wait);
-            };
+            let timeout; return function(...args) { clearTimeout(timeout); timeout = setTimeout(() => func.apply(this, args), wait); };
         }
 
         async function loadShopData() {
             try {
-                const [ingredientsRes, dropsRes] = await Promise.all([
-                    fetch('ingredients.json'),
-                    fetch('drops.json')
-                ]);
+                const [ingredientsRes, dropsRes] = await Promise.all([fetch('ingredients.json'), fetch('drops.json')]);
                 if (!ingredientsRes.ok || !dropsRes.ok) throw new Error("Fetch failed");
-                const ingredientsJson = await ingredientsRes.json();
-                const dropsJson = await dropsRes.json();
-                processJsonData(ingredientsJson, dropsJson);
-            } catch (error) {
-                console.error(error);
-                showToast("System Load Failure");
-            }
+                processJsonData(await ingredientsRes.json(), await dropsRes.json());
+            } catch (error) { console.error(error); showToast("Link to Mainframe Severed"); }
         }
 
         function processJsonData(ingredients, dropsMap) {
             const processed = [];
             const normIngredients = {};
             Object.keys(ingredients).forEach(k => normIngredients[k.trim().toLowerCase()] = { ...ingredients[k], originalName: k });
-            
             const normDrops = {};
             Object.keys(dropsMap).forEach(k => normDrops[k.trim().toLowerCase()] = dropsMap[k]);
 
             const sharedTelemetry = {}; 
-
             Object.values(dropsMap).forEach(dropArray => {
                 if (!Array.isArray(dropArray)) return;
                 dropArray.forEach(d => {
                     if (!d.name) return;
                     const mobKey = d.name.trim().toLowerCase();
                     if (!sharedTelemetry[mobKey]) sharedTelemetry[mobKey] = [];
-                    
                     if (d.details && d.details.coords) {
                         const rawCoords = d.details.coords;
                         const hasXandZ = (c) => isNum(c.x) && isNum(c.z);
-
                         const addCoord = (c) => {
                             if (hasXandZ(c)) {
-                                const cleanY = isNum(c.y) ? Number(c.y) : null;
-                                const coordObj = { x: Number(c.x), y: cleanY, z: Number(c.z) };
+                                const coordObj = { x: Number(c.x), y: isNum(c.y) ? Number(c.y) : null, z: Number(c.z) };
                                 const coordStr = `${coordObj.x},${coordObj.y},${coordObj.z}`;
-                                if (!sharedTelemetry[mobKey].find(existing => `${existing.x},${existing.y},${existing.z}` === coordStr)) {
-                                    sharedTelemetry[mobKey].push(coordObj);
-                                }
+                                if (!sharedTelemetry[mobKey].find(ex => `${ex.x},${ex.y},${ex.z}` === coordStr)) sharedTelemetry[mobKey].push(coordObj);
                             }
                         };
-
-                        if (Array.isArray(rawCoords)) rawCoords.forEach(addCoord);
-                        else addCoord(rawCoords);
+                        if (Array.isArray(rawCoords)) rawCoords.forEach(addCoord); else addCoord(rawCoords);
                     }
                 });
             });
 
             const allKeys = new Set([...Object.keys(normIngredients), ...Object.keys(normDrops)]);
-
             for (const key of allKeys) {
                 const ingData = normIngredients[key] || {};
                 const dropEntries = normDrops[key] || [];
-
                 const item = {
                     name: ingData.originalName || Object.keys(dropsMap).find(orig => orig.trim().toLowerCase() === key) || key,
-                    tier: ingData.tier !== undefined ? ingData.tier : -1,
-                    level: ingData.lvl || 0,
+                    tier: ingData.tier !== undefined ? Number(ingData.tier) : -1,
+                    level: Number(ingData.lvl) || 0,
                     professions: ingData.profs || [],
                     stats: ingData.stats || [],
-                    drops: [],
-                    searchStr: "" // Will index this next
+                    drops: [], searchStr: "" 
                 };
-
                 if (Array.isArray(dropEntries)) {
-                    item.drops = dropEntries.map(d => {
-                        const mobKey = (d.name || "").trim().toLowerCase();
-                        return { 
-                            name: d.name || "Unknown Source", 
-                            location: d.details ? (d.details.location || "") : "", 
-                            allCoords: sharedTelemetry[mobKey] || [],
-                            screenshots: d.details ? (d.details.screenshots || "") : "" 
-                        };
-                    });
+                    item.drops = dropEntries.map(d => ({ 
+                        name: d.name || "Unknown Entity", 
+                        location: d.details ? (d.details.location || "") : "", 
+                        allCoords: sharedTelemetry[(d.name || "").trim().toLowerCase()] || [],
+                        screenshots: d.details ? (d.details.screenshots || "") : "" 
+                    }));
                 }
-
-                // --- SEARCH PRE-INDEXING (Performance Boost) ---
-                const searchParts = [
-                    item.name,
-                    ...item.professions,
-                    ...item.stats.map(s => s.label),
-                    ...item.drops.map(d => d.name + ' ' + d.location)
-                ];
-                item.searchStr = searchParts.join(' ').toLowerCase();
-
+                item.searchStr = [item.name, ...item.professions, ...item.stats.map(s => s.label), ...item.drops.map(d => d.name + ' ' + d.location)].join(' ').toLowerCase();
                 processed.push(item);
             }
-
             RAW_DATA = processed;
             computeDynamicState();
             initDynamicUI();
@@ -467,12 +396,10 @@
         }
 
         function initDynamicUI() {
-            const profContainer = document.getElementById('professionFilters');
-            profContainer.innerHTML = STATE.allProfs.map(p => `<button data-prof="${p}" class="prof-chip zest-btn px-3 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest whitespace-nowrap">${p}</button>`).join('');
-            const ps = document.getElementById('posStat1');
-            const ns = document.getElementById('negStat1');
-            ps.innerHTML = '<option value="">Stat 1</option>';
-            ns.innerHTML = '<option value="">Stat 1</option>';
+            const pc = document.getElementById('professionFilters');
+            pc.innerHTML = STATE.allProfs.map(p => `<button data-prof="${p}" class="prof-chip zest-btn px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest whitespace-nowrap">${p}</button>`).join('');
+            const ps = document.getElementById('posStat1'), ns = document.getElementById('negStat1');
+            ps.innerHTML = '<option value="">Any Modifier</option>'; ns.innerHTML = '<option value="">Any Modifier</option>';
             STATE.allPosStats.forEach(s => ps.innerHTML += `<option value="${s}">${s}</option>`);
             STATE.allNegStats.forEach(s => ns.innerHTML += `<option value="${s}">${s}</option>`);
         }
@@ -480,113 +407,87 @@
         function filterData() {
             const query = STATE.search.toLowerCase().trim();
             const filtered = RAW_DATA.filter(item => {
-                const matchesSearch = !query || item.searchStr.includes(query);
-                const matchesLevel = item.level >= STATE.minLv && item.level <= STATE.maxLv;
-                const matchesTier = STATE.tiers.size === 0 || STATE.tiers.has(item.tier.toString());
-                const matchesProf = STATE.profs.size === 0 || item.professions.some(p => STATE.profs.has(p));
-                const matchesStatP = !STATE.posStat1 || item.stats.some(s => s.label === STATE.posStat1 && s.pos);
-                const matchesStatN = !STATE.negStat1 || item.stats.some(s => s.label === STATE.negStat1 && !s.pos);
-                const matchesInterest = !STATE.interestOnly || INTEREST_NAMES.has(item.name.trim().toLowerCase());
-                const matchesCoords = !STATE.coordsOnly || item.drops.some(d => d.allCoords.length > 0);
-                
-                return matchesSearch && matchesLevel && matchesTier && matchesProf && matchesStatP && matchesStatN && matchesInterest && matchesCoords;
+                if (query && !item.searchStr.includes(query)) return false;
+                if (item.level < STATE.minLv || item.level > STATE.maxLv) return false;
+                if (STATE.tiers.size > 0 && !STATE.tiers.has(item.tier.toString())) return false;
+                if (STATE.profs.size > 0 && !item.professions.some(p => STATE.profs.has(p))) return false;
+                if (STATE.posStat1 && !item.stats.some(s => s.label === STATE.posStat1 && s.pos)) return false;
+                if (STATE.negStat1 && !item.stats.some(s => s.label === STATE.negStat1 && !s.pos)) return false;
+                if (STATE.interestOnly && !INTEREST_NAMES.has(item.name.trim().toLowerCase())) return false;
+                if (STATE.coordsOnly && !item.drops.some(d => d.allCoords.length > 0)) return false;
+                return true;
             });
-
-            const anyFilterActive = STATE.search !== "" || STATE.tiers.size > 0 || STATE.profs.size > 0 || STATE.interestOnly || STATE.coordsOnly || STATE.minLv !== 0 || STATE.maxLv !== 115 || STATE.posStat1 !== "" || STATE.negStat1 !== "";
-
-            if (!anyFilterActive) {
-                return filtered.sort(() => 0.5 - Math.random()).slice(0, 50);
-            }
-
-            return filtered.sort((a, b) => a.name.localeCompare(b.name));
+            const anyActive = query || STATE.tiers.size || STATE.profs.size || STATE.interestOnly || STATE.coordsOnly || STATE.minLv !== 0 || STATE.maxLv !== 115 || STATE.posStat1 || STATE.negStat1;
+            return !anyActive ? filtered.sort(() => 0.5 - Math.random()).slice(0, 50) : filtered.sort((a, b) => a.name.localeCompare(b.name));
         }
 
         function render() {
-            const grid = document.getElementById('ingredientGrid');
-            const info = document.getElementById('resultsInfo');
-            const rawResults = filterData();
-            
-            // --- VIRTUAL CLAMPING (Lag Fix) ---
-            // Only render the first 60 results to prevent DOM bloat
-            const renderLimit = 60;
-            const data = rawResults.slice(0, renderLimit);
-            
+            const grid = document.getElementById('ingredientGrid'), info = document.getElementById('resultsInfo'), rawResults = filterData();
+            const renderLimit = 160; const data = rawResults.slice(0, renderLimit);
             if (rawResults.length > 0) {
                 info.classList.remove('hidden');
-                info.textContent = rawResults.length > renderLimit 
-                    ? `Showing ${renderLimit} of ${rawResults.length} records (Alphabetical)` 
-                    : `Displaying ${rawResults.length} matching records`;
-            } else {
-                info.classList.add('hidden');
-            }
+                info.textContent = rawResults.length > renderLimit ? `Showing top ${renderLimit} of ${rawResults.length} indexed records` : `${rawResults.length} records retrieved from data-flow`;
+            } else info.classList.add('hidden');
 
-            if (data.length === 0) {
-                grid.innerHTML = "";
-                document.getElementById('emptyState').classList.remove('hidden');
-            } else {
+            if (data.length === 0) { grid.innerHTML = ""; document.getElementById('emptyState').classList.remove('hidden'); }
+            else {
                 document.getElementById('emptyState').classList.add('hidden');
                 grid.innerHTML = data.map((item, idx) => `
-                    <div class="zest-card rounded-[1.5rem] p-4 flex flex-col gap-4 shadow-sm">
+                    <div class="zest-card rounded-[2.5rem] p-6 flex flex-col gap-6 shadow-xl">
                         <div class="flex justify-between items-start">
                             <div class="overflow-hidden">
-                                <h3 class="text-sm font-black text-custom-main leading-tight uppercase tracking-tight mb-1 truncate">${item.name}</h3>
+                                <h3 class="text-base font-black text-custom-main leading-tight uppercase tracking-tight mb-2 truncate">${item.name}</h3>
                                 <div class="flex items-center gap-2">
-                                    <span class="text-[9px] font-black text-indigo-400 bg-indigo-500/10 px-1.5 py-0.5 rounded leading-none">LV ${item.level}</span>
-                                    <div class="flex gap-0.5 text-amber-500">
-                                        ${item.tier >= 0 ? Array(item.tier).fill(0).map(() => `<i class="fas fa-star text-[8px]"></i>`).join('') : '<span class="text-[7px] text-zinc-600 font-bold tracking-tighter">UNRANKED</span>'}
+                                    <span class="text-[10px] font-black text-indigo-400 bg-indigo-500/10 px-2 py-1 rounded-lg leading-none">LV ${item.level}</span>
+                                    <div class="flex gap-1 text-amber-500">
+                                        ${item.tier >= 0 ? Array(item.tier).fill(0).map(() => `<i class="fas fa-star text-[9px]"></i>`).join('') : '<span class="text-[8px] text-zinc-600 font-bold tracking-tighter">UNRANKED</span>'}
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="space-y-3">
-                            <div class="space-y-1">
-                                <p class="text-[8px] font-black text-custom-dim uppercase tracking-widest border-b border-custom pb-1 mb-1">Properties</p>
-                                ${item.stats.length === 0 ? '<p class="text-[10px] italic text-zinc-700">No telemetry.</p>' : item.stats.map(s => `
-                                    <div class="flex justify-between text-[12px] font-bold py-0.5 border-b border-custom border-opacity-20 last:border-0">
+                        <div class="space-y-5">
+                            <div class="space-y-1.5">
+                                <p class="text-[9px] font-black text-custom-dim uppercase tracking-[0.2em] border-b border-custom pb-2 mb-2">Properties</p>
+                                ${item.stats.length === 0 ? '<p class="text-[11px] italic text-zinc-700 opacity-50">Passive Record.</p>' : item.stats.map(s => `
+                                    <div class="flex justify-between text-[13px] font-bold py-1 border-b border-custom border-opacity-10 last:border-0">
                                         <span class="text-custom-dim">${s.label}</span>
                                         <span class="${s.pos ? 'stat-pos' : 'stat-neg'}">${s.value}</span>
                                     </div>
                                 `).join('')}
                             </div>
 
-                            <div class="space-y-1.5">
-                                <p class="text-[8px] font-black text-custom-dim uppercase tracking-widest border-b border-custom pb-1 mb-1">Last Seen</p>
-                                ${item.drops.length === 0 ? `<p class="text-[10px] italic text-custom-dim opacity-40">No sources found.</p>` : item.drops.map(drop => {
+                            <div class="space-y-3">
+                                <p class="text-[9px] font-black text-custom-dim uppercase tracking-[0.2em] border-b border-custom pb-2 mb-2">Last Seen</p>
+                                ${item.drops.length === 0 ? `<p class="text-[11px] italic text-custom-dim opacity-40">No telemetry logs.</p>` : item.drops.map(drop => {
                                     const mainScreenshot = drop.screenshots ? drop.screenshots.split(',')[0].trim() : null;
                                     return `
-                                    <div class="space-y-2 bg-custom-main bg-opacity-30 p-3 rounded-lg border border-custom border-opacity-30">
+                                    <div class="space-y-3 bg-custom-main bg-opacity-40 p-4 rounded-2xl border border-custom border-opacity-30">
                                         <div class="flex justify-between items-start gap-2">
                                             <div class="overflow-hidden">
-                                                <p class="text-custom-main font-bold text-xs truncate leading-tight">${drop.name}</p>
-                                                <p class="text-custom-dim text-[8px] font-bold uppercase tracking-tight truncate">${drop.location || 'Unknown Orbit'}</p>
+                                                <p class="text-custom-main font-black text-sm truncate leading-tight">${drop.name}</p>
+                                                <div class="flex items-center gap-1.5 text-custom-dim text-[10px] font-bold mt-1">
+                                                    <i class="fas fa-map-marker-alt text-indigo-500/50"></i>
+                                                    <span class="truncate">${drop.location || 'Undisclosed Area'}</span>
+                                                </div>
                                             </div>
-                                            ${mainScreenshot ? `
-                                                <a href="${mainScreenshot}" target="_blank" class="zest-btn p-2 rounded-lg !bg-pink-500 !text-white !border-pink-400 text-[10px] shadow-sm hover:scale-110 transition-transform" title="Intel View">
-                                                    <i class="fas fa-image"></i>
-                                                </a>
-                                            ` : ''}
+                                            ${mainScreenshot ? `<a href="${mainScreenshot}" target="_blank" class="zest-btn p-2.5 rounded-xl !bg-pink-500/10 !text-pink-500 !border-pink-500/30 hover:!bg-pink-500 hover:!text-white transition-all shadow-sm" title="Intel Feed"><i class="fas fa-image"></i></a>` : ''}
                                         </div>
-                                        ${drop.allCoords.map(c => {
-                                            const hasY = isNum(c.y);
-                                            const displayLabel = hasY ? `${c.x}, ${c.y}, ${c.z}` : `${c.x}, ${c.z}`;
-                                            return `
-                                            <div 
-                                                onclick="copyToClipboard('${c.x}', ${hasY ? c.y : 'null'}, '${c.z}')"
-                                                class="zest-btn flex items-center justify-center gap-2 bg-indigo-600 !border-indigo-400 !text-white hover:bg-indigo-500 px-3 py-2 rounded-lg cursor-pointer shadow-md group mt-1"
-                                            >
-                                                <i class="fas fa-crosshairs text-base group-hover:rotate-90 transition-transform"></i>
-                                                <span class="font-black text-[12px] font-mono tracking-widest truncate">${displayLabel}</span>
-                                            </div>
-                                        `;}).join('')}
+                                        <div class="grid grid-cols-1 gap-2">
+                                            ${drop.allCoords.map(c => {
+                                                const hasY = isNum(c.y);
+                                                const label = hasY ? `${c.x}, ${c.y}, ${c.z}` : `${c.x}, ${c.z}`;
+                                                return `<button onclick="copyToClipboard('${c.x}', ${hasY ? c.y : 'null'}, '${c.z}')" class="zest-btn flex items-center justify-center gap-3 bg-indigo-600 !border-indigo-400 !text-white hover:bg-indigo-500 py-3 rounded-xl cursor-pointer shadow-lg group"><i class="fas fa-crosshairs text-base group-hover:rotate-90 transition-transform"></i><span class="font-black text-[11px] font-mono tracking-widest">${label}</span></button>`;
+                                            }).join('')}
+                                        </div>
                                     </div>
                                 `;}).join('')}
                             </div>
                         </div>
 
-                        <div class="mt-auto pt-2 border-t border-custom border-opacity-50 flex flex-wrap gap-1">
-                            ${item.professions.length === 0 ? '<span class="text-[7px] text-zinc-800 font-bold uppercase">Generic</span>' : item.professions.map(p => `
-                                <span class="text-[7px] text-custom-dim font-black px-1.5 py-0.5 rounded-md bg-custom-input border border-custom uppercase tracking-tighter">${p}</span>
+                        <div class="mt-auto pt-4 border-t border-custom border-opacity-50 flex flex-wrap gap-2">
+                            ${item.professions.length === 0 ? '<span class="text-[8px] text-zinc-800 font-bold uppercase tracking-widest">Generic Entry</span>' : item.professions.map(p => `
+                                <span class="text-[8px] text-custom-dim font-black px-2.5 py-1.5 rounded-lg bg-custom-input border border-custom uppercase tracking-tighter">${p}</span>
                             `).join('')}
                         </div>
                     </div>
@@ -596,58 +497,33 @@
         }
 
         function renderTags() {
-            const container = document.getElementById('activeTags');
-            const tags = [];
-            if (STATE.search) tags.push({ id: 'search', label: `SEARCH: ${STATE.search}` });
-            if (STATE.interestOnly) tags.push({ id: 'interest', label: `★ INTEREST` });
-            if (STATE.coordsOnly) tags.push({ id: 'coords', label: `⌖ COORDS` });
-            if (STATE.minLv > 0 || STATE.maxLv < 115) tags.push({ id: 'lv', label: `L${STATE.minLv}-${STATE.maxLv}` });
-            STATE.tiers.forEach(t => tags.push({ id: `tier-${t}`, label: `T${t}` }));
+            const container = document.getElementById('activeTags'), tags = [];
+            if (STATE.search) tags.push({ id: 'search', label: `QUERY: ${STATE.search}` });
+            if (STATE.interestOnly) tags.push({ id: 'interest', label: `★ TARGETED` });
+            if (STATE.coordsOnly) tags.push({ id: 'coords', label: `⌖ GEOLOCATED` });
+            if (STATE.minLv > 0 || STATE.maxLv < 115) tags.push({ id: 'lv', label: `LV RANGE ${STATE.minLv}-${STATE.maxLv}` });
+            STATE.tiers.forEach(t => tags.push({ id: `tier-${t}`, label: `TIER ${t}` }));
             STATE.profs.forEach(p => tags.push({ id: `prof-${p}`, label: p }));
-            container.innerHTML = tags.map(t => `<div class="flex items-center gap-2 px-3 py-1.5 bg-custom-card border border-custom text-custom-main rounded-lg text-[10px] font-black uppercase tracking-widest shadow-md">${t.label}<button onclick="removeFilter('${t.id}')" class="hover:text-indigo-400 transition-colors"><i class="fas fa-times"></i></button></div>`).join('');
+            container.innerHTML = tags.map(t => `<div class="flex items-center gap-3 px-4 py-2 bg-custom-card border border-custom text-custom-main rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg">${t.label}<button onclick="removeFilter('${t.id}')" class="hover:text-indigo-400 transition-colors"><i class="fas fa-times"></i></button></div>`).join('');
         }
 
         function copyToClipboard(x, y, z) {
-            // Strict condition for clipboard command
             const command = (isNum(y)) ? `/compass ${x}, ${y}, ${z}` : `/compass ${x}, ${z}`;
-            const ta = document.createElement("textarea");
-            ta.value = command; ta.style.position = "fixed"; ta.style.left = "-9999px";
+            const ta = document.createElement("textarea"); ta.value = command; ta.style.position = "fixed"; ta.style.left = "-9999px";
             document.body.appendChild(ta); ta.select();
-            try { document.execCommand('copy'); showToast(`COPIED: ${command}`); } catch (err) {}
+            try { document.execCommand('copy'); showToast(`UPLINK SECURED: ${command}`); } catch (err) {}
             document.body.removeChild(ta);
         }
 
         function showToast(msg) {
-            const t = document.getElementById("toast");
-            t.textContent = msg; t.classList.add("show");
+            const t = document.getElementById("toast"); t.textContent = msg; t.classList.add("show");
             setTimeout(() => t.classList.remove("show"), 2500);
         }
 
         function toggleTheme() {
             const icon = document.getElementById('themeIcon');
-            if (STATE.theme === "dark") {
-                STATE.theme = "light"; document.body.classList.add('light');
-                icon.classList.replace('fa-moon', 'fa-sun');
-            } else {
-                STATE.theme = "dark"; document.body.classList.remove('light');
-                icon.classList.replace('fa-sun', 'fa-moon');
-            }
-        }
-
-        function handleScroll() {
-            const header = document.getElementById('mainHeader');
-            const content = document.getElementById('headerContent');
-            if (window.scrollY > 50) {
-                header.classList.add('compact');
-                content.classList.replace('py-6', 'py-2');
-                if (document.getElementById('filterDrawer').classList.contains('open')) {
-                    document.getElementById('filterDrawer').classList.remove('open');
-                    document.getElementById('chevron').style.transform = 'rotate(0deg)';
-                }
-            } else {
-                header.classList.remove('compact');
-                content.classList.replace('py-2', 'py-6');
-            }
+            if (STATE.theme === "dark") { STATE.theme = "light"; document.body.classList.add('light'); icon.classList.replace('fa-moon', 'fa-sun'); }
+            else { STATE.theme = "dark"; document.body.classList.remove('light'); icon.classList.replace('fa-sun', 'fa-moon'); }
         }
 
         function removeFilter(id) {
@@ -664,9 +540,7 @@
             STATE.search = ""; STATE.minLv = 0; STATE.maxLv = 115; STATE.interestOnly = false; STATE.coordsOnly = false;
             STATE.tiers.clear(); STATE.profs.clear(); STATE.posStat1 = ""; STATE.negStat1 = "";
             document.getElementById('globalSearch').value = "";
-            document.getElementById('interestToggle').classList.remove('active');
-            document.getElementById('coordsToggle').classList.remove('active');
-            document.getElementById('minLevel').value = 0; document.getElementById('maxLevel').value = 115;
+            document.getElementById('interestToggle').classList.remove('active'); document.getElementById('coordsToggle').classList.remove('active');
             document.querySelectorAll('.tier-btn, .prof-chip').forEach(el => el.classList.remove('bg-indigo-600', 'text-white'));
             document.querySelectorAll('select').forEach(s => s.value = "");
             render();
@@ -674,7 +548,6 @@
 
         window.addEventListener('DOMContentLoaded', () => {
             loadShopData();
-            window.addEventListener('scroll', handleScroll);
             document.getElementById('themeToggle').addEventListener('click', toggleTheme);
             document.getElementById('toggleFilters').addEventListener('click', () => {
                 const isOpen = document.getElementById('filterDrawer').classList.toggle('open');
