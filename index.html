@@ -226,7 +226,7 @@
                             type="text" 
                             id="globalSearch"
                             placeholder="Search names, mobs, or telemetry..."
-                            class="w-full bg-custom-input border border-custom rounded-xl py-3 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all text-sm text-custom-main placeholder:text-zinc-500"
+                            class="w-full bg-custom-input border border-custom rounded-xl py-3.5 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all text-sm text-custom-main placeholder:text-zinc-500"
                         >
                     </div>
                 </div>
@@ -255,7 +255,7 @@
                             <div class="flex items-center gap-3">
                                 <input type="number" id="minLevel" value="0" class="w-full bg-custom-input border border-custom rounded-lg py-3 px-4 text-sm font-bold outline-none focus:border-indigo-500">
                                 <span class="text-custom-dim font-bold">—</span>
-                                <input type="number" id="maxLevel" value="100" class="w-full bg-custom-input border border-custom rounded-lg py-3 px-4 text-sm font-bold outline-none focus:border-indigo-500">
+                                <input type="number" id="maxLevel" value="115" class="w-full bg-custom-input border border-custom rounded-lg py-3 px-4 text-sm font-bold outline-none focus:border-indigo-500">
                             </div>
                         </div>
                         <div class="space-y-4">
@@ -340,7 +340,7 @@
         let RAW_DATA = [];
 
         const STATE = {
-            search: "", minLv: 0, maxLv: 100, tiers: new Set(), profs: new Set(),
+            search: "", minLv: 0, maxLv: 115, tiers: new Set(), profs: new Set(),
             posStat1: "", negStat1: "", interestOnly: false, coordsOnly: false, theme: "dark",
             allProfs: [], allPosStats: [], allNegStats: []
         };
@@ -361,23 +361,17 @@
             }
         }
 
-        /**
-         * Normalizes data merging to handle whitespace and casing issues in JSON keys
-         */
         function processJsonData(ingredients, dropsMap) {
             const processed = [];
-            
-            // Create normalized maps for reliable lookup
             const normIngredients = {};
-            Object.keys(ingredients).forEach(k => normIngredients[k.trim().toLowerCase()] = ingredients[k]);
+            Object.keys(ingredients).forEach(k => normIngredients[k.trim().toLowerCase()] = { ...ingredients[k], originalName: k });
             
             const normDrops = {};
             Object.keys(dropsMap).forEach(k => normDrops[k.trim().toLowerCase()] = dropsMap[k]);
 
-            // Unified key set from both files
             const allKeys = new Set([
-                ...Object.keys(ingredients).map(k => k.trim().toLowerCase()),
-                ...Object.keys(dropsMap).map(k => k.trim().toLowerCase())
+                ...Object.keys(normIngredients),
+                ...Object.keys(normDrops)
             ]);
 
             for (const key of allKeys) {
@@ -385,8 +379,7 @@
                 const dropEntries = normDrops[key] || [];
 
                 const item = {
-                    // Favor the original name from ingredients if available, else use drops key
-                    name: ingredients[key] ? key : (Object.keys(ingredients).find(orig => orig.trim().toLowerCase() === key) || Object.keys(dropsMap).find(orig => orig.trim().toLowerCase() === key) || key),
+                    name: ingData.originalName || Object.keys(dropsMap).find(orig => orig.trim().toLowerCase() === key) || key,
                     tier: ingData.tier !== undefined ? ingData.tier : -1,
                     level: ingData.lvl || 0,
                     professions: ingData.profs || [],
@@ -451,7 +444,7 @@
 
         function filterData() {
             const query = STATE.search.toLowerCase().trim();
-            return RAW_DATA.filter(item => {
+            const filtered = RAW_DATA.filter(item => {
                 const matchesSearch = !query || 
                     item.name.toLowerCase().includes(query) || 
                     item.professions.some(p => p.toLowerCase().includes(query)) || 
@@ -459,20 +452,34 @@
                     item.drops.some(d => d.name.toLowerCase().includes(query) || d.location.toLowerCase().includes(query));
 
                 const matchesLevel = item.level >= STATE.minLv && item.level <= STATE.maxLv;
-                
-                // Allow unranked items (-1) to pass if no tiers are selected
                 const matchesTier = STATE.tiers.size === 0 || STATE.tiers.has(item.tier.toString());
-                
                 const matchesProf = STATE.profs.size === 0 || item.professions.some(p => STATE.profs.has(p));
                 const matchesStatP = !STATE.posStat1 || item.stats.some(s => s.label === STATE.posStat1 && s.pos);
                 const matchesStatN = !STATE.negStat1 || item.stats.some(s => s.label === STATE.negStat1 && !s.pos);
-                
-                // Use normalized name for interest lookup
                 const matchesInterest = !STATE.interestOnly || INTEREST_NAMES.has(item.name.trim().toLowerCase());
                 const matchesCoords = !STATE.coordsOnly || item.drops.some(d => d.allCoords.length > 0);
                 
                 return matchesSearch && matchesLevel && matchesTier && matchesProf && matchesStatP && matchesStatN && matchesInterest && matchesCoords;
             });
+
+            // RANDOMIZATION LOGIC: 
+            // If no search/filters are active, return 50 random items
+            const anyFilterActive = STATE.search !== "" || 
+                                   STATE.tiers.size > 0 || 
+                                   STATE.profs.size > 0 || 
+                                   STATE.interestOnly || 
+                                   STATE.coordsOnly || 
+                                   STATE.minLv !== 0 || 
+                                   STATE.maxLv !== 115 || 
+                                   STATE.posStat1 !== "" || 
+                                   STATE.negStat1 !== "";
+
+            if (!anyFilterActive) {
+                return filtered.sort(() => 0.5 - Math.random()).slice(0, 50);
+            }
+
+            // ALPHABETICAL SORTING:
+            return filtered.sort((a, b) => a.name.localeCompare(b.name));
         }
 
         function render() {
@@ -556,7 +563,7 @@
             if (STATE.search) tags.push({ id: 'search', label: `SEARCH: ${STATE.search}` });
             if (STATE.interestOnly) tags.push({ id: 'interest', label: `★ INTEREST` });
             if (STATE.coordsOnly) tags.push({ id: 'coords', label: `⌖ COORDS` });
-            if (STATE.minLv > 0 || STATE.maxLv < 100) tags.push({ id: 'lv', label: `L${STATE.minLv}-${STATE.maxLv}` });
+            if (STATE.minLv > 0 || STATE.maxLv < 115) tags.push({ id: 'lv', label: `L${STATE.minLv}-${STATE.maxLv}` });
             STATE.tiers.forEach(t => tags.push({ id: `tier-${t}`, label: `T${t}` }));
             STATE.profs.forEach(p => tags.push({ id: `prof-${p}`, label: p }));
 
@@ -603,7 +610,7 @@
             if (id === 'search') { STATE.search = ""; document.getElementById('globalSearch').value = ""; }
             else if (id === 'interest') { STATE.interestOnly = false; document.getElementById('interestToggle').classList.remove('active'); }
             else if (id === 'coords') { STATE.coordsOnly = false; document.getElementById('coordsToggle').classList.remove('active'); }
-            else if (id === 'lv') { STATE.minLv = 0; STATE.maxLv = 100; document.getElementById('minLevel').value = 0; document.getElementById('maxLevel').value = 100; }
+            else if (id === 'lv') { STATE.minLv = 0; STATE.maxLv = 115; document.getElementById('minLevel').value = 0; document.getElementById('maxLevel').value = 115; }
             else if (id.startsWith('tier-')) { 
                 const t = id.split('-')[1]; 
                 STATE.tiers.delete(t); 
@@ -620,11 +627,13 @@
         }
 
         function clearAllFilters() {
-            STATE.search = ""; STATE.minLv = 0; STATE.maxLv = 100; STATE.interestOnly = false; STATE.coordsOnly = false;
+            STATE.search = ""; STATE.minLv = 0; STATE.maxLv = 115; STATE.interestOnly = false; STATE.coordsOnly = false;
             STATE.tiers.clear(); STATE.profs.clear(); STATE.posStat1 = ""; STATE.negStat1 = "";
             document.getElementById('globalSearch').value = "";
             document.getElementById('interestToggle').classList.remove('active');
             document.getElementById('coordsToggle').classList.remove('active');
+            document.getElementById('minLevel').value = 0;
+            document.getElementById('maxLevel').value = 115;
             document.querySelectorAll('.tier-btn, .prof-chip').forEach(el => el.classList.remove('bg-indigo-600', 'text-white'));
             document.querySelectorAll('select').forEach(s => s.value = "");
             render();
@@ -664,7 +673,7 @@
             });
             document.getElementById('globalSearch').addEventListener('input', e => { STATE.search = e.target.value; render(); });
             document.getElementById('minLevel').addEventListener('input', e => { STATE.minLv = parseInt(e.target.value || 0); render(); });
-            document.getElementById('maxLevel').addEventListener('input', e => { STATE.maxLv = parseInt(e.target.value || 100); render(); });
+            document.getElementById('maxLevel').addEventListener('input', e => { STATE.maxLv = parseInt(e.target.value || 115); render(); });
             document.getElementById('posStat1').addEventListener('change', e => { STATE.posStat1 = e.target.value; render(); });
             document.getElementById('negStat1').addEventListener('change', e => { STATE.negStat1 = e.target.value; render(); });
             
