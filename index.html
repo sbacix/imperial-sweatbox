@@ -359,7 +359,6 @@
         async function loadShopData() {
             let ingredients = {}, drops = {}, htoi = [], wynnItems = {};
             
-            // 1. Fetch Local Files (Mandatory Cluster)
             try {
                 const [resI, resD, resH] = await Promise.all([
                     fetch('ingredients.json'), 
@@ -374,7 +373,6 @@
                 showToast("System Buffer Offline");
             }
 
-            // 2. Fetch External API (Optional Cluster - Won't break app if fails)
             try {
                 const wynnRes = await fetch('https://api.wynncraft.com/v3/item/database?fullResult');
                 if (wynnRes.ok) {
@@ -439,7 +437,6 @@
                 const dropEntries = normDrops[key] || [];
                 const hData = normHtoi[key] || {};
                 
-                // Safe lookup for Wynn Items
                 let wData = {};
                 if (wynnItems && typeof wynnItems === 'object') {
                     const originalWynnKey = Object.keys(wynnItems).find(wk => wk.trim().toLowerCase() === key);
@@ -598,15 +595,15 @@
 
                                     return `
                                     <div class="space-y-2 bg-custom-main bg-opacity-40 p-3 rounded-xl border border-custom border-opacity-30">
-                                        <div class="flex justify-between items-start gap-2">
+                                        <div class="flex justify-between items-center gap-2">
                                             <div class="flex-1 min-w-0">
                                                 <p class="text-custom-main font-black text-[11px] leading-tight break-words font-semibold">${drop.name}</p>
-                                                <div class="flex items-start gap-1 text-custom-dim text-[9px] font-bold mt-1">
-                                                    <i class="fas fa-map-marker-alt text-red-500/50 mt-0.5"></i>
+                                                <div class="flex items-center gap-1 text-custom-dim text-[9px] font-bold mt-1">
+                                                    <i class="fas fa-map-marker-alt text-red-500/50"></i>
                                                     <span class="break-words leading-none">${drop.location || 'Undisclosed Area'}</span>
                                                 </div>
                                             </div>
-                                            ${mainScreenshot ? `<a href="${mainScreenshot}" target="_blank" class="zest-btn p-1.5 rounded-lg !bg-red-500/10 !text-red-500 !border-red-500/30 hover:!bg-red-500 hover:!text-white transition-all shadow-sm shrink-0" title="Intel Feed"><i class="fas fa-image text-xs"></i></a>` : ''}
+                                            ${mainScreenshot ? `<a href="${mainScreenshot}" target="_blank" class="zest-btn w-8 h-8 flex items-center justify-center rounded-lg !bg-red-500/10 !text-red-500 !border-red-500/30 hover:!bg-red-500 hover:!text-white transition-all shadow-sm shrink-0" title="Intel Feed"><i class="fas fa-image text-xs"></i></a>` : ''}
                                         </div>
                                         <div class="flex flex-wrap gap-1.5 pt-1">
                                             ${coordsHtml}
