@@ -56,7 +56,6 @@
         .stat-pos { color: #10b981; }
         .stat-neg { color: #f43f5e; }
 
-        /* Chroma Glow Cycle Animation */
         @keyframes glowCycle {
             0% { box-shadow: 0 15px 35px -10px var(--zest-indigo); border-color: #6366f1; }
             33% { box-shadow: 0 15px 35px -10px var(--zest-purple); border-color: #a855f7; }
@@ -64,12 +63,11 @@
             100% { box-shadow: 0 15px 35px -10px var(--zest-indigo); border-color: #6366f1; }
         }
 
-        /* Girly Title Color Cycle */
         @keyframes titleCycle {
-            0% { color: #a855f7; } /* Purple */
-            33% { color: #ec4899; } /* Pink */
-            66% { color: #22d3ee; } /* Cyan */
-            100% { color: #ec4899; } /* Pink back */
+            0% { color: #a855f7; } 
+            33% { color: #ec4899; } 
+            66% { color: #22d3ee; } 
+            100% { color: #ec4899; } 
         }
 
         .zest-card {
@@ -97,7 +95,6 @@
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* Compact Header Styles on Scroll */
         header.compact {
             padding-top: 0.75rem;
             padding-bottom: 0.75rem;
@@ -197,21 +194,21 @@
     <header id="mainHeader" class="sticky top-0 z-50 glass-header">
         <div class="max-w-[1700px] mx-auto px-6 py-6 transition-all duration-300" id="headerContent">
             
-            <!-- Branding Row (Large - Only visible when at top) -->
+            <!-- Branding Row (Large) -->
             <div class="flex flex-col items-center text-center mb-6 branding-large">
                 <div class="bg-gradient-to-tr from-indigo-500 to-cyan-400 p-3 rounded-2xl shadow-2xl mb-2">
                     <i class="fas fa-lemon text-white text-3xl"></i>
                 </div>
                 <h1 class="text-3xl lg:text-5xl font-black tracking-tighter leading-tight text-custom-main">
-                    Swipu has been found in the <span class="animated-title uppercase">Epstein Files</span>
+                    Swipu's Current Location: <span class="animated-title uppercase">Epstein Island</span>
                 </h1>
-                <p class="text-[10px] font-bold text-custom-dim uppercase tracking-[0.4em] mt-1">And We Forgive him</p>
+                <p class="text-[10px] font-bold text-custom-dim uppercase tracking-[0.4em] mt-1">Happy Hunting :)</p>
             </div>
 
             <!-- Dashboard Interaction Row -->
             <div class="grid grid-cols-1 lg:grid-cols-3 items-center gap-6">
                 
-                <!-- Left: Branding Small (Only visible on scroll) & Search -->
+                <!-- Left: Branding Small & Search -->
                 <div class="flex items-center gap-4 order-2 lg:order-1">
                     <div class="hidden branding-small items-center gap-2 shrink-0">
                         <i class="fas fa-lemon text-indigo-500 text-xl"></i>
@@ -228,7 +225,7 @@
                     </div>
                 </div>
 
-                <!-- Center Placeholder (for balancing) -->
+                <!-- Center Placeholder -->
                 <div class="hidden lg:block lg:order-2 branding-large"></div>
 
                 <!-- Right: Theme & Dashboard Toggles -->
@@ -244,7 +241,7 @@
                 </div>
             </div>
 
-            <!-- Drawer (Dashboard) -->
+            <!-- Drawer -->
             <div id="filterDrawer" class="mt-6 border-t border-custom">
                 <div class="py-8 space-y-8">
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -293,10 +290,7 @@
     </header>
 
     <main class="max-w-[1700px] mx-auto p-6 lg:p-10">
-        <!-- Active Tags -->
         <div id="activeTags" class="flex flex-wrap gap-2 mb-10 min-h-[30px]"></div>
-
-        <!-- Ingredient Grid (4 Columns) -->
         <div id="ingredientGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
 
         <div id="emptyState" class="hidden flex flex-col items-center justify-center py-48 text-custom-dim">
@@ -309,23 +303,85 @@
     </main>
 
     <script>
-        const INTEREST_NAMES = new Set([
-            "Adamastor's Faceplate", "Ancient Heart", "Archaic Medallion", "Bat Heart", "Borange Fluff",
-            "Cat Food", "Cataratite", "Coalescence", "Colossus' Shard", "Contraband Absinthe",
-            "Contraband Hibiscus", "Creepvine Cluster", "Cursed Wings", "Cyclone Blue Leaves",
-            "Death Whistle Leaf", "Decaying Heart", "Defiled Luxroot", "Defishious", "Dernic Parasite",
-            "Doom Stone", "Draconic Bone Marrow", "Earthly Aura", "Elephelk Trunk", "Enhanced Behaviour Microchip",
-            "Enhanced Potential Microchip", "Evolving Spores", "Eye of The Beast", "Fairy Powder",
-            "Farcor's Trust", "Fiery Aura", "Flow of Fate", "Gilded Bark", "Glacial Anomaly",
-            "Glowing Tree Sap", "Haleva Plant", "Haphazard Serum", "Ice Cream Sandwich", "Kerasot Sporehead",
-            "Large Titanium Chunk", "Lashing Hellfire", "Lithoflesh", "Letvus Delight", "Lunar Charm",
-            "Luxrooot Cuttings", "Mangrove Root", "Mellow Mango", "Myconid Spores", "Myocardial Leg",
-            "Naval Stone", "Nightmare Fuel", "Nivlan Honey", "Obelisk Core", "Plane of Nonexistence",
-            "Pride of the Heights", "Prismatic Spores", "Red Mercury", "Remedial Paste", "Ritual Catalyst",
-            "Rock-Hard Beak", "Sentient Leukocyte", "Serpent Tongue", "Shattered Dawnlight", "Shrieker's Head",
-            "Smokebomb", "Soulbound Cinders", "Tentacle", "Throbbing Avos Heart", "Unicorn Horn",
-            "Watery Aura", "Windy Aura", "World Illuminator"
-        ]);
+        /**
+         * ITEMS OF INTEREST - EDIT THIS LIST MANUALLY
+         * Just write the name of the items exactly as they appear in ingredients.json
+         */
+        const MANUAL_INTEREST_LIST = [
+            "Adamastor's Faceplate",
+            "Ancient Heart",
+            "Archaic Medallion",
+            "Bat Heart",
+            "Borange Fluff",
+            "Cat Food",
+            "Cataratite",
+            "Coalescence",
+            "Colossus' Shard",
+            "Contraband Absinthe",
+            "Contraband Hibiscus",
+            "Creepvine Cluster",
+            "Cursed Wings",
+            "Cyclone Blue Leaves",
+            "Death Whistle Leaf",
+            "Decaying Heart",
+            "Defiled Luxroot",
+            "Defishious",
+            "Dernic Parasite",
+            "Doom Stone",
+            "Draconic Bone Marrow",
+            "Earthly Aura",
+            "Elephelk Trunk",
+            "Enhanced Behaviour Microchip",
+            "Enhanced Potential Microchip",
+            "Evolving Spores",
+            "Eye of The Beast",
+            "Fairy Powder",
+            "Farcor's Trust",
+            "Fiery Aura",
+            "Flow of Fate",
+            "Gilded Bark",
+            "Glacial Anomaly",
+            "Glowing Tree Sap",
+            "Haleva Plant",
+            "Haphazard Serum",
+            "Ice Cream Sandwich",
+            "Kerasot Sporehead",
+            "Large Titanium Chunk",
+            "Lashing Hellfire",
+            "Lithoflesh",
+            "Letvus Delight",
+            "Lunar Charm",
+            "Luxrooot Cuttings",
+            "Mangrove Root",
+            "Mellow Mango",
+            "Myconid Spores",
+            "Myocardial Leg",
+            "Naval Stone",
+            "Nightmare Fuel",
+            "Nivlan Honey",
+            "Obelisk Core",
+            "Plane of Nonexistence",
+            "Pride of the Heights",
+            "Prismatic Spores",
+            "Red Mercury",
+            "Remedial Paste",
+            "Ritual Catalyst",
+            "Rock-Hard Beak",
+            "Sentient Leukocyte",
+            "Serpent Tongue",
+            "Shattered Dawnlight",
+            "Shrieker's Head",
+            "Smokebomb",
+            "Soulbound Cinders",
+            "Tentacle",
+            "Throbbing Avos Heart",
+            "Unicorn Horn",
+            "Watery Aura",
+            "Windy Aura",
+            "World Illuminator"
+        ];
+
+        const INTEREST_NAMES = new Set(MANUAL_INTEREST_LIST);
 
         let RAW_DATA = [];
 
@@ -366,20 +422,22 @@
                 if (dropEntries && Array.isArray(dropEntries)) {
                     item.drops = dropEntries.map(d => {
                         let loc = "";
-                        let coords = { x: 0, z: 0 };
+                        let validCoords = [];
                         if (d.details) {
                             loc = d.details.location || "";
-                            const src = d.details.coords;
-                            if (src) {
-                                if (Array.isArray(src)) {
-                                    const valid = src.find(c => Number(c.x) !== 0 || Number(c.z) !== 0);
-                                    if (valid) coords = { x: Number(valid.x), z: Number(valid.z) };
-                                } else if (Number(src.x) !== 0 || Number(src.z) !== 0) {
-                                    coords = { x: Number(src.x), z: Number(src.z) };
+                            const rawCoords = d.details.coords;
+                            if (rawCoords) {
+                                const checkNonZero = (c) => Number(c.x) !== 0 || Number(c.y) !== 0 || Number(c.z) !== 0;
+                                if (Array.isArray(rawCoords)) {
+                                    validCoords = rawCoords.filter(checkNonZero).map(c => ({
+                                        x: Number(c.x), y: Number(c.y), z: Number(c.z)
+                                    }));
+                                } else if (checkNonZero(rawCoords)) {
+                                    validCoords = [{ x: Number(rawCoords.x), y: Number(rawCoords.y), z: Number(rawCoords.z) }];
                                 }
                             }
                         }
-                        return { name: d.name, location: loc, coords };
+                        return { name: d.name, location: loc, allCoords: validCoords };
                     });
                 }
                 processed.push(item);
@@ -461,13 +519,15 @@
                                             <p class="text-custom-main font-bold text-xs truncate leading-tight">${drop.name}</p>
                                             <p class="text-custom-dim text-[8px] font-bold uppercase tracking-tight truncate">${drop.location}</p>
                                         </div>
-                                        <div 
-                                            onclick="copyToClipboard('${drop.coords.x}', '${drop.coords.z}')"
-                                            class="zest-btn flex items-center justify-center gap-2 bg-indigo-600 !border-indigo-400 !text-white hover:bg-indigo-500 px-3 py-2 rounded-lg cursor-pointer shadow-md group"
-                                        >
-                                            <i class="fas fa-crosshairs text-base group-hover:rotate-90 transition-transform"></i>
-                                            <span class="font-black text-[12px] font-mono tracking-widest truncate">/compass ${drop.coords.x}, ${drop.coords.z}</span>
-                                        </div>
+                                        ${drop.allCoords.map(c => `
+                                            <div 
+                                                onclick="copyToClipboard('${c.x}', '${c.y}', '${c.z}')"
+                                                class="zest-btn flex items-center justify-center gap-2 bg-indigo-600 !border-indigo-400 !text-white hover:bg-indigo-500 px-3 py-2 rounded-lg cursor-pointer shadow-md group mt-1"
+                                            >
+                                                <i class="fas fa-crosshairs text-base group-hover:rotate-90 transition-transform"></i>
+                                                <span class="font-black text-[12px] font-mono tracking-widest truncate">${c.x}, ${c.y}, ${c.z}</span>
+                                            </div>
+                                        `).join('')}
                                     </div>
                                 `).join('')}
                             </div>
@@ -501,12 +561,12 @@
             `).join('');
         }
 
-        function copyToClipboard(x, z) {
-            const command = `/compass ${x},${z}`;
+        function copyToClipboard(x, y, z) {
+            const command = `/compass ${x}, ${y}, ${z}`;
             const ta = document.createElement("textarea");
             ta.value = command; ta.style.position = "fixed"; ta.style.left = "-9999px";
             document.body.appendChild(ta); ta.select();
-            try { document.execCommand('copy'); showToast(`COPIED COMPASS COMMAND: ${x}, ${z}`); } catch (err) {}
+            try { document.execCommand('copy'); showToast(`COPIED COMPASS COMMAND: ${x}, ${y}, ${z}`); } catch (err) {}
             document.body.removeChild(ta);
         }
 
@@ -551,7 +611,6 @@
             render();
         }
 
-        // --- NEW SCROLL LOGIC ---
         function handleScroll() {
             const header = document.getElementById('mainHeader');
             const content = document.getElementById('headerContent');
@@ -562,7 +621,6 @@
                 header.classList.add('compact');
                 content.classList.remove('py-6');
                 content.classList.add('py-2');
-                // Auto-close drawer on scroll to keep it thin
                 if (drawer.classList.contains('open')) {
                     drawer.classList.remove('open');
                     chevron.style.transform = 'rotate(0deg)';
@@ -581,7 +639,6 @@
             document.getElementById('toggleFilters').addEventListener('click', () => {
                 const isOpen = document.getElementById('filterDrawer').classList.toggle('open');
                 document.getElementById('chevron').style.transform = isOpen ? 'rotate(180deg)' : 'rotate(0deg)';
-                // If opening at top, make sure header isn't compact
                 if (isOpen && window.scrollY < 50) {
                     document.getElementById('mainHeader').classList.remove('compact');
                 }
