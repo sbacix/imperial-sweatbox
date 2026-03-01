@@ -10,7 +10,6 @@
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap');
 
         :root {
-            /* These will be overwritten by JavaScript Theme Engine */
             --bg-body: #f5f2ed;
             --bg-card: #ffffff;
             --bg-surface: #faf8f5;
@@ -30,7 +29,7 @@
             font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: var(--bg-body);
             color: var(--text-primary);
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
             overflow-x: hidden;
         }
 
@@ -52,7 +51,7 @@
         }
 
         .archive-card:hover {
-            transform: translateY(-8px) scale(1.01);
+            transform: translateY(-8px);
             border-color: var(--accent);
         }
 
@@ -64,22 +63,11 @@
             transition: all 0.2s;
         }
 
-        .input-base:focus {
-            border-color: var(--accent);
-            outline: none;
-            box-shadow: 0 0 0 4px var(--border);
-        }
-
         .btn-primary {
             background: var(--accent);
             color: white;
             border-radius: 16px;
             transition: all 0.3s;
-        }
-
-        .btn-primary:hover {
-            filter: brightness(1.1);
-            transform: translateY(-1px);
         }
 
         .coord-btn {
@@ -97,7 +85,6 @@
             background: var(--accent);
             color: white;
             border-color: var(--accent);
-            transform: scale(1.05);
         }
 
         #filterSidebar {
@@ -114,9 +101,7 @@
             border-radius: 20px;
             padding: 16px;
             margin-bottom: 12px;
-            transition: transform 0.2s;
         }
-        .loot-pill:hover { transform: translateX(4px); }
 
         .stat-badge {
             font-size: 10px;
@@ -214,7 +199,7 @@
                 <input 
                     type="text" id="globalSearch" 
                     placeholder="Enter entity or item signature..."
-                    class="w-full input-base py-4 pl-14 pr-8 text-sm font-medium tracking-tight"
+                    class="w-full input-base py-4 pl-14 pr-8 text-sm font-medium tracking-tight outline-none"
                 >
             </div>
 
@@ -242,12 +227,11 @@
                 <i class="fas fa-shield-virus text-4xl"></i>
             </div>
             <h3 class="text-2xl font-black tracking-tight opacity-50">Null Archive Signal</h3>
-            <p class="text-[var(--text-secondary)] font-medium max-w-sm mt-4 mb-10">No unique entities match the current filtering parameters in the Imperial Database.</p>
-            <button onclick="clearAllFilters()" class="text-[var(--accent-hover)] font-black uppercase text-xs tracking-[0.2em] border-b-2 border-[var(--accent)] pb-1 hover:opacity-70 transition-opacity">Full System Reset</button>
+            <p class="text-[var(--text-secondary)] font-medium max-w-sm mt-4 mb-10">No unique entities match the parameters in the Imperial Database.</p>
+            <button onclick="clearAllFilters()" class="text-[var(--accent-hover)] font-black uppercase text-xs tracking-[0.2em] border-b-2 border-[var(--accent)] pb-1">Full System Reset</button>
         </div>
     </main>
 
-    <!-- Side Sidebar -->
     <div id="sidebarOverlay" class="fixed inset-0 bg-black/40 z-[50] opacity-0 pointer-events-none transition-opacity duration-500"></div>
     <aside id="filterSidebar" class="fixed top-0 right-0 h-full w-[420px] z-[60] transform translate-x-full shadow-2xl flex flex-col">
         <div class="p-10 border-b border-[var(--border)] flex items-center justify-between bg-[var(--bg-surface)]">
@@ -256,7 +240,6 @@
         </div>
 
         <div class="flex-1 overflow-y-auto p-10 space-y-12 custom-scrollbar">
-            <!-- Theme Engine UI -->
             <section class="space-y-8 bg-[var(--bg-surface)] p-6 rounded-3xl border border-[var(--border)]">
                 <div>
                     <label class="text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest mb-5 block">Visual Luminance</label>
@@ -304,9 +287,9 @@
             <section class="space-y-6">
                 <label class="text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest">Loot Level</label>
                 <div class="flex items-center gap-5">
-                    <input type="number" id="minLevel" placeholder="0" class="w-full input-base px-5 py-4 text-sm font-black">
+                    <input type="number" id="minLevel" placeholder="0" class="w-full input-base px-5 py-4 text-sm font-black outline-none">
                     <span class="text-[var(--text-secondary)] font-black opacity-30">/</span>
-                    <input type="number" id="maxLevel" placeholder="115" class="w-full input-base px-5 py-4 text-sm font-black">
+                    <input type="number" id="maxLevel" placeholder="115" class="w-full input-base px-5 py-4 text-sm font-black outline-none">
                 </div>
             </section>
 
@@ -370,31 +353,39 @@
             const dot = document.getElementById('apiStatusDot');
             const text = document.getElementById('apiStatusText');
             dot.className = "status-dot";
-            if (state === 'loading') { dot.classList.add('status-loading'); text.textContent = "Linking Imperial Matrix..."; }
+            if (state === 'loading') { dot.classList.add('status-loading'); text.textContent = "Linking Matrix..."; }
             else if (state === 'success') { dot.classList.add('status-success'); text.textContent = "Live Stream Verified"; }
-            else if (state === 'error') { dot.classList.add('status-error'); text.textContent = "Offline (Archive Backup)"; }
+            else if (state === 'error') { dot.classList.add('status-error'); text.textContent = "Offline (Archive Mode)"; }
         }
 
         async function loadShopData() {
-            let ingredients = {}, drops = {}, htoi = [], wynnItems = {};
             setApiStatus('loading');
+            
+            // Phase 1: Local Load (Immediate)
             try {
                 const [resI, resD, resH] = await Promise.all([
                     fetch('ingredients.json').then(r => r.ok ? r.json() : {}),
                     fetch('drops.json').then(r => r.ok ? r.json() : {}),
                     fetch('htoi.json').then(r => r.ok ? r.json() : [])
                 ]);
-                ingredients = resI; drops = resD; htoi = resH;
+                processJsonData(resI, resD, resH, {}); // Render local instantly
+            } catch (e) { console.error("Archive Failed", e); }
 
-                try {
-                    const wynnRes = await fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent('https://api.wynncraft.com/v3/item/database?fullResult'));
-                    if (wynnRes.ok) {
-                        wynnItems = await wynnRes.json();
-                        setApiStatus('success');
-                    } else { setApiStatus('error'); }
-                } catch(apiErr) { setApiStatus('error'); }
-            } catch (e) { setApiStatus('error'); }
-            processJsonData(ingredients, drops, htoi, wynnItems);
+            // Phase 2: API Load (Background)
+            try {
+                const wynnRes = await fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent('https://api.wynncraft.com/v3/item/database?fullResult'));
+                if (wynnRes.ok) {
+                    const wynnItems = await wynnRes.json();
+                    // Re-run processing with API data included
+                    const [resI, resD, resH] = await Promise.all([
+                        fetch('ingredients.json').then(r => r.json()),
+                        fetch('drops.json').then(r => r.json()),
+                        fetch('htoi.json').then(r => r.json())
+                    ]);
+                    processJsonData(resI, resD, resH, wynnItems);
+                    setApiStatus('success');
+                } else { setApiStatus('error'); }
+            } catch(apiErr) { setApiStatus('error'); }
         }
 
         function processJsonData(ingredients, dropsMap, htoiArray, wynnItems) {
@@ -413,21 +404,20 @@
                 });
             }
 
-            // STAGE 1: Ultra-Aggressive Entity Unification
             const entityRegistry = {};
 
             const getSanitizedName = (name) => {
-                // Remove everything after a comma (Ancient Iboju Undead, etc) and trim
+                // Persistent fix for "Dead Miner, ..." duplicate types
                 return name.split(',')[0].trim();
             };
 
             const addCoordUnique = (entityKey, c) => {
                 if (!isNum(c.x) || !isNum(c.z)) return;
                 const nx = Number(c.x), ny = isNum(c.y) ? Number(c.y) : 0, nz = Number(c.z);
-                if (Math.abs(nx) + Math.abs(ny) + Math.abs(nz) === 0) return;
+                if (Math.abs(nx) + Math.abs(ny) + Math.abs(nz) === 0) return; // Ignore 0,0,0
                 
                 const coordObj = { x: nx, y: isNum(c.y) ? ny : null, z: nz };
-                const coordKey = `${coordObj.x}|${coordObj.y}|${coordObj.z}`;
+                const coordKey = `${coordObj.x}|${coordObj.z}`; // Key by XZ to merge similar spawn spots
                 
                 if (!entityRegistry[entityKey].uniqueCoords.has(coordKey)) {
                     entityRegistry[entityKey].uniqueCoords.add(coordKey);
@@ -451,6 +441,7 @@
                 return key;
             };
 
+            // Ingest drops.json
             Object.keys(dropsMap).forEach(itemName => {
                 const drops = dropsMap[itemName];
                 if (!Array.isArray(drops)) return;
@@ -467,6 +458,7 @@
                 });
             });
 
+            // Ingest htoi.json
             htoiArray.forEach(h => {
                 const itemName = h.name;
                 Object.keys(h).forEach(prop => {
@@ -490,20 +482,28 @@
                 });
             });
 
-            // STAGE 2: Secondary Stitching - Merge entities that share coordinates
+            // Global Stitching Pass: Merge entities that share coordinates OR sanitized names
             let flattened = Object.values(entityRegistry);
             let merged = true;
             while(merged) {
                 merged = false;
                 for(let i = 0; i < flattened.length; i++) {
                     for(let j = i + 1; j < flattened.length; j++) {
-                        // Check for coordinate overlap
-                        const overlap = [...flattened[i].uniqueCoords].some(c => flattened[j].uniqueCoords.has(c));
-                        if(overlap) {
-                            // Merge j into i
+                        const nameOverlap = flattened[i].name.toLowerCase() === flattened[j].name.toLowerCase();
+                        const coordOverlap = [...flattened[i].uniqueCoords].some(c => flattened[j].uniqueCoords.has(c));
+                        
+                        if(nameOverlap || coordOverlap) {
                             flattened[i].locations = new Set([...flattened[i].locations, ...flattened[j].locations]);
                             flattened[i].loot = new Set([...flattened[i].loot, ...flattened[j].loot]);
-                            flattened[j].coords.forEach(c => addCoordUnique(flattened[i].name.toLowerCase(), c));
+                            flattened[i].screenshots = new Set([...flattened[i].screenshots, ...flattened[j].screenshots]);
+                            // Merge coords
+                            flattened[j].coords.forEach(c => {
+                                const ck = `${c.x}|${c.z}`;
+                                if (!flattened[i].uniqueCoords.has(ck)) {
+                                    flattened[i].uniqueCoords.add(ck);
+                                    flattened[i].coords.push(c);
+                                }
+                            });
                             flattened.splice(j, 1);
                             merged = true;
                             break;
@@ -520,14 +520,13 @@
                 });
                 lootDetails.sort((a,b) => b.level - a.level);
                 const locArr = Array.from(ent.locations);
-                const locationStr = locArr.length > 0 ? locArr.join(' | ') : "Undisclosed Sector";
                 return {
                     name: ent.name,
-                    location: locationStr,
+                    location: locArr.length > 0 ? locArr.join(' | ') : "Undisclosed Sector",
                     screenshots: Array.from(ent.screenshots).flatMap(s => s.split(',')).map(s => s.trim()),
                     loot: lootDetails,
                     coords: ent.coords,
-                    searchStr: [ent.name, locationStr, ...lootDetails.map(l => l.name)].join(' ').toLowerCase()
+                    searchStr: [ent.name, ...lootDetails.map(l => l.name)].join(' ').toLowerCase()
                 };
             });
 
@@ -540,8 +539,8 @@
             STATE.allProfs = [...new Set(allItems.flatMap(i => i.profs || []))].sort();
             STATE.allPosStats = [...new Set(allItems.flatMap(i => (i.stats || []).filter(s => s.pos).map(s => s.label)))].sort();
             STATE.allNegStats = [...new Set(allItems.flatMap(i => (i.stats || []).filter(s => !s.pos).map(s => s.label)))].sort();
-            document.getElementById('posStat1').innerHTML = '<option value="">All Buffs</option>' + STATE.allPosStats.map(s => `<option value="${s}">${s}</option>`).join('');
-            document.getElementById('negStat1').innerHTML = '<option value="">All Debuffs</option>' + STATE.allNegStats.map(s => `<option value="${s}">${s}</option>`).join('');
+            document.getElementById('posStat1').innerHTML = '<option value="">All Attributes</option>' + STATE.allPosStats.map(s => `<option value="${s}">${s}</option>`).join('');
+            document.getElementById('negStat1').innerHTML = '<option value="">All Attributes</option>' + STATE.allNegStats.map(s => `<option value="${s}">${s}</option>`).join('');
             document.getElementById('professionFilters').innerHTML = STATE.allProfs.map(p => `<button data-prof="${p}" class="prof-chip input-base px-4 py-3 rounded-xl text-[10px] font-black uppercase tracking-wider">${p}</button>`).join('');
         }
 
@@ -568,7 +567,7 @@
             const grid = document.getElementById('sourceGrid'), info = document.getElementById('resultsInfo');
             const data = filterData();
             const view = data.slice(0, 60);
-            info.textContent = data.length > 0 ? `${data.length} Integrated Signatures Identified` : "Awaiting Imperial Authorization...";
+            info.textContent = data.length > 0 ? `${data.length} Strategic Sources Synced` : "Matrix Idle...";
             if (view.length === 0) { grid.innerHTML = ""; document.getElementById('emptyState').classList.remove('hidden'); }
             else {
                 document.getElementById('emptyState').classList.add('hidden');
@@ -631,39 +630,23 @@
             };
             const p = palettes[STATE.palette];
             
-            // Re-calculated Linear Ramp for Luminance
             let b, c, s, t, sec, brd;
             switch(STATE.brightness) {
-                case 1: // Void (Deepest Dark)
-                    b = `hsl(${p.hue}, ${p.sat}%, 5%)`;
-                    c = `hsl(${p.hue}, ${p.sat}%, 8%)`;
-                    s = `hsl(${p.hue}, ${p.sat}%, 12%)`;
-                    t = '#ffffff'; sec = '#717171'; brd = 'rgba(255,255,255,0.1)';
-                    break;
-                case 2: // Midnight (Dim)
-                    b = `hsl(${p.hue}, ${p.sat}%, 18%)`;
-                    c = `hsl(${p.hue}, ${p.sat}%, 22%)`;
-                    s = `hsl(${p.hue}, ${p.sat}%, 28%)`;
-                    t = '#e0e0e0'; sec = '#9ca3af'; brd = 'rgba(255,255,255,0.06)';
-                    break;
-                case 3: // Neutral (Mid-tone)
-                    b = `hsl(${p.hue}, ${p.sat}%, 50%)`;
-                    c = `hsl(${p.hue}, ${p.sat}%, 58%)`;
-                    s = `hsl(${p.hue}, ${p.sat}%, 62%)`;
-                    t = '#ffffff'; sec = '#e0e0e0'; brd = 'rgba(255,255,255,0.15)';
-                    break;
-                case 4: // Parchment (Soft Light)
-                    b = `hsl(${p.hue}, ${p.sat}%, 82%)`;
-                    c = `#ffffff`;
-                    s = `hsl(${p.hue}, ${p.sat}%, 90%)`;
-                    t = '#4a4641'; sec = '#8a847c'; brd = 'rgba(0,0,0,0.1)';
-                    break;
-                case 5: // Ivory (Brightest)
-                    b = `hsl(${p.hue}, ${p.sat}%, 96%)`;
-                    c = `#ffffff`;
-                    s = `#fcfcfc`;
-                    t = '#111111'; sec = '#555555'; brd = 'rgba(0,0,0,0.04)';
-                    break;
+                case 1: 
+                    b = `hsl(${p.hue}, ${p.sat}%, 6%)`; c = `hsl(${p.hue}, ${p.sat}%, 10%)`; s = `hsl(${p.hue}, ${p.sat}%, 14%)`;
+                    t = '#ffffff'; sec = '#888888'; brd = 'rgba(255,255,255,0.1)'; break;
+                case 2:
+                    b = `hsl(${p.hue}, ${p.sat}%, 18%)`; c = `hsl(${p.hue}, ${p.sat}%, 22%)`; s = `hsl(${p.hue}, ${p.sat}%, 26%)`;
+                    t = '#e2e8f0'; sec = '#94a3b8'; brd = 'rgba(255,255,255,0.06)'; break;
+                case 3: 
+                    b = `hsl(${p.hue}, ${p.sat}%, 38%)`; c = `hsl(${p.hue}, ${p.sat}%, 44%)`; s = `hsl(${p.hue}, ${p.sat}%, 48%)`;
+                    t = '#ffffff'; sec = '#cbd5e1'; brd = 'rgba(255,255,255,0.15)'; break;
+                case 4:
+                    b = `hsl(${p.hue}, ${p.sat}%, 68%)`; c = `hsl(${p.hue}, ${p.sat}%, 96%)`; s = `hsl(${p.hue}, ${p.sat}%, 82%)`;
+                    t = '#4a4641'; sec = '#8a847c'; brd = 'rgba(0,0,0,0.1)'; break;
+                case 5:
+                    b = `hsl(${p.hue}, ${p.sat}%, 86%)`; c = '#ffffff'; s = '#fcfcfc';
+                    t = '#1e293b'; sec = '#64748b'; brd = 'rgba(0,0,0,0.06)'; break;
             }
 
             root.style.setProperty('--bg-body', b);
@@ -698,13 +681,18 @@
         function copyToClipboard(x, y, z) {
             const hasY = isNum(y) && y !== 'null' && y !== 'undefined';
             const cmd = hasY ? `/compass ${x}, ${y}, ${z}` : `/compass ${x}, ${z}`;
-            const el = document.createElement('textarea'); el.value = cmd; el.style.position = "fixed"; el.style.left = "-9999px"; 
+            const el = document.createElement('textarea'); 
+            el.value = cmd; el.style.position = "fixed"; el.style.left = "-9999px"; 
             document.body.appendChild(el); el.select();
-            try { document.execCommand('copy'); showToast("COPIED: " + cmd); } catch(e) {}
+            try {
+                document.execCommand('copy'); 
+                const t = document.getElementById('toast'); 
+                t.textContent = "COPIED: " + cmd; 
+                t.classList.add('show');
+                setTimeout(() => t.classList.remove('show'), 2500);
+            } catch(e) {}
             document.body.removeChild(el);
         }
-
-        function showToast(m) { const t = document.getElementById('toast'); t.textContent = m; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2500); }
 
         function removeFilter(id) {
             if (id === 'search') { STATE.search = ""; document.getElementById('globalSearch').value = ""; }
