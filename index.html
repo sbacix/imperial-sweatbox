@@ -9,8 +9,8 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap');
 
-        /* Default (Level 3: Parchment / Palette 1: Sage) */
         :root {
+            /* These will be overwritten by JavaScript Theme Engine */
             --bg-body: #f5f2ed;
             --bg-card: #ffffff;
             --bg-surface: #faf8f5;
@@ -18,8 +18,8 @@
             --text-secondary: #8a847c;
             --accent: #a3b18a;
             --accent-hover: #588157;
-            --border: rgba(0, 0, 0, 0.06);
-            --shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+            --border: rgba(0, 0, 0, 0.08);
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
             
             --status-red: #e07a5f;
             --status-orange: #f2cc8f;
@@ -30,7 +30,7 @@
             font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: var(--bg-body);
             color: var(--text-primary);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             overflow-x: hidden;
         }
 
@@ -38,48 +38,48 @@
 
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: var(--bg-body); }
-        ::-webkit-scrollbar-thumb { background: #dcd7cf; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: var(--text-secondary); opacity: 0.2; border-radius: 10px; }
 
         .archive-card {
             background: var(--bg-card);
             border: 1px solid var(--border);
-            border-radius: 24px;
+            border-radius: 28px;
             box-shadow: var(--shadow);
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s, background 0.3s;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.3s, background 0.4s;
             display: flex;
             flex-direction: column;
             overflow: hidden;
         }
 
         .archive-card:hover {
-            transform: translateY(-6px);
+            transform: translateY(-8px) scale(1.01);
             border-color: var(--accent);
         }
 
         .input-base {
-            background: var(--bg-card);
+            background: var(--bg-surface);
             border: 1px solid var(--border);
             color: var(--text-primary);
-            border-radius: 14px;
+            border-radius: 16px;
             transition: all 0.2s;
         }
 
         .input-base:focus {
             border-color: var(--accent);
             outline: none;
-            box-shadow: 0 0 0 4px rgba(var(--accent-rgb, 163, 177, 138), 0.15);
+            box-shadow: 0 0 0 4px var(--border);
         }
 
         .btn-primary {
             background: var(--accent);
             color: white;
-            border-radius: 14px;
-            transition: background 0.2s, transform 0.2s;
+            border-radius: 16px;
+            transition: all 0.3s;
         }
 
         .btn-primary:hover {
-            background: var(--accent-hover);
-            transform: scale(1.02);
+            filter: brightness(1.1);
+            transform: translateY(-1px);
         }
 
         .coord-btn {
@@ -88,21 +88,22 @@
             border: 1px solid var(--border);
             transition: all 0.2s;
             font-size: 10px;
-            font-weight: 700;
-            padding: 6px 12px;
-            border-radius: 10px;
+            font-weight: 800;
+            padding: 8px 14px;
+            border-radius: 12px;
         }
         
         .coord-btn:hover {
             background: var(--accent);
             color: white;
             border-color: var(--accent);
+            transform: scale(1.05);
         }
 
         #filterSidebar {
             background: var(--bg-card);
             border-left: 1px solid var(--border);
-            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         #filterSidebar.open { transform: translateX(0); }
@@ -110,16 +111,18 @@
         .loot-pill {
             background: var(--bg-surface);
             border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 14px;
+            border-radius: 20px;
+            padding: 16px;
             margin-bottom: 12px;
+            transition: transform 0.2s;
         }
+        .loot-pill:hover { transform: translateX(4px); }
 
         .stat-badge {
             font-size: 10px;
-            font-weight: 700;
-            padding: 3px 8px;
-            border-radius: 8px;
+            font-weight: 800;
+            padding: 4px 10px;
+            border-radius: 10px;
             background: var(--bg-card);
             border: 1px solid var(--border);
         }
@@ -137,175 +140,195 @@
             transform: translateX(-50%) translateY(100px);
             background: var(--bg-card);
             color: var(--text-primary);
-            padding: 1rem 2rem;
-            border-radius: 18px;
-            font-weight: 700;
-            font-size: 14px;
+            padding: 1.2rem 2.5rem;
+            border-radius: 20px;
+            font-weight: 800;
+            font-size: 15px;
             z-index: 1000;
-            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            border: 1px solid var(--accent);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border: 2px solid var(--accent);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2);
         }
         #toast.show { transform: translateX(-50%) translateY(0); }
 
         .status-dot {
-            width: 10px;
-            height: 10px;
+            width: 12px;
+            height: 12px;
             border-radius: 50%;
             display: inline-block;
-            margin-right: 6px;
+            margin-right: 8px;
         }
-        .status-loading { background-color: var(--status-orange); box-shadow: 0 0 8px var(--status-orange); }
-        .status-success { background-color: var(--status-green); box-shadow: 0 0 8px var(--status-green); }
-        .status-error { background-color: var(--status-red); box-shadow: 0 0 8px var(--status-red); }
+        .status-loading { background-color: var(--status-orange); box-shadow: 0 0 10px var(--status-orange); }
+        .status-success { background-color: var(--status-green); box-shadow: 0 0 10px var(--status-green); }
+        .status-error { background-color: var(--status-red); box-shadow: 0 0 10px var(--status-red); }
 
         .preset-dot {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            border-radius: 12px;
             cursor: pointer;
-            border: 2px solid transparent;
-            transition: border-color 0.2s;
+            border: 3px solid transparent;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        .preset-dot.active { border-color: var(--text-primary); }
+        .preset-dot.active { border-color: var(--accent); transform: scale(1.1); }
+        
+        .brightness-dot {
+            width: 32px;
+            height: 32px;
+            border-radius: 12px;
+            cursor: pointer;
+            border: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 800;
+        }
+        .brightness-dot.active { background: var(--accent); color: white; border-color: var(--accent); }
     </style>
 </head>
 <body class="min-h-screen">
 
-    <div id="toast">Database Ready</div>
+    <div id="toast">Archive Synchronized</div>
 
-    <!-- Soft Header -->
-    <header class="sticky top-0 z-40 w-full bg-[var(--bg-body)]/80 backdrop-blur-xl border-b border-[var(--border)]">
-        <div class="max-w-[1400px] mx-auto px-6 h-24 flex items-center justify-between">
-            <div class="flex items-center gap-4">
-                <div class="w-12 h-12 bg-[var(--accent)] rounded-2xl flex items-center justify-center text-white shadow-lg shadow-[var(--accent)]/20 transition-colors">
-                    <i class="fas fa-dragon text-xl"></i>
+    <header class="sticky top-0 z-40 w-full bg-[var(--bg-body)]/80 backdrop-blur-2xl border-b border-[var(--border)]">
+        <div class="max-w-[1500px] mx-auto px-8 h-28 flex items-center justify-between">
+            <div class="flex items-center gap-5">
+                <div class="w-14 h-14 bg-[var(--accent)] rounded-2xl flex items-center justify-center text-white shadow-xl shadow-[var(--accent)]/30 transition-all duration-500">
+                    <i class="fas fa-dragon text-2xl"></i>
                 </div>
                 <div>
-                    <h1 class="text-lg font-extrabold tracking-tight">Library of <span style="color: var(--accent-hover)">Imperial</span></h1>
-                    <div class="flex items-center mt-0.5">
+                    <h1 class="text-xl font-black tracking-tighter uppercase">Library of <span style="color: var(--accent-hover)">Imperial</span></h1>
+                    <div class="flex items-center mt-1">
                         <span id="apiStatusDot" class="status-dot status-loading"></span>
-                        <p id="apiStatusText" class="text-[9px] text-[var(--text-secondary)] font-bold tracking-[0.1em] uppercase">Connecting Matrix...</p>
+                        <p id="apiStatusText" class="text-[10px] text-[var(--text-secondary)] font-black tracking-[0.15em] uppercase">Syncing Live Matrix...</p>
                     </div>
                 </div>
             </div>
 
-            <div class="hidden md:flex flex-1 max-w-xl mx-10 relative">
-                <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-[var(--text-secondary)] opacity-40"></i>
+            <div class="hidden lg:flex flex-1 max-w-2xl mx-12 relative">
+                <i class="fas fa-search absolute left-6 top-1/2 -translate-y-1/2 text-[var(--text-secondary)] opacity-40"></i>
                 <input 
                     type="text" id="globalSearch" 
-                    placeholder="Search for unique records..."
-                    class="w-full input-base py-3 pl-12 pr-6 text-sm placeholder:opacity-50"
+                    placeholder="Enter entity or item signature..."
+                    class="w-full input-base py-4 pl-14 pr-8 text-sm font-medium tracking-tight"
                 >
             </div>
 
-            <div class="flex items-center gap-4">
-                <button id="toggleFilters" class="btn-primary px-6 py-3 text-xs font-black uppercase tracking-widest flex items-center gap-2 shadow-lg shadow-[var(--accent)]/20">
-                    <i class="fas fa-sliders-h"></i> Matrix
+            <div class="flex items-center gap-5">
+                <button id="toggleFilters" class="btn-primary px-8 py-4 text-xs font-black uppercase tracking-widest flex items-center gap-3 shadow-xl shadow-[var(--accent)]/20">
+                    <i class="fas fa-layer-group"></i> <span>Matrix</span>
                 </button>
             </div>
         </div>
     </header>
 
-    <main class="max-w-[1400px] mx-auto px-6 py-10">
-        <div id="activeTags" class="flex flex-wrap gap-2 mb-10 min-h-[32px]"></div>
+    <main class="max-w-[1500px] mx-auto px-8 py-12">
+        <div id="activeTags" class="flex flex-wrap gap-3 mb-12 min-h-[32px]"></div>
 
-        <div class="flex items-center justify-between mb-10">
-            <h2 id="resultsInfo" class="text-xs font-black text-[var(--text-secondary)] uppercase tracking-[0.2em] opacity-60">
-                Calibrating Imperial Records...
+        <div class="flex items-center justify-between mb-12 border-l-4 border-[var(--accent)] pl-6 py-2">
+            <h2 id="resultsInfo" class="text-xs font-black text-[var(--text-secondary)] uppercase tracking-[0.3em]">
+                Acquiring Database Streams...
             </h2>
         </div>
 
-        <div id="sourceGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10"></div>
+        <div id="sourceGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12"></div>
 
-        <div id="emptyState" class="hidden py-48 flex flex-col items-center text-center">
-            <div class="w-20 h-20 bg-[var(--bg-surface)] rounded-3xl flex items-center justify-center mb-6 opacity-30">
-                <i class="fas fa-fingerprint text-3xl"></i>
+        <div id="emptyState" class="hidden py-64 flex flex-col items-center text-center">
+            <div class="w-24 h-24 bg-[var(--bg-surface)] rounded-[2.5rem] flex items-center justify-center mb-8 opacity-20">
+                <i class="fas fa-shield-virus text-4xl"></i>
             </div>
-            <h3 class="text-xl font-bold opacity-70">Artifact Unregistered</h3>
-            <p class="text-[var(--text-secondary)] text-sm mb-8">Zero unique signatures found in this sector.</p>
-            <button onclick="clearAllFilters()" class="text-[var(--accent-hover)] font-black uppercase text-xs tracking-widest hover:underline">Flush Matrix</button>
+            <h3 class="text-2xl font-black tracking-tight opacity-50">Null Archive Signal</h3>
+            <p class="text-[var(--text-secondary)] font-medium max-w-sm mt-4 mb-10">No unique entities match the current filtering parameters in the Imperial Database.</p>
+            <button onclick="clearAllFilters()" class="text-[var(--accent-hover)] font-black uppercase text-xs tracking-[0.2em] border-b-2 border-[var(--accent)] pb-1 hover:opacity-70 transition-opacity">Full System Reset</button>
         </div>
     </main>
 
     <!-- Side Sidebar -->
-    <div id="sidebarOverlay" class="fixed inset-0 bg-black/30 z-[50] opacity-0 pointer-events-none transition-opacity duration-300"></div>
-    <aside id="filterSidebar" class="fixed top-0 right-0 h-full w-[380px] z-[60] transform translate-x-full shadow-2xl flex flex-col">
-        <div class="p-8 border-b border-[var(--border)] flex items-center justify-between">
-            <h2 class="font-black text-sm uppercase tracking-widest">Protocol Matrix</h2>
-            <button id="closeSidebar" class="text-[var(--text-secondary)] hover:text-[var(--text-primary)]"><i class="fas fa-times"></i></button>
+    <div id="sidebarOverlay" class="fixed inset-0 bg-black/40 z-[50] opacity-0 pointer-events-none transition-opacity duration-500"></div>
+    <aside id="filterSidebar" class="fixed top-0 right-0 h-full w-[420px] z-[60] transform translate-x-full shadow-2xl flex flex-col">
+        <div class="p-10 border-b border-[var(--border)] flex items-center justify-between bg-[var(--bg-surface)]">
+            <h2 class="font-black text-sm uppercase tracking-[0.2em]">Interface Config</h2>
+            <button id="closeSidebar" class="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-black/5"><i class="fas fa-times"></i></button>
         </div>
 
-        <div class="flex-1 overflow-y-auto p-8 space-y-10 custom-scrollbar">
-            <!-- New Preset Customization -->
-            <section class="space-y-6">
-                <label class="text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest opacity-60">Visual Luminance (1-5)</label>
-                <div class="flex justify-between items-center px-2" id="brightnessPresets">
-                    <button data-level="1" class="preset-dot bg-[#0a0a0a]" title="Void (Super Dark)"></button>
-                    <button data-level="2" class="preset-dot bg-[#1a1c23]" title="Midnight"></button>
-                    <button data-level="3" class="preset-dot bg-[#f5f2ed]" title="Parchment (Neutral)"></button>
-                    <button data-level="4" class="preset-dot bg-[#ffffff]" title="Daylight"></button>
-                    <button data-level="5" class="preset-dot bg-[#fdfdfd] border-gray-200" title="Ivory (Pure Light)"></button>
+        <div class="flex-1 overflow-y-auto p-10 space-y-12 custom-scrollbar">
+            <!-- Theme Engine UI -->
+            <section class="space-y-8 bg-[var(--bg-surface)] p-6 rounded-3xl border border-[var(--border)]">
+                <div>
+                    <label class="text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest mb-5 block">Visual Luminance</label>
+                    <div class="flex justify-between items-center px-1" id="brightnessPresets">
+                        <button data-level="1" class="brightness-dot">1</button>
+                        <button data-level="2" class="brightness-dot">2</button>
+                        <button data-level="3" class="brightness-dot">3</button>
+                        <button data-level="4" class="brightness-dot">4</button>
+                        <button data-level="5" class="brightness-dot">5</button>
+                    </div>
                 </div>
 
-                <label class="text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest opacity-60">Color Palette</label>
-                <div class="flex justify-between items-center px-2" id="palettePresets">
-                    <button data-palette="sage" class="preset-dot bg-[#a3b18a]" title="Sage (Imperial)"></button>
-                    <button data-palette="ocean" class="preset-dot bg-[#72a1b1]" title="Oceanic"></button>
-                    <button data-palette="crimson" class="preset-dot bg-[#b17272]" title="Crimson"></button>
-                    <button data-palette="amber" class="preset-dot bg-[#b19672]" title="Amber"></button>
-                    <button data-palette="lavender" class="preset-dot bg-[#8c72b1]" title="Lavender"></button>
+                <div>
+                    <label class="text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest mb-5 block">Atmospheric Palette</label>
+                    <div class="flex justify-between items-center px-1" id="palettePresets">
+                        <button data-palette="sage" class="preset-dot bg-[#a3b18a]" title="Sage"></button>
+                        <button data-palette="ocean" class="preset-dot bg-[#72a1b1]" title="Ocean"></button>
+                        <button data-palette="crimson" class="preset-dot bg-[#b17272]" title="Crimson"></button>
+                        <button data-palette="amber" class="preset-dot bg-[#b19672]" title="Amber"></button>
+                        <button data-palette="lavender" class="preset-dot bg-[#8c72b1]" title="Lavender"></button>
+                    </div>
                 </div>
             </section>
 
-            <section class="space-y-5">
-                <label class="text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest opacity-60">Tier Classification</label>
-                <div class="grid grid-cols-4 gap-2" id="tierFilters">
-                    <button data-tier="0" class="tier-btn input-base py-3 text-xs font-bold">T0</button>
-                    <button data-tier="1" class="tier-btn input-base py-3 text-xs font-bold">T1</button>
-                    <button data-tier="2" class="tier-btn input-base py-3 text-xs font-bold">T2</button>
-                    <button data-tier="3" class="tier-btn input-base py-3 text-xs font-bold">T3</button>
+            <section class="space-y-6">
+                <label class="text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest">Quality Tier</label>
+                <div class="grid grid-cols-4 gap-3" id="tierFilters">
+                    <button data-tier="0" class="tier-btn input-base py-4 text-xs font-black">T0</button>
+                    <button data-tier="1" class="tier-btn input-base py-4 text-xs font-black">T1</button>
+                    <button data-tier="2" class="tier-btn input-base py-4 text-xs font-black">T2</button>
+                    <button data-tier="3" class="tier-btn input-base py-4 text-xs font-black">T3</button>
                 </div>
             </section>
 
             <section class="space-y-4">
-                <label class="text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest opacity-60">Active Toggles</label>
-                <button id="interestToggle" class="toggle-btn input-base w-full py-4 text-[11px] font-black uppercase tracking-widest flex items-center justify-center gap-2">
-                    <i class="fas fa-star text-amber-500"></i> High Interest
+                <label class="text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest">Active Protocols</label>
+                <button id="interestToggle" class="toggle-btn input-base w-full py-5 text-[11px] font-black uppercase tracking-[0.2em] flex items-center justify-center gap-3">
+                    <i class="fas fa-crown text-amber-500"></i> High Priority
                 </button>
-                <button id="coordsToggle" class="toggle-btn input-base w-full py-4 text-[11px] font-black uppercase tracking-widest flex items-center justify-center gap-2">
-                    <i class="fas fa-location-arrow"></i> Geolocated Only
+                <button id="coordsToggle" class="toggle-btn input-base w-full py-5 text-[11px] font-black uppercase tracking-[0.2em] flex items-center justify-center gap-3">
+                    <i class="fas fa-crosshairs"></i> Geolocated
                 </button>
             </section>
 
-            <section class="space-y-5">
-                <label class="text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest opacity-60">Loot Range</label>
-                <div class="flex items-center gap-4">
-                    <input type="number" id="minLevel" placeholder="0" class="w-full input-base px-4 py-3 text-sm font-bold">
-                    <span class="text-[var(--text-secondary)] font-bold opacity-30">-</span>
-                    <input type="number" id="maxLevel" placeholder="115" class="w-full input-base px-4 py-3 text-sm font-bold">
+            <section class="space-y-6">
+                <label class="text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest">Loot Level</label>
+                <div class="flex items-center gap-5">
+                    <input type="number" id="minLevel" placeholder="0" class="w-full input-base px-5 py-4 text-sm font-black">
+                    <span class="text-[var(--text-secondary)] font-black opacity-30">/</span>
+                    <input type="number" id="maxLevel" placeholder="115" class="w-full input-base px-5 py-4 text-sm font-black">
                 </div>
             </section>
 
-            <section class="space-y-8">
+            <section class="space-y-10">
                 <div>
-                    <label class="block text-[10px] font-black uppercase tracking-widest mb-4 opacity-70">Buff Protocol</label>
-                    <select id="posStat1" class="w-full input-base px-4 py-3 text-xs font-bold outline-none cursor-pointer"></select>
+                    <label class="block text-[10px] font-black uppercase tracking-widest mb-5 text-[var(--status-green)]">Primary Buff</label>
+                    <select id="posStat1" class="w-full input-base px-5 py-4 text-xs font-black outline-none cursor-pointer"></select>
                 </div>
                 <div>
-                    <label class="block text-[10px] font-black uppercase tracking-widest mb-4 opacity-70">Debuff Protocol</label>
-                    <select id="negStat1" class="w-full input-base px-4 py-3 text-xs font-bold outline-none cursor-pointer"></select>
+                    <label class="block text-[10px] font-black uppercase tracking-widest mb-5 text-[var(--status-red)]">Primary Debuff</label>
+                    <select id="negStat1" class="w-full input-base px-5 py-4 text-xs font-black outline-none cursor-pointer"></select>
                 </div>
             </section>
 
-            <section class="space-y-5 pb-16">
-                <label class="text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest opacity-60">Professions</label>
-                <div id="professionFilters" class="flex flex-wrap gap-2"></div>
+            <section class="space-y-6 pb-20">
+                <label class="text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest">Authorized Professions</label>
+                <div id="professionFilters" class="flex flex-wrap gap-3"></div>
             </section>
         </div>
 
-        <div class="p-8 border-t border-[var(--border)]">
-            <button onclick="clearAllFilters()" class="w-full py-4 rounded-2xl text-[11px] font-black uppercase tracking-widest bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white transition-all">Emergency Reset</button>
+        <div class="p-10 border-t border-[var(--border)] bg-[var(--bg-surface)]">
+            <button onclick="clearAllFilters()" class="w-full py-5 rounded-3xl text-[11px] font-black uppercase tracking-widest bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white transition-all">Emergency Flush</button>
         </div>
     </aside>
 
@@ -347,9 +370,9 @@
             const dot = document.getElementById('apiStatusDot');
             const text = document.getElementById('apiStatusText');
             dot.className = "status-dot";
-            if (state === 'loading') { dot.classList.add('status-loading'); text.textContent = "Connecting Matrix..."; }
-            else if (state === 'success') { dot.classList.add('status-success'); text.textContent = "Live Sync Active"; }
-            else if (state === 'error') { dot.classList.add('status-error'); text.textContent = "Offline (Local Backup)"; }
+            if (state === 'loading') { dot.classList.add('status-loading'); text.textContent = "Linking Imperial Matrix..."; }
+            else if (state === 'success') { dot.classList.add('status-success'); text.textContent = "Live Stream Verified"; }
+            else if (state === 'error') { dot.classList.add('status-error'); text.textContent = "Offline (Archive Backup)"; }
         }
 
         async function loadShopData() {
@@ -364,8 +387,8 @@
                 ingredients = resI; drops = resD; htoi = resH;
 
                 try {
-                    // Using a CORS proxy to fix the "Offline" issue
-                    const wynnRes = await fetch('https://corsproxy.io/?' + encodeURIComponent('https://api.wynncraft.com/v3/item/database?fullResult'));
+                    // Optimized CORS bypass using a reliable provider
+                    const wynnRes = await fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent('https://api.wynncraft.com/v3/item/database?fullResult'));
                     if (wynnRes.ok) {
                         wynnItems = await wynnRes.json();
                         setApiStatus('success');
@@ -391,81 +414,107 @@
                 });
             }
 
-            const globalMobCoords = {};
-            const addMobCoords = (mobName, coords) => {
-                if (!mobName) return;
-                const key = mobName.trim().toLowerCase(); // TRIMMED
-                if (!globalMobCoords[key]) globalMobCoords[key] = [];
-                const arr = Array.isArray(coords) ? coords : [coords].filter(x => x);
-                arr.forEach(c => {
-                    if (isNum(c.x) && isNum(c.z)) {
-                        const nx = Number(c.x), ny = isNum(c.y) ? Number(c.y) : 0, nz = Number(c.z);
-                        if (Math.abs(nx) + Math.abs(ny) + Math.abs(nz) === 0) return; 
-                        const obj = { x: nx, y: isNum(c.y) ? ny : null, z: nz };
-                        if (!globalMobCoords[key].some(ex => ex.x === obj.x && ex.z === obj.z)) globalMobCoords[key].push(obj);
-                    }
-                });
+            // STAGE 1: Aggressive Entity Normalization
+            // Logic: One card per Unique Entity Name. No duplicates allowed.
+            const entityRegistry = {};
+
+            const addCoordUnique = (entityKey, c) => {
+                if (!isNum(c.x) || !isNum(c.z)) return;
+                const nx = Number(c.x), ny = isNum(c.y) ? Number(c.y) : 0, nz = Number(c.z);
+                if (Math.abs(nx) + Math.abs(ny) + Math.abs(nz) === 0) return; // Block 0,0,0
+                
+                const coordObj = { x: nx, y: isNum(c.y) ? ny : null, z: nz };
+                const coordKey = `${coordObj.x}|${coordObj.y}|${coordObj.z}`;
+                
+                if (!entityRegistry[entityKey].uniqueCoords.has(coordKey)) {
+                    entityRegistry[entityKey].uniqueCoords.add(coordKey);
+                    entityRegistry[entityKey].coords.push(coordObj);
+                }
             };
 
-            Object.values(dropsMap).forEach(arr => {
-                if (Array.isArray(arr)) arr.forEach(d => addMobCoords(d.name, d.details?.coords));
-            });
-            htoiArray.forEach(h => {
-                Object.keys(h).forEach(prop => {
-                    if (['name', 'id', 'level'].includes(prop)) return;
-                    try {
-                        const parsed = JSON.parse(h[prop]);
-                        if (Array.isArray(parsed)) parsed.forEach(e => addMobCoords(e.name || e.description, e.location_coords || e.coords));
-                    } catch(e) {}
-                });
-            });
-
-            const sourceRegistry = {};
-            const registerSource = (mobName, location, screenshot, itemName) => {
-                if (!mobName) return;
-                const sName = mobName.trim(); // TRIMMED
-                const sLoc = location?.trim() || "Undisclosed Sector";
-                const sourceKey = `${sName.toLowerCase()}|${sLoc.toLowerCase()}`;
-
-                if (!sourceRegistry[sourceKey]) {
-                    sourceRegistry[sourceKey] = {
-                        name: sName,
-                        location: sLoc,
+            const ensureEntity = (name) => {
+                const cleanName = name.trim();
+                const key = cleanName.toLowerCase();
+                if (!entityRegistry[key]) {
+                    entityRegistry[key] = {
+                        name: cleanName,
+                        locations: new Set(),
                         screenshots: new Set(),
                         loot: new Set(),
-                        coords: globalMobCoords[sName.toLowerCase()] || []
+                        coords: [],
+                        uniqueCoords: new Set()
                     };
                 }
-                if (screenshot) sourceRegistry[sourceKey].screenshots.add(screenshot);
-                if (itemName) sourceRegistry[sourceKey].loot.add(itemName.trim().toLowerCase());
+                return key;
             };
 
+            // Parse drops.json
             Object.keys(dropsMap).forEach(itemName => {
-                const arr = dropsMap[itemName];
-                if (Array.isArray(arr)) arr.forEach(d => registerSource(d.name, d.details?.location, d.details?.screenshots, itemName));
+                const drops = dropsMap[itemName];
+                if (!Array.isArray(drops)) return;
+                drops.forEach(d => {
+                    if (!d.name) return;
+                    const key = ensureEntity(d.name);
+                    if (d.details?.location) entityRegistry[key].locations.add(d.details.location.trim());
+                    if (d.details?.screenshots) entityRegistry[key].screenshots.add(d.details.screenshots);
+                    entityRegistry[key].loot.add(itemName.trim().toLowerCase());
+                    
+                    if (d.details?.coords) {
+                        const cs = Array.isArray(d.details.coords) ? d.details.coords : [d.details.coords];
+                        cs.forEach(c => addCoordUnique(key, c));
+                    }
+                });
             });
+
+            // Parse htoi.json
             htoiArray.forEach(h => {
                 const itemName = h.name;
                 Object.keys(h).forEach(prop => {
                     if (['name', 'id', 'level'].includes(prop)) return;
                     try {
                         const parsed = JSON.parse(h[prop]);
-                        if (Array.isArray(parsed)) parsed.forEach(e => registerSource(e.name || e.description || prop.toUpperCase(), e.location, e.screenshots, itemName));
+                        if (Array.isArray(parsed)) {
+                            parsed.forEach(e => {
+                                const name = e.name || e.description || prop.toUpperCase();
+                                const key = ensureEntity(name);
+                                if (e.location) entityRegistry[key].locations.add(e.location.trim());
+                                if (e.screenshots) entityRegistry[key].screenshots.add(e.screenshots);
+                                if (itemName) entityRegistry[key].loot.add(itemName.trim().toLowerCase());
+                                
+                                const cs = e.location_coords || e.coords;
+                                if (cs) {
+                                    const csArr = Array.isArray(cs) ? cs : [cs];
+                                    csArr.forEach(c => addCoordUnique(key, c));
+                                }
+                            });
+                        }
                     } catch(e) {}
                 });
             });
 
-            const finalSources = Object.values(sourceRegistry).map(src => {
-                const lootDetails = Array.from(src.loot).map(lootName => {
+            // STAGE 2: Flatten Registry into Source Data
+            SOURCE_DATA = Object.values(entityRegistry).map(ent => {
+                const lootDetails = Array.from(ent.loot).map(lootName => {
                     const info = GLOBAL_ITEM_LOOKUP[lootName] || { originalName: lootName, stats: [], lvl: 0, tier: -1, profs: [] };
                     return { name: info.originalName, level: Number(info.lvl) || 0, tier: info.tier !== undefined ? Number(info.tier) : -1, professions: info.profs || [], stats: info.stats || [] };
                 });
                 lootDetails.sort((a,b) => b.level - a.level);
-                const searchStr = [src.name, src.location, ...lootDetails.map(l => l.name)].join(' ').toLowerCase();
-                return { ...src, loot: lootDetails, searchStr, screenshots: Array.from(src.screenshots) };
+                
+                const locArr = Array.from(ent.locations);
+                const locationStr = locArr.length > 0 ? locArr.join(' | ') : "Undisclosed Sector";
+
+                const searchStr = [ent.name, locationStr, ...lootDetails.map(l => l.name)].join(' ').toLowerCase();
+                
+                return {
+                    name: ent.name,
+                    location: locationStr,
+                    screenshots: Array.from(ent.screenshots).flatMap(s => s.split(',')).map(s => s.trim()),
+                    loot: lootDetails,
+                    coords: ent.coords,
+                    searchStr
+                };
             });
 
-            SOURCE_DATA = finalSources;
             computeState();
             render();
         }
@@ -475,9 +524,9 @@
             STATE.allProfs = [...new Set(allItems.flatMap(i => i.profs || []))].sort();
             STATE.allPosStats = [...new Set(allItems.flatMap(i => (i.stats || []).filter(s => s.pos).map(s => s.label)))].sort();
             STATE.allNegStats = [...new Set(allItems.flatMap(i => (i.stats || []).filter(s => !s.pos).map(s => s.label)))].sort();
-            document.getElementById('posStat1').innerHTML = '<option value="">All Attributes</option>' + STATE.allPosStats.map(s => `<option value="${s}">${s}</option>`).join('');
-            document.getElementById('negStat1').innerHTML = '<option value="">All Attributes</option>' + STATE.allNegStats.map(s => `<option value="${s}">${s}</option>`).join('');
-            document.getElementById('professionFilters').innerHTML = STATE.allProfs.map(p => `<button data-prof="${p}" class="prof-chip input-base px-3 py-2 rounded-lg text-[10px] font-bold uppercase tracking-wider">${p}</button>`).join('');
+            document.getElementById('posStat1').innerHTML = '<option value="">All Buffs</option>' + STATE.allPosStats.map(s => `<option value="${s}">${s}</option>`).join('');
+            document.getElementById('negStat1').innerHTML = '<option value="">All Debuffs</option>' + STATE.allNegStats.map(s => `<option value="${s}">${s}</option>`).join('');
+            document.getElementById('professionFilters').innerHTML = STATE.allProfs.map(p => `<button data-prof="${p}" class="prof-chip input-base px-4 py-3 rounded-xl text-[10px] font-black uppercase tracking-wider">${p}</button>`).join('');
         }
 
         function filterData() {
@@ -503,7 +552,7 @@
             const grid = document.getElementById('sourceGrid'), info = document.getElementById('resultsInfo');
             const data = filterData();
             const view = data.slice(0, 60);
-            info.textContent = data.length > 0 ? `${data.length} Strategic Sources Synced` : "Matrix Idle: Waiting for Signature";
+            info.textContent = data.length > 0 ? `${data.length} Integrated Signatures Identified` : "Awaiting Imperial Authorization...";
             if (view.length === 0) { grid.innerHTML = ""; document.getElementById('emptyState').classList.remove('hidden'); }
             else {
                 document.getElementById('emptyState').classList.add('hidden');
@@ -515,12 +564,12 @@
                     }).join('');
                     const lootHtml = src.loot.map(l => `
                         <div class="loot-pill">
-                            <div class="flex justify-between items-start mb-3">
+                            <div class="flex justify-between items-start mb-4">
                                 <div class="overflow-hidden">
-                                    <h4 class="text-[11px] font-black uppercase truncate text-[var(--text-primary)] opacity-80">${l.name}</h4>
-                                    <div class="flex items-center gap-2 mt-1">
-                                        <span class="mono text-[8px] font-bold" style="color: var(--accent-hover)">Lv.${l.level}</span>
-                                        <div class="flex gap-0.5 text-[#e9c46a] text-[8px]">${l.tier >= 0 ? Array(l.tier).fill('★').join('') : ''}</div>
+                                    <h4 class="text-[12px] font-black uppercase truncate text-[var(--text-primary)]">${l.name}</h4>
+                                    <div class="flex items-center gap-3 mt-1.5">
+                                        <span class="mono text-[9px] font-black" style="color: var(--accent-hover)">LV.${l.level}</span>
+                                        <div class="flex gap-1 text-amber-500 text-[9px]">${l.tier >= 0 ? Array(l.tier).fill('★').join('') : ''}</div>
                                     </div>
                                 </div>
                             </div>
@@ -530,23 +579,23 @@
                         </div>
                     `).join('');
                     return `
-                    <div class="archive-card p-8">
-                        <div class="flex justify-between items-start mb-6">
+                    <div class="archive-card p-10">
+                        <div class="flex justify-between items-start mb-8">
                             <div class="flex-1 overflow-hidden">
-                                <h3 class="text-base font-black tracking-tight truncate uppercase pr-2">${src.name}</h3>
-                                <div class="flex items-center gap-2 mt-1.5 opacity-60">
-                                    <i class="fas fa-map-marker-alt text-[10px]"></i>
-                                    <p class="text-[10px] font-bold truncate uppercase tracking-widest">${src.location}</p>
+                                <h3 class="text-lg font-black tracking-tighter truncate uppercase pr-4">${src.name}</h3>
+                                <div class="flex items-center gap-2 mt-2 opacity-60">
+                                    <i class="fas fa-compass text-[10px]"></i>
+                                    <p class="text-[10px] font-black truncate uppercase tracking-widest leading-none">${src.location}</p>
                                 </div>
                             </div>
-                            ${src.screenshots.length > 0 ? `<a href="${src.screenshots[0].split(',')[0]}" target="_blank" class="w-10 h-10 flex items-center justify-center rounded-2xl bg-[var(--accent)] text-white hover:opacity-80 transition-all shadow-sm"><i class="fas fa-camera text-xs"></i></a>` : ''}
+                            ${src.screenshots.length > 0 ? `<a href="${src.screenshots[0]}" target="_blank" class="w-12 h-12 flex items-center justify-center rounded-2xl bg-[var(--accent)] text-white hover:scale-110 transition-all shadow-lg"><i class="fas fa-camera text-sm"></i></a>` : ''}
                         </div>
-                        <div class="mb-8">
-                            <p class="text-[9px] font-black uppercase tracking-[0.2em] text-[var(--text-secondary)] mb-4 opacity-40">Tactical Geolocation</p>
-                            <div class="flex flex-wrap gap-2.5">${coordsHtml || '<span class="text-[10px] font-bold opacity-10 uppercase italic">Coordinates Unlisted</span>'}</div>
+                        <div class="mb-10">
+                            <p class="text-[9px] font-black uppercase tracking-[0.25em] text-[var(--text-secondary)] mb-5 opacity-40">Tactical Geolocation</p>
+                            <div class="flex flex-wrap gap-3">${coordsHtml || '<span class="text-[10px] font-black opacity-10 uppercase italic tracking-widest">Signal Missing</span>'}</div>
                         </div>
-                        <div class="flex-1 overflow-y-auto max-h-[340px] custom-scrollbar pr-2">
-                            <p class="text-[9px] font-black uppercase tracking-[0.2em] text-[var(--text-secondary)] mb-4 opacity-40">Artifacts Detected (${src.loot.length})</p>
+                        <div class="flex-1 overflow-y-auto max-h-[380px] custom-scrollbar pr-3">
+                            <p class="text-[9px] font-black uppercase tracking-[0.25em] text-[var(--text-secondary)] mb-5 opacity-40">Inventory Link (${src.loot.length})</p>
                             ${lootHtml}
                         </div>
                     </div>
@@ -557,36 +606,59 @@
 
         function updateTheme() {
             const root = document.documentElement;
-            // Palette Definitions
             const palettes = {
-                sage: { accent: '#a3b18a', hover: '#588157', rgb: '163, 177, 138' },
-                ocean: { accent: '#72a1b1', hover: '#457b9d', rgb: '114, 161, 177' },
-                crimson: { accent: '#b17272', hover: '#8a4a4a', rgb: '177, 114, 114' },
-                amber: { accent: '#b19672', hover: '#8a704a', rgb: '177, 150, 114' },
-                lavender: { accent: '#8c72b1', hover: '#5b4a8a', rgb: '140, 114, 177' }
+                sage: { hue: 80, sat: 20, acc: '#a3b18a', hov: '#588157' },
+                ocean: { hue: 200, sat: 25, acc: '#72a1b1', hov: '#457b9d' },
+                crimson: { hue: 0, sat: 25, acc: '#b17272', hov: '#8a4a4a' },
+                amber: { hue: 35, sat: 25, acc: '#b19672', hov: '#8a704a' },
+                lavender: { hue: 260, sat: 20, acc: '#8c72b1', hov: '#5b4a8a' }
             };
             const p = palettes[STATE.palette];
-            root.style.setProperty('--accent', p.accent);
-            root.style.setProperty('--accent-hover', p.hover);
-            root.style.setProperty('--accent-rgb', p.rgb);
+            
+            // Adjust semantic colors based on Luminance level (1-5)
+            let b, c, s, t, sec, brd;
+            switch(STATE.brightness) {
+                case 1: // Void
+                    b = `hsl(${p.hue}, ${p.sat}%, 4%)`;
+                    c = `hsl(${p.hue}, ${p.sat}%, 8%)`;
+                    s = `hsl(${p.hue}, ${p.sat}%, 12%)`;
+                    t = '#ffffff'; sec = '#717171'; brd = 'rgba(255,255,255,0.08)';
+                    break;
+                case 2: // Midnight
+                    b = `hsl(${p.hue}, ${p.sat}%, 12%)`;
+                    c = `hsl(${p.hue}, ${p.sat}%, 16%)`;
+                    s = `hsl(${p.hue}, ${p.sat}%, 20%)`;
+                    t = '#e0e0e0'; sec = '#9ca3af'; brd = 'rgba(255,255,255,0.05)';
+                    break;
+                case 3: // Neutral (Standard)
+                    b = `hsl(${p.hue}, ${p.sat}%, 94%)`;
+                    c = `#ffffff`;
+                    s = `hsl(${p.hue}, ${p.sat}%, 97%)`;
+                    t = '#4a4641'; sec = '#8a847c'; brd = 'rgba(0,0,0,0.08)';
+                    break;
+                case 4: // Daylight
+                    b = `hsl(${p.hue}, ${p.sat}%, 97%)`;
+                    c = `#ffffff`;
+                    s = `#f9f9f9`;
+                    t = '#1f2937'; sec = '#6b7280'; brd = 'rgba(0,0,0,0.05)';
+                    break;
+                case 5: // Ivory
+                    b = `#fcfcfc`;
+                    c = `#ffffff`;
+                    s = `#ffffff`;
+                    t = '#000000'; sec = '#4b5563'; brd = 'rgba(0,0,0,0.03)';
+                    break;
+            }
 
-            // Luminance Levels
-            const levels = [
-                { body: '#0a0a0a', card: '#121212', surf: '#181818', text: '#e0e0e0', sec: '#717171', border: 'rgba(255,255,255,0.06)' }, // 1: Void
-                { body: '#1a1c23', card: '#252932', surf: '#2d323d', text: '#d1d5db', sec: '#9ca3af', border: 'rgba(255,255,255,0.04)' }, // 2: Midnight
-                { body: '#f5f2ed', card: '#ffffff', surf: '#faf8f5', text: '#4a4641', sec: '#8a847c', border: 'rgba(0,0,0,0.06)' },    // 3: Neutral
-                { body: '#ffffff', card: '#f9f9f9', surf: '#f1f1f1', text: '#1f2937', sec: '#6b7280', border: 'rgba(0,0,0,0.04)' },    // 4: Daylight
-                { body: '#fdfdfd', card: '#ffffff', surf: '#fcfcfc', text: '#000000', sec: '#4b5563', border: 'rgba(0,0,0,0.02)' }     // 5: Ivory
-            ];
-            const l = levels[STATE.brightness - 1];
-            root.style.setProperty('--bg-body', l.body);
-            root.style.setProperty('--bg-card', l.card);
-            root.style.setProperty('--bg-surface', l.surf);
-            root.style.setProperty('--text-primary', l.text);
-            root.style.setProperty('--text-secondary', l.sec);
-            root.style.setProperty('--border', l.border);
+            root.style.setProperty('--bg-body', b);
+            root.style.setProperty('--bg-card', c);
+            root.style.setProperty('--bg-surface', s);
+            root.style.setProperty('--text-primary', t);
+            root.style.setProperty('--text-secondary', sec);
+            root.style.setProperty('--border', brd);
+            root.style.setProperty('--accent', p.acc);
+            root.style.setProperty('--accent-hover', p.hov);
 
-            // Update Preset Dots UI
             document.querySelectorAll('#brightnessPresets button').forEach(b => b.classList.toggle('active', parseInt(b.dataset.level) === STATE.brightness));
             document.querySelectorAll('#palettePresets button').forEach(b => b.classList.toggle('active', b.dataset.palette === STATE.palette));
         }
@@ -600,9 +672,9 @@
             STATE.tiers.forEach(t => tags.push({ id: 'tier-'+t, val: `Tier ${t}` }));
             STATE.profs.forEach(p => tags.push({ id: 'prof-'+p, val: p }));
             container.innerHTML = tags.map(t => `
-                <div class="flex items-center gap-3 px-4 py-2 bg-[var(--accent)]/10 text-[var(--accent-hover)] border border-[var(--accent)]/20 rounded-xl text-[10px] font-black uppercase tracking-wider">
+                <div class="flex items-center gap-3 px-5 py-2.5 bg-[var(--accent)]/10 text-[var(--accent-hover)] border border-[var(--accent)]/20 rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-sm">
                     ${t.val}
-                    <button onclick="removeFilter('${t.id}')" class="hover:opacity-60 transition-colors"><i class="fas fa-times"></i></button>
+                    <button onclick="removeFilter('${t.id}')" class="hover:opacity-50 transition-opacity"><i class="fas fa-times"></i></button>
                 </div>
             `).join('');
         }
@@ -612,9 +684,11 @@
             const cmd = hasY ? `/compass ${x}, ${y}, ${z}` : `/compass ${x}, ${z}`;
             const el = document.createElement('textarea'); el.value = cmd; el.style.position = "fixed"; el.style.left = "-9999px"; 
             document.body.appendChild(el); el.select();
-            try { document.execCommand('copy'); const t = document.getElementById('toast'); t.textContent = "COPIED: " + cmd; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2500); } catch(e) {}
+            try { document.execCommand('copy'); showToast("COPIED: " + cmd); } catch(e) {}
             document.body.removeChild(el);
         }
+
+        function showToast(m) { const t = document.getElementById('toast'); t.textContent = m; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2500); }
 
         function removeFilter(id) {
             if (id === 'search') { STATE.search = ""; document.getElementById('globalSearch').value = ""; }
@@ -628,25 +702,16 @@
         function clearAllFilters() {
             STATE.search = ""; STATE.tiers.clear(); STATE.profs.clear(); STATE.interestOnly = false; STATE.coordsOnly = false; STATE.minLv = 0; STATE.maxLv = 115;
             document.getElementById('globalSearch').value = "";
-            document.querySelectorAll('.active').forEach(e => { if(!e.classList.contains('preset-dot')) e.classList.remove('active'); });
+            document.querySelectorAll('.active').forEach(e => { if(!e.classList.contains('preset-dot') && !e.classList.contains('brightness-dot')) e.classList.remove('active'); });
             document.querySelectorAll('input[type="number"]').forEach(i => i.value = "");
             render();
         }
 
-        // UI Listeners
         document.getElementById('toggleFilters').addEventListener('click', () => { document.getElementById('filterSidebar').classList.add('open'); document.getElementById('sidebarOverlay').classList.replace('opacity-0', 'opacity-100'); document.getElementById('sidebarOverlay').classList.remove('pointer-events-none'); });
         document.getElementById('closeSidebar').addEventListener('click', () => { document.getElementById('filterSidebar').classList.remove('open'); document.getElementById('sidebarOverlay').classList.replace('opacity-100', 'opacity-0'); document.getElementById('sidebarOverlay').classList.add('pointer-events-none'); });
         document.getElementById('sidebarOverlay').addEventListener('click', () => { document.getElementById('filterSidebar').classList.remove('open'); document.getElementById('sidebarOverlay').classList.replace('opacity-100', 'opacity-0'); document.getElementById('sidebarOverlay').classList.add('pointer-events-none'); });
-
-        document.getElementById('brightnessPresets').addEventListener('click', e => {
-            const btn = e.target.closest('button'); if(!btn) return;
-            STATE.brightness = parseInt(btn.dataset.level); updateTheme();
-        });
-        document.getElementById('palettePresets').addEventListener('click', e => {
-            const btn = e.target.closest('button'); if(!btn) return;
-            STATE.palette = btn.dataset.palette; updateTheme();
-        });
-
+        document.getElementById('brightnessPresets').addEventListener('click', e => { const btn = e.target.closest('button'); if(!btn) return; STATE.brightness = parseInt(btn.dataset.level); updateTheme(); });
+        document.getElementById('palettePresets').addEventListener('click', e => { const btn = e.target.closest('button'); if(!btn) return; STATE.palette = btn.dataset.palette; updateTheme(); });
         document.getElementById('globalSearch').addEventListener('input', debounce(e => { STATE.search = e.target.value; render(); }, 250));
         document.getElementById('minLevel').addEventListener('input', e => { STATE.minLv = Number(e.target.value) || 0; render(); });
         document.getElementById('maxLevel').addEventListener('input', e => { STATE.maxLv = Number(e.target.value) || 115; render(); });
