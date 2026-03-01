@@ -12,7 +12,6 @@
         :root {
             /* Dynamic variables controlled by Theme Engine */
             --bg-body: #f5f2ed;
-            --bg-card: #ffffff;
             --bg-surface: #faf8f5;
             --text-primary: #1e293b;
             --text-secondary: #64748b;
@@ -21,6 +20,13 @@
             --border: rgba(0, 0, 0, 0.12);
             --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
             
+            /* STATIC CARD PALETTE (Always the same) */
+            --bg-card-fixed: #2e2e2e;
+            --bg-pill-fixed: #383838;
+            --text-card-fixed: #f8fafc;
+            --text-card-dim: #94a3b8;
+            --border-card-fixed: rgba(255, 255, 255, 0.1);
+
             --status-red: #ef4444;
             --status-orange: #f59e0b;
             --status-green: #10b981;
@@ -40,12 +46,14 @@
         ::-webkit-scrollbar-track { background: var(--bg-body); }
         ::-webkit-scrollbar-thumb { background: var(--text-secondary); opacity: 0.3; border-radius: 10px; }
 
+        /* FIXED CARD STYLING */
         .archive-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
+            background: var(--bg-card-fixed);
+            color: var(--text-card-fixed);
+            border: 1px solid var(--border-card-fixed);
             border-radius: 24px;
-            box-shadow: var(--shadow);
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s, background-color 0.4s;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s;
             display: flex;
             flex-direction: column;
             overflow: hidden;
@@ -54,7 +62,7 @@
         .archive-card:hover {
             transform: translateY(-8px);
             border-color: var(--accent);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.4);
         }
 
         .input-base {
@@ -79,9 +87,9 @@
         }
 
         .coord-btn {
-            background: var(--bg-surface);
-            color: var(--text-primary);
-            border: 1px solid var(--border);
+            background: var(--bg-pill-fixed);
+            color: var(--text-card-fixed);
+            border: 1px solid var(--border-card-fixed);
             transition: all 0.2s;
             font-size: 10px;
             font-weight: 800;
@@ -96,7 +104,7 @@
         }
 
         #filterSidebar {
-            background: var(--bg-card);
+            background: var(--bg-body);
             border-left: 1px solid var(--border);
             transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
@@ -104,8 +112,8 @@
         #filterSidebar.open { transform: translateX(0); }
 
         .loot-pill {
-            background: var(--bg-surface);
-            border: 1px solid var(--border);
+            background: var(--bg-pill-fixed);
+            border: 1px solid var(--border-card-fixed);
             border-radius: 20px;
             padding: 16px;
             margin-bottom: 12px;
@@ -117,8 +125,8 @@
             font-weight: 800;
             padding: 4px 8px;
             border-radius: 8px;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
+            background: var(--bg-card-fixed);
+            border: 1px solid var(--border-card-fixed);
         }
 
         .toggle-btn.active {
@@ -131,8 +139,8 @@
             bottom: 2.5rem;
             left: 50%;
             transform: translateX(-50%) translateY(100px);
-            background: var(--bg-card);
-            color: var(--text-primary);
+            background: var(--bg-card-fixed);
+            color: white;
             padding: 1.2rem 2.5rem;
             border-radius: 20px;
             font-weight: 800;
@@ -265,7 +273,7 @@
 
                 <div>
                     <label class="text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest mb-5 block">Atmospheric Palette</label>
-                    <div class="flex justify-between items-center" id="palettePresets">
+                    <div class="flex justify-between items-center px-1" id="palettePresets">
                         <button data-palette="gray" class="preset-dot bg-[#71717a]" title="Gray (Neutral)"></button>
                         <button data-palette="red" class="preset-dot bg-[#ef4444]" title="Crimson"></button>
                         <button data-palette="purple" class="preset-dot bg-[#a855f7]" title="Mystic"></button>
@@ -372,7 +380,7 @@
         async function loadShopData() {
             setApiStatus('loading');
             
-            // Render local instantly
+            // Phase 1: Local Load
             try {
                 const [resI, resD, resH] = await Promise.all([
                     fetch('ingredients.json').then(r => r.ok ? r.json() : {}),
@@ -382,7 +390,7 @@
                 processJsonData(resI, resD, resH, {}); 
             } catch (e) { console.error("Local Load Fail", e); }
 
-            // Background live sync
+            // Phase 2: Background sync
             try {
                 const wynnRes = await fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent('https://api.wynncraft.com/v3/item/database?fullResult'));
                 if (wynnRes.ok) {
@@ -417,7 +425,6 @@
             const entityRegistry = {};
 
             const getSanitizedName = (name) => {
-                // Strips titles like "Dead Miner, Ancient ..." back to base name
                 return name.split(',')[0].trim();
             };
 
@@ -490,7 +497,7 @@
                 });
             });
 
-            // Secondary Stitch Pass: Merge entities that share coordinates
+            // Stitch Logic
             let flattened = Object.values(entityRegistry);
             let merged = true;
             while(merged) {
@@ -588,9 +595,9 @@
                         <div class="loot-pill">
                             <div class="flex justify-between items-start mb-4">
                                 <div class="overflow-hidden">
-                                    <h4 class="text-[12px] font-black uppercase truncate text-[var(--text-primary)]">${l.name}</h4>
+                                    <h4 class="text-[12px] font-black uppercase truncate" style="color: var(--text-card-fixed)">${l.name}</h4>
                                     <div class="flex items-center gap-3 mt-1.5">
-                                        <span class="mono text-[9px] font-black" style="color: var(--accent-hover)">LV.${l.level}</span>
+                                        <span class="mono text-[9px] font-black" style="color: var(--accent)">LV.${l.level}</span>
                                         <div class="flex gap-1 text-amber-500 text-[9px]">${l.tier >= 0 ? Array(l.tier).fill('★').join('') : ''}</div>
                                     </div>
                                 </div>
@@ -604,20 +611,20 @@
                     <div class="archive-card p-10">
                         <div class="flex justify-between items-start mb-8">
                             <div class="flex-1 overflow-hidden">
-                                <h3 class="text-lg font-black tracking-tighter truncate uppercase pr-4">${src.name}</h3>
+                                <h3 class="text-lg font-black tracking-tighter truncate uppercase pr-4" style="color: var(--text-card-fixed)">${src.name}</h3>
                                 <div class="flex items-center gap-2 mt-2 opacity-70">
                                     <i class="fas fa-compass text-[10px]"></i>
-                                    <p class="text-[10px] font-bold truncate uppercase tracking-widest leading-none">${src.location}</p>
+                                    <p class="text-[10px] font-bold truncate uppercase tracking-widest leading-none" style="color: var(--text-card-dim)">${src.location}</p>
                                 </div>
                             </div>
                             ${src.screenshots.length > 0 ? `<a href="${src.screenshots[0]}" target="_blank" class="w-12 h-12 flex items-center justify-center rounded-2xl bg-[var(--accent)] text-white hover:opacity-80 transition-all shadow-lg"><i class="fas fa-camera text-sm"></i></a>` : ''}
                         </div>
                         <div class="mb-10">
-                            <p class="text-[9px] font-black uppercase tracking-[0.25em] text-[var(--text-secondary)] mb-5 opacity-60">Tactical Geolocation</p>
+                            <p class="text-[9px] font-black uppercase tracking-[0.25em] mb-5 opacity-60" style="color: var(--text-card-dim)">Tactical Geolocation</p>
                             <div class="flex flex-wrap gap-3">${coordsHtml || '<span class="text-[10px] font-black opacity-20 uppercase italic tracking-widest">Signal Missing</span>'}</div>
                         </div>
                         <div class="flex-1 overflow-y-auto max-h-[380px] custom-scrollbar pr-3">
-                            <p class="text-[9px] font-black uppercase tracking-[0.25em] text-[var(--text-secondary)] mb-5 opacity-60">Linked Artifacts (${src.loot.length})</p>
+                            <p class="text-[9px] font-black uppercase tracking-[0.25em] mb-5 opacity-60" style="color: var(--text-card-dim)">Linked Artifacts (${src.loot.length})</p>
                             ${lootHtml}
                         </div>
                     </div>
@@ -628,36 +635,35 @@
         function updateTheme() {
             const root = document.documentElement;
             const palettes = {
-                gray: { h: 240, s: 5, acc: '#52525b', hov: '#18181b' },
-                red: { h: 0, s: 45, acc: '#ef4444', hov: '#991b1b' },
-                purple: { h: 270, s: 45, acc: '#a855f7', hov: '#6b21a8' },
-                blue: { h: 210, s: 50, acc: '#3b82f6', hov: '#1d4ed8' },
-                green: { h: 145, s: 40, acc: '#10b981', hov: '#065f46' }
+                gray: { h: 220, s: 5, acc: '#52525b', hov: '#27272a' },
+                red: { h: 0, s: 35, acc: '#ef4444', hov: '#991b1b' },
+                purple: { h: 265, s: 35, acc: '#a855f7', hov: '#6b21a8' },
+                blue: { h: 215, s: 40, acc: '#3b82f6', hov: '#1d4ed8' },
+                green: { h: 145, s: 30, acc: '#10b981', hov: '#065f46' }
             };
             const p = palettes[STATE.palette];
             
-            let b, c, s, t, sec, brd;
-            // Calibrated ramp to prevent white-out at levels 4-5
+            let b, s, t, sec, brd;
+            // Refined ramp to fix wash-out issues at levels 4-5
             switch(STATE.brightness) {
                 case 1: 
-                    b = `hsl(${p.h}, ${p.s}%, 5%)`; c = `hsl(${p.h}, ${p.s}%, 9%)`; s = `hsl(${p.h}, ${p.s}%, 13%)`;
-                    t = '#ffffff'; sec = '#94a3b8'; brd = 'rgba(255,255,255,0.12)'; break;
+                    b = `hsl(${p.h}, ${p.s}%, 5%)`; s = `hsl(${p.h}, ${p.s}%, 12%)`;
+                    t = '#ffffff'; sec = '#94a3b8'; brd = 'rgba(255,255,255,0.1)'; break;
                 case 2:
-                    b = `hsl(${p.h}, ${p.s}%, 15%)`; c = `hsl(${p.h}, ${p.s}%, 19%)`; s = `hsl(${p.h}, ${p.s}%, 23%)`;
-                    t = '#f8fafc'; sec = '#94a3b8'; brd = 'rgba(255,255,255,0.08)'; break;
+                    b = `hsl(${p.h}, ${p.s}%, 18%)`; s = `hsl(${p.h}, ${p.s}%, 26%)`;
+                    t = '#f8fafc'; sec = '#94a3b8'; brd = 'rgba(255,255,255,0.06)'; break;
                 case 3: 
-                    b = `hsl(${p.h}, ${p.s}%, 45%)`; c = `hsl(${p.h}, ${p.s}%, 52%)`; s = `hsl(${p.h}, ${p.s}%, 56%)`;
-                    t = '#ffffff'; sec = '#cbd5e1'; brd = 'rgba(255,255,255,0.2)'; break;
+                    b = `hsl(${p.h}, ${p.s}%, 45%)`; s = `hsl(${p.h}, ${p.s}%, 54%)`;
+                    t = '#ffffff'; sec = '#cbd5e1'; brd = 'rgba(255,255,255,0.15)'; break;
                 case 4:
-                    b = `hsl(${p.h}, ${p.s}%, 78%)`; c = '#ffffff'; s = `hsl(${p.h}, ${p.s}%, 85%)`;
-                    t = '#0f172a'; sec = '#475569'; brd = 'rgba(0,0,0,0.12)'; break;
+                    b = `hsl(${p.h}, ${p.s}%, 70%)`; s = `hsl(${p.h}, ${p.s}%, 80%)`;
+                    t = '#0f172a'; sec = '#475569'; brd = 'rgba(0,0,0,0.1)'; break;
                 case 5:
-                    b = `hsl(${p.h}, ${p.s}%, 92%)`; c = '#ffffff'; s = '#fcfcfc';
+                    b = `hsl(${p.h}, ${p.s}%, 82%)`; s = `hsl(${p.h}, ${p.s}%, 92%)`;
                     t = '#000000'; sec = '#4b5563'; brd = 'rgba(0,0,0,0.15)'; break;
             }
 
             root.style.setProperty('--bg-body', b);
-            root.style.setProperty('--bg-card', c);
             root.style.setProperty('--bg-surface', s);
             root.style.setProperty('--text-primary', t);
             root.style.setProperty('--text-secondary', sec);
