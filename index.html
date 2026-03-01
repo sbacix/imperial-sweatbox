@@ -148,7 +148,6 @@
         }
         #toast.show { transform: translateX(-50%) translateY(0); }
 
-        /* API Status Dot */
         .status-dot {
             width: 10px;
             height: 10px;
@@ -334,7 +333,6 @@
             setApiStatus('loading');
             
             try {
-                // Always try to load local data first for immediate functionality
                 const [resI, resD, resH] = await Promise.all([
                     fetch('ingredients.json').then(r => r.ok ? r.json() : {}),
                     fetch('drops.json').then(r => r.ok ? r.json() : {}),
@@ -342,7 +340,6 @@
                 ]);
                 ingredients = resI; drops = resD; htoi = resH;
 
-                // Attempt live API with timeout
                 try {
                     const controller = new AbortController();
                     const timeoutId = setTimeout(() => controller.abort(), 8000);
@@ -355,11 +352,9 @@
                         setApiStatus('error');
                     }
                 } catch(apiErr) {
-                    console.warn("API Offline", apiErr);
                     setApiStatus('error');
                 }
             } catch (e) { 
-                console.error("Critical Data Load Error", e);
                 setApiStatus('error');
             }
             processJsonData(ingredients, drops, htoi, wynnItems);
@@ -367,13 +362,11 @@
 
         function processJsonData(ingredients, dropsMap, htoiArray, wynnItems) {
             GLOBAL_ITEM_LOOKUP = {};
-            // Base local ingredients
             Object.keys(ingredients).forEach(k => {
                 const lower = k.trim().toLowerCase();
                 GLOBAL_ITEM_LOOKUP[lower] = { ...ingredients[k], originalName: k };
             });
 
-            // Merge in Wynn API data for new items
             if (wynnItems) {
                 Object.keys(wynnItems).forEach(k => {
                     const lower = k.trim().toLowerCase();
@@ -393,13 +386,13 @@
             const globalMobCoords = {};
             const addMobCoords = (mobName, coords) => {
                 if (!mobName) return;
-                const key = mobName.toLowerCase().trim();
+                const key = mobName.trim().toLowerCase();
                 if (!globalMobCoords[key]) globalMobCoords[key] = [];
                 const arr = Array.isArray(coords) ? coords : [coords].filter(x => x);
                 arr.forEach(c => {
                     if (isNum(c.x) && isNum(c.z)) {
                         const nx = Number(c.x), ny = isNum(c.y) ? Number(c.y) : 0, nz = Number(c.z);
-                        if (Math.abs(nx) + Math.abs(ny) + Math.abs(nz) === 0) return; // Strict 0,0,0 filter
+                        if (Math.abs(nx) + Math.abs(ny) + Math.abs(nz) === 0) return; 
                         const obj = { x: nx, y: isNum(c.y) ? ny : null, z: nz };
                         if (!globalMobCoords[key].some(ex => ex.x === obj.x && ex.z === obj.z)) globalMobCoords[key].push(obj);
                     }
@@ -424,6 +417,7 @@
                 if (!mobName) return;
                 const sName = mobName.trim();
                 const sLoc = location?.trim() || "Undisclosed Sector";
+                // Use a normalized key to prevent duplicates within the same location
                 const sourceKey = `${sName.toLowerCase()}|${sLoc.toLowerCase()}`;
 
                 if (!sourceRegistry[sourceKey]) {
@@ -436,7 +430,7 @@
                     };
                 }
                 if (screenshot) sourceRegistry[sourceKey].screenshots.add(screenshot);
-                if (itemName) sourceRegistry[sourceKey].loot.add(itemName.toLowerCase().trim());
+                if (itemName) sourceRegistry[sourceKey].loot.add(itemName.trim().toLowerCase());
             };
 
             Object.keys(dropsMap).forEach(itemName => {
@@ -454,6 +448,7 @@
                 });
             });
 
+            // Convert Registry to Final Sorted Array & Deduplicate loot internals
             const finalSources = Object.values(sourceRegistry).map(src => {
                 const lootDetails = Array.from(src.loot).map(lootName => {
                     const info = GLOBAL_ITEM_LOOKUP[lootName] || { originalName: lootName, stats: [], lvl: 0, tier: -1, profs: [] };
@@ -465,8 +460,17 @@
                         stats: info.stats || []
                     };
                 });
+                
+                // Sort loot by level for consistency
+                lootDetails.sort((a,b) => b.level - a.level);
+
                 const searchStr = [src.name, src.location, ...lootDetails.map(l => l.name)].join(' ').toLowerCase();
-                return { ...src, loot: lootDetails, searchStr, screenshots: Array.from(src.screenshots) };
+                return { 
+                    ...src, 
+                    loot: lootDetails, 
+                    searchStr, 
+                    screenshots: Array.from(src.screenshots) 
+                };
             });
 
             SOURCE_DATA = finalSources;
@@ -637,7 +641,6 @@
             setTimeout(() => t.classList.remove("show"), 2500);
         }
 
-        // Sidebar Controls
         document.getElementById('toggleFilters').addEventListener('click', () => {
             document.getElementById('filterSidebar').classList.add('open');
             document.getElementById('sidebarOverlay').classList.replace('opacity-0', 'opacity-100');
@@ -654,7 +657,6 @@
             document.getElementById('sidebarOverlay').classList.add('pointer-events-none');
         });
 
-        // Search & Filter Events
         document.getElementById('globalSearch').addEventListener('input', debounce(e => { STATE.search = e.target.value; render(); }, 250));
         document.getElementById('minLevel').addEventListener('input', e => { STATE.minLv = Number(e.target.value) || 0; render(); });
         document.getElementById('maxLevel').addEventListener('input', e => { STATE.maxLv = Number(e.target.value) || 115; render(); });
