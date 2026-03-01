@@ -10,26 +10,27 @@
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap');
 
         :root {
+            /* Dynamic variables controlled by Theme Engine */
             --bg-body: #f5f2ed;
             --bg-card: #ffffff;
             --bg-surface: #faf8f5;
-            --text-primary: #4a4641;
-            --text-secondary: #8a847c;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
             --accent: #a3b18a;
             --accent-hover: #588157;
-            --border: rgba(0, 0, 0, 0.08);
-            --shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            --border: rgba(0, 0, 0, 0.12);
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
             
-            --status-red: #e07a5f;
-            --status-orange: #f2cc8f;
-            --status-green: #81b29a;
+            --status-red: #ef4444;
+            --status-orange: #f59e0b;
+            --status-green: #10b981;
         }
 
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: var(--bg-body);
             color: var(--text-primary);
-            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: background-color 0.4s ease, color 0.4s ease;
             overflow-x: hidden;
         }
 
@@ -37,14 +38,14 @@
 
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: var(--bg-body); }
-        ::-webkit-scrollbar-thumb { background: var(--text-secondary); opacity: 0.2; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: var(--text-secondary); opacity: 0.3; border-radius: 10px; }
 
         .archive-card {
             background: var(--bg-card);
             border: 1px solid var(--border);
-            border-radius: 28px;
+            border-radius: 24px;
             box-shadow: var(--shadow);
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.3s, background 0.4s;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s, background-color 0.4s;
             display: flex;
             flex-direction: column;
             overflow: hidden;
@@ -53,6 +54,7 @@
         .archive-card:hover {
             transform: translateY(-8px);
             border-color: var(--accent);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
         }
 
         .input-base {
@@ -63,11 +65,17 @@
             transition: all 0.2s;
         }
 
+        .input-base:focus {
+            border-color: var(--accent);
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(0,0,0,0.05);
+        }
+
         .btn-primary {
             background: var(--accent);
             color: white;
             border-radius: 16px;
-            transition: all 0.3s;
+            font-weight: 800;
         }
 
         .coord-btn {
@@ -77,8 +85,8 @@
             transition: all 0.2s;
             font-size: 10px;
             font-weight: 800;
-            padding: 8px 14px;
-            border-radius: 12px;
+            padding: 8px 12px;
+            border-radius: 10px;
         }
         
         .coord-btn:hover {
@@ -101,13 +109,14 @@
             border-radius: 20px;
             padding: 16px;
             margin-bottom: 12px;
+            transition: transform 0.2s;
         }
 
         .stat-badge {
             font-size: 10px;
             font-weight: 800;
-            padding: 4px 10px;
-            border-radius: 10px;
+            padding: 4px 8px;
+            border-radius: 8px;
             background: var(--bg-card);
             border: 1px solid var(--border);
         }
@@ -115,7 +124,6 @@
         .toggle-btn.active {
             background: var(--accent);
             color: white !important;
-            border-color: var(--accent);
         }
 
         #toast {
@@ -128,28 +136,28 @@
             padding: 1.2rem 2.5rem;
             border-radius: 20px;
             font-weight: 800;
-            font-size: 15px;
+            font-size: 14px;
             z-index: 1000;
             transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
             border: 2px solid var(--accent);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
         }
         #toast.show { transform: translateX(-50%) translateY(0); }
 
         .status-dot {
-            width: 12px;
-            height: 12px;
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
             display: inline-block;
-            margin-right: 8px;
+            margin-right: 6px;
         }
-        .status-loading { background-color: var(--status-orange); box-shadow: 0 0 10px var(--status-orange); }
-        .status-success { background-color: var(--status-green); box-shadow: 0 0 10px var(--status-green); }
-        .status-error { background-color: var(--status-red); box-shadow: 0 0 10px var(--status-red); }
+        .status-loading { background-color: var(--status-orange); }
+        .status-success { background-color: var(--status-green); }
+        .status-error { background-color: var(--status-red); }
 
         .preset-dot {
-            width: 32px;
-            height: 32px;
+            width: 36px;
+            height: 36px;
             border-radius: 12px;
             cursor: pointer;
             border: 3px solid transparent;
@@ -161,8 +169,8 @@
         .preset-dot.active { border-color: var(--accent); transform: scale(1.1); }
         
         .brightness-dot {
-            width: 32px;
-            height: 32px;
+            width: 36px;
+            height: 36px;
             border-radius: 12px;
             cursor: pointer;
             border: 2px solid var(--border);
@@ -171,79 +179,82 @@
             justify-content: center;
             font-size: 12px;
             font-weight: 800;
+            background: var(--bg-surface);
         }
         .brightness-dot.active { background: var(--accent); color: white; border-color: var(--accent); }
     </style>
 </head>
 <body class="min-h-screen">
 
-    <div id="toast">Archive Synchronized</div>
+    <div id="toast">Archive Initialized</div>
 
     <header class="sticky top-0 z-40 w-full bg-[var(--bg-body)]/80 backdrop-blur-2xl border-b border-[var(--border)]">
-        <div class="max-w-[1500px] mx-auto px-8 h-28 flex items-center justify-between">
+        <div class="max-w-[1500px] mx-auto px-8 h-24 flex items-center justify-between">
             <div class="flex items-center gap-5">
-                <div class="w-14 h-14 bg-[var(--accent)] rounded-2xl flex items-center justify-center text-white shadow-xl shadow-[var(--accent)]/30 transition-all duration-500">
-                    <i class="fas fa-dragon text-2xl"></i>
+                <div class="w-12 h-12 bg-[var(--accent)] rounded-2xl flex items-center justify-center text-white shadow-xl transition-all">
+                    <i class="fas fa-dragon text-xl"></i>
                 </div>
                 <div>
                     <h1 class="text-xl font-black tracking-tighter uppercase">Library of <span style="color: var(--accent-hover)">Imperial</span></h1>
                     <div class="flex items-center mt-1">
                         <span id="apiStatusDot" class="status-dot status-loading"></span>
-                        <p id="apiStatusText" class="text-[10px] text-[var(--text-secondary)] font-black tracking-[0.15em] uppercase">Syncing Live Matrix...</p>
+                        <p id="apiStatusText" class="text-[10px] text-[var(--text-secondary)] font-bold tracking-[0.1em] uppercase">Matrix Link Pending...</p>
                     </div>
                 </div>
             </div>
 
             <div class="hidden lg:flex flex-1 max-w-2xl mx-12 relative">
-                <i class="fas fa-search absolute left-6 top-1/2 -translate-y-1/2 text-[var(--text-secondary)] opacity-40"></i>
+                <i class="fas fa-search absolute left-6 top-1/2 -translate-y-1/2 text-[var(--text-secondary)] opacity-50"></i>
                 <input 
                     type="text" id="globalSearch" 
-                    placeholder="Enter entity or item signature..."
-                    class="w-full input-base py-4 pl-14 pr-8 text-sm font-medium tracking-tight outline-none"
+                    placeholder="Enter signature to scan..."
+                    class="w-full input-base py-3.5 pl-14 pr-8 text-sm font-semibold tracking-tight outline-none"
                 >
             </div>
 
-            <div class="flex items-center gap-5">
-                <button id="toggleFilters" class="btn-primary px-8 py-4 text-xs font-black uppercase tracking-widest flex items-center gap-3 shadow-xl shadow-[var(--accent)]/20">
-                    <i class="fas fa-layer-group"></i> <span>Matrix</span>
+            <div class="flex items-center gap-4">
+                <button id="toggleFilters" class="btn-primary px-8 py-3.5 text-xs font-black uppercase tracking-widest flex items-center gap-3 shadow-xl shadow-[var(--accent)]/10">
+                    <i class="fas fa-sliders-h"></i> <span>Matrix</span>
                 </button>
             </div>
         </div>
     </header>
 
     <main class="max-w-[1500px] mx-auto px-8 py-12">
-        <div id="activeTags" class="flex flex-wrap gap-3 mb-12 min-h-[32px]"></div>
+        <div id="activeTags" class="flex flex-wrap gap-3 mb-10 min-h-[32px]"></div>
 
-        <div class="flex items-center justify-between mb-12 border-l-4 border-[var(--accent)] pl-6 py-2">
+        <div class="flex items-center justify-between mb-10 border-l-4 border-[var(--accent)] pl-6 py-1">
             <h2 id="resultsInfo" class="text-xs font-black text-[var(--text-secondary)] uppercase tracking-[0.3em]">
-                Acquiring Database Streams...
+                Authenticating Imperial Stream...
             </h2>
         </div>
 
-        <div id="sourceGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12"></div>
+        <div id="sourceGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10"></div>
 
         <div id="emptyState" class="hidden py-64 flex flex-col items-center text-center">
             <div class="w-24 h-24 bg-[var(--bg-surface)] rounded-[2.5rem] flex items-center justify-center mb-8 opacity-20">
-                <i class="fas fa-shield-virus text-4xl"></i>
+                <i class="fas fa-fingerprint text-4xl"></i>
             </div>
-            <h3 class="text-2xl font-black tracking-tight opacity-50">Null Archive Signal</h3>
-            <p class="text-[var(--text-secondary)] font-medium max-w-sm mt-4 mb-10">No unique entities match the parameters in the Imperial Database.</p>
-            <button onclick="clearAllFilters()" class="text-[var(--accent-hover)] font-black uppercase text-xs tracking-[0.2em] border-b-2 border-[var(--accent)] pb-1">Full System Reset</button>
+            <h3 class="text-2xl font-black tracking-tight opacity-50">No Matches Found</h3>
+            <p class="text-[var(--text-secondary)] font-medium max-w-sm mt-4 mb-10">Zero unique signatures matched the current matrix constraints.</p>
+            <button onclick="clearAllFilters()" class="text-[var(--accent-hover)] font-black uppercase text-xs tracking-widest border-b-2 border-[var(--accent)] pb-1">Reset Matrix</button>
         </div>
     </main>
 
+    <!-- Side Sidebar -->
     <div id="sidebarOverlay" class="fixed inset-0 bg-black/40 z-[50] opacity-0 pointer-events-none transition-opacity duration-500"></div>
-    <aside id="filterSidebar" class="fixed top-0 right-0 h-full w-[420px] z-[60] transform translate-x-full shadow-2xl flex flex-col">
-        <div class="p-10 border-b border-[var(--border)] flex items-center justify-between bg-[var(--bg-surface)]">
-            <h2 class="font-black text-sm uppercase tracking-[0.2em]">Interface Config</h2>
+    <aside id="filterSidebar" class="fixed top-0 right-0 h-full w-[400px] z-[60] transform translate-x-full shadow-2xl flex flex-col">
+        <div class="p-8 border-b border-[var(--border)] flex items-center justify-between bg-[var(--bg-surface)]">
+            <h2 class="font-black text-sm uppercase tracking-[0.2em]">Matrix Controls</h2>
             <button id="closeSidebar" class="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-black/5"><i class="fas fa-times"></i></button>
         </div>
 
-        <div class="flex-1 overflow-y-auto p-10 space-y-12 custom-scrollbar">
+        <div class="flex-1 overflow-y-auto p-8 space-y-12 custom-scrollbar">
+            <!-- Theme Controls -->
             <section class="space-y-8 bg-[var(--bg-surface)] p-6 rounded-3xl border border-[var(--border)]">
                 <div>
-                    <label class="text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest mb-5 block">Visual Luminance</label>
-                    <div class="flex justify-between items-center px-1" id="brightnessPresets">
+                    <label class="text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest mb-5 block">Visual Contrast (Luminance)</label>
+                    <div class="flex justify-between items-center" id="brightnessPresets">
                         <button data-level="1" class="brightness-dot">1</button>
                         <button data-level="2" class="brightness-dot">2</button>
                         <button data-level="3" class="brightness-dot">3</button>
@@ -254,12 +265,12 @@
 
                 <div>
                     <label class="text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest mb-5 block">Atmospheric Palette</label>
-                    <div class="flex justify-between items-center px-1" id="palettePresets">
-                        <button data-palette="sage" class="preset-dot bg-[#a3b18a]" title="Sage"></button>
-                        <button data-palette="ocean" class="preset-dot bg-[#72a1b1]" title="Ocean"></button>
-                        <button data-palette="crimson" class="preset-dot bg-[#b17272]" title="Crimson"></button>
-                        <button data-palette="amber" class="preset-dot bg-[#b19672]" title="Amber"></button>
-                        <button data-palette="lavender" class="preset-dot bg-[#8c72b1]" title="Lavender"></button>
+                    <div class="flex justify-between items-center" id="palettePresets">
+                        <button data-palette="gray" class="preset-dot bg-[#71717a]" title="Gray (Neutral)"></button>
+                        <button data-palette="red" class="preset-dot bg-[#ef4444]" title="Crimson"></button>
+                        <button data-palette="purple" class="preset-dot bg-[#a855f7]" title="Mystic"></button>
+                        <button data-palette="blue" class="preset-dot bg-[#3b82f6]" title="Oceanic"></button>
+                        <button data-palette="green" class="preset-dot bg-[#10b981]" title="Sage"></button>
                     </div>
                 </div>
             </section>
@@ -267,51 +278,51 @@
             <section class="space-y-6">
                 <label class="text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest">Quality Tier</label>
                 <div class="grid grid-cols-4 gap-3" id="tierFilters">
-                    <button data-tier="0" class="tier-btn input-base py-4 text-xs font-black">T0</button>
-                    <button data-tier="1" class="tier-btn input-base py-4 text-xs font-black">T1</button>
-                    <button data-tier="2" class="tier-btn input-base py-4 text-xs font-black">T2</button>
-                    <button data-tier="3" class="tier-btn input-base py-4 text-xs font-black">T3</button>
+                    <button data-tier="0" class="tier-btn input-base py-3 text-xs font-black">T0</button>
+                    <button data-tier="1" class="tier-btn input-base py-3 text-xs font-black">T1</button>
+                    <button data-tier="2" class="tier-btn input-base py-3 text-xs font-black">T2</button>
+                    <button data-tier="3" class="tier-btn input-base py-3 text-xs font-black">T3</button>
                 </div>
             </section>
 
             <section class="space-y-4">
-                <label class="text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest">Active Protocols</label>
-                <button id="interestToggle" class="toggle-btn input-base w-full py-5 text-[11px] font-black uppercase tracking-[0.2em] flex items-center justify-center gap-3">
-                    <i class="fas fa-crown text-amber-500"></i> High Priority
+                <label class="text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest">Search Logic</label>
+                <button id="interestToggle" class="toggle-btn input-base w-full py-4 text-[10px] font-black uppercase tracking-[0.2em] flex items-center justify-center gap-3">
+                    <i class="fas fa-star text-amber-500"></i> High Interest
                 </button>
-                <button id="coordsToggle" class="toggle-btn input-base w-full py-5 text-[11px] font-black uppercase tracking-[0.2em] flex items-center justify-center gap-3">
-                    <i class="fas fa-crosshairs"></i> Geolocated
+                <button id="coordsToggle" class="toggle-btn input-base w-full py-4 text-[10px] font-black uppercase tracking-[0.2em] flex items-center justify-center gap-3">
+                    <i class="fas fa-location-crosshairs"></i> Geolocated Only
                 </button>
             </section>
 
             <section class="space-y-6">
-                <label class="text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest">Loot Level</label>
-                <div class="flex items-center gap-5">
-                    <input type="number" id="minLevel" placeholder="0" class="w-full input-base px-5 py-4 text-sm font-black outline-none">
+                <label class="text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest">Item Level</label>
+                <div class="flex items-center gap-4">
+                    <input type="number" id="minLevel" placeholder="0" class="w-full input-base px-4 py-3 text-sm font-black outline-none">
                     <span class="text-[var(--text-secondary)] font-black opacity-30">/</span>
-                    <input type="number" id="maxLevel" placeholder="115" class="w-full input-base px-5 py-4 text-sm font-black outline-none">
+                    <input type="number" id="maxLevel" placeholder="115" class="w-full input-base px-4 py-3 text-sm font-black outline-none">
                 </div>
             </section>
 
             <section class="space-y-10">
                 <div>
-                    <label class="block text-[10px] font-black uppercase tracking-widest mb-5 text-[var(--status-green)]">Primary Buff</label>
-                    <select id="posStat1" class="w-full input-base px-5 py-4 text-xs font-black outline-none cursor-pointer"></select>
+                    <label class="block text-[10px] font-black uppercase tracking-widest mb-4 text-[var(--status-green)]">Primary Buff</label>
+                    <select id="posStat1" class="w-full input-base px-4 py-3 text-[11px] font-black outline-none cursor-pointer"></select>
                 </div>
                 <div>
-                    <label class="block text-[10px] font-black uppercase tracking-widest mb-5 text-[var(--status-red)]">Primary Debuff</label>
-                    <select id="negStat1" class="w-full input-base px-5 py-4 text-xs font-black outline-none cursor-pointer"></select>
+                    <label class="block text-[10px] font-black uppercase tracking-widest mb-4 text-[var(--status-red)]">Primary Debuff</label>
+                    <select id="negStat1" class="w-full input-base px-4 py-3 text-[11px] font-black outline-none cursor-pointer"></select>
                 </div>
             </section>
 
             <section class="space-y-6 pb-20">
-                <label class="text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest">Authorized Professions</label>
-                <div id="professionFilters" class="flex flex-wrap gap-3"></div>
+                <label class="text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest">Professions</label>
+                <div id="professionFilters" class="flex flex-wrap gap-2"></div>
             </section>
         </div>
 
-        <div class="p-10 border-t border-[var(--border)] bg-[var(--bg-surface)]">
-            <button onclick="clearAllFilters()" class="w-full py-5 rounded-3xl text-[11px] font-black uppercase tracking-widest bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white transition-all">Emergency Flush</button>
+        <div class="p-8 border-t border-[var(--border)] bg-[var(--bg-surface)]">
+            <button onclick="clearAllFilters()" class="w-full py-4 rounded-2xl text-[11px] font-black uppercase tracking-widest bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white transition-all">Emergency Flush</button>
         </div>
     </aside>
 
@@ -340,7 +351,7 @@
         const STATE = {
             search: "", minLv: 0, maxLv: 115, tiers: new Set(), profs: new Set(),
             posStat1: "", negStat1: "", interestOnly: false, coordsOnly: false,
-            brightness: 3, palette: 'sage',
+            brightness: 3, palette: 'green',
             allProfs: [], allPosStats: [], allNegStats: []
         };
 
@@ -353,30 +364,29 @@
             const dot = document.getElementById('apiStatusDot');
             const text = document.getElementById('apiStatusText');
             dot.className = "status-dot";
-            if (state === 'loading') { dot.classList.add('status-loading'); text.textContent = "Linking Matrix..."; }
-            else if (state === 'success') { dot.classList.add('status-success'); text.textContent = "Live Stream Verified"; }
-            else if (state === 'error') { dot.classList.add('status-error'); text.textContent = "Offline (Archive Mode)"; }
+            if (state === 'loading') { dot.classList.add('status-loading'); text.textContent = "Syncing Live Archive..."; }
+            else if (state === 'success') { dot.classList.add('status-success'); text.textContent = "Archive Linked"; }
+            else if (state === 'error') { dot.classList.add('status-error'); text.textContent = "Offline (Local Only)"; }
         }
 
         async function loadShopData() {
             setApiStatus('loading');
             
-            // Phase 1: Local Load (Immediate)
+            // Render local instantly
             try {
                 const [resI, resD, resH] = await Promise.all([
                     fetch('ingredients.json').then(r => r.ok ? r.json() : {}),
                     fetch('drops.json').then(r => r.ok ? r.json() : {}),
                     fetch('htoi.json').then(r => r.ok ? r.json() : [])
                 ]);
-                processJsonData(resI, resD, resH, {}); // Render local instantly
-            } catch (e) { console.error("Archive Failed", e); }
+                processJsonData(resI, resD, resH, {}); 
+            } catch (e) { console.error("Local Load Fail", e); }
 
-            // Phase 2: API Load (Background)
+            // Background live sync
             try {
                 const wynnRes = await fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent('https://api.wynncraft.com/v3/item/database?fullResult'));
                 if (wynnRes.ok) {
                     const wynnItems = await wynnRes.json();
-                    // Re-run processing with API data included
                     const [resI, resD, resH] = await Promise.all([
                         fetch('ingredients.json').then(r => r.json()),
                         fetch('drops.json').then(r => r.json()),
@@ -407,17 +417,17 @@
             const entityRegistry = {};
 
             const getSanitizedName = (name) => {
-                // Persistent fix for "Dead Miner, ..." duplicate types
+                // Strips titles like "Dead Miner, Ancient ..." back to base name
                 return name.split(',')[0].trim();
             };
 
             const addCoordUnique = (entityKey, c) => {
                 if (!isNum(c.x) || !isNum(c.z)) return;
                 const nx = Number(c.x), ny = isNum(c.y) ? Number(c.y) : 0, nz = Number(c.z);
-                if (Math.abs(nx) + Math.abs(ny) + Math.abs(nz) === 0) return; // Ignore 0,0,0
+                if (Math.abs(nx) + Math.abs(ny) + Math.abs(nz) === 0) return; 
                 
                 const coordObj = { x: nx, y: isNum(c.y) ? ny : null, z: nz };
-                const coordKey = `${coordObj.x}|${coordObj.z}`; // Key by XZ to merge similar spawn spots
+                const coordKey = `${coordObj.x}|${coordObj.z}`; 
                 
                 if (!entityRegistry[entityKey].uniqueCoords.has(coordKey)) {
                     entityRegistry[entityKey].uniqueCoords.add(coordKey);
@@ -441,7 +451,6 @@
                 return key;
             };
 
-            // Ingest drops.json
             Object.keys(dropsMap).forEach(itemName => {
                 const drops = dropsMap[itemName];
                 if (!Array.isArray(drops)) return;
@@ -458,7 +467,6 @@
                 });
             });
 
-            // Ingest htoi.json
             htoiArray.forEach(h => {
                 const itemName = h.name;
                 Object.keys(h).forEach(prop => {
@@ -482,7 +490,7 @@
                 });
             });
 
-            // Global Stitching Pass: Merge entities that share coordinates OR sanitized names
+            // Secondary Stitch Pass: Merge entities that share coordinates
             let flattened = Object.values(entityRegistry);
             let merged = true;
             while(merged) {
@@ -496,7 +504,6 @@
                             flattened[i].locations = new Set([...flattened[i].locations, ...flattened[j].locations]);
                             flattened[i].loot = new Set([...flattened[i].loot, ...flattened[j].loot]);
                             flattened[i].screenshots = new Set([...flattened[i].screenshots, ...flattened[j].screenshots]);
-                            // Merge coords
                             flattened[j].coords.forEach(c => {
                                 const ck = `${c.x}|${c.z}`;
                                 if (!flattened[i].uniqueCoords.has(ck)) {
@@ -567,7 +574,7 @@
             const grid = document.getElementById('sourceGrid'), info = document.getElementById('resultsInfo');
             const data = filterData();
             const view = data.slice(0, 60);
-            info.textContent = data.length > 0 ? `${data.length} Strategic Sources Synced` : "Matrix Idle...";
+            info.textContent = data.length > 0 ? `${data.length} Strategic Sources Synced` : "Awaiting Authorization...";
             if (view.length === 0) { grid.innerHTML = ""; document.getElementById('emptyState').classList.remove('hidden'); }
             else {
                 document.getElementById('emptyState').classList.add('hidden');
@@ -598,55 +605,55 @@
                         <div class="flex justify-between items-start mb-8">
                             <div class="flex-1 overflow-hidden">
                                 <h3 class="text-lg font-black tracking-tighter truncate uppercase pr-4">${src.name}</h3>
-                                <div class="flex items-center gap-2 mt-2 opacity-60">
+                                <div class="flex items-center gap-2 mt-2 opacity-70">
                                     <i class="fas fa-compass text-[10px]"></i>
-                                    <p class="text-[10px] font-black truncate uppercase tracking-widest leading-none">${src.location}</p>
+                                    <p class="text-[10px] font-bold truncate uppercase tracking-widest leading-none">${src.location}</p>
                                 </div>
                             </div>
-                            ${src.screenshots.length > 0 ? `<a href="${src.screenshots[0]}" target="_blank" class="w-12 h-12 flex items-center justify-center rounded-2xl bg-[var(--accent)] text-white hover:scale-110 transition-all shadow-lg"><i class="fas fa-camera text-sm"></i></a>` : ''}
+                            ${src.screenshots.length > 0 ? `<a href="${src.screenshots[0]}" target="_blank" class="w-12 h-12 flex items-center justify-center rounded-2xl bg-[var(--accent)] text-white hover:opacity-80 transition-all shadow-lg"><i class="fas fa-camera text-sm"></i></a>` : ''}
                         </div>
                         <div class="mb-10">
-                            <p class="text-[9px] font-black uppercase tracking-[0.25em] text-[var(--text-secondary)] mb-5 opacity-40">Tactical Geolocation</p>
-                            <div class="flex flex-wrap gap-3">${coordsHtml || '<span class="text-[10px] font-black opacity-10 uppercase italic tracking-widest">Signal Missing</span>'}</div>
+                            <p class="text-[9px] font-black uppercase tracking-[0.25em] text-[var(--text-secondary)] mb-5 opacity-60">Tactical Geolocation</p>
+                            <div class="flex flex-wrap gap-3">${coordsHtml || '<span class="text-[10px] font-black opacity-20 uppercase italic tracking-widest">Signal Missing</span>'}</div>
                         </div>
                         <div class="flex-1 overflow-y-auto max-h-[380px] custom-scrollbar pr-3">
-                            <p class="text-[9px] font-black uppercase tracking-[0.25em] text-[var(--text-secondary)] mb-5 opacity-40">Inventory Link (${src.loot.length})</p>
+                            <p class="text-[9px] font-black uppercase tracking-[0.25em] text-[var(--text-secondary)] mb-5 opacity-60">Linked Artifacts (${src.loot.length})</p>
                             ${lootHtml}
                         </div>
                     </div>
                 `}).join('');
             }
-            renderActiveTags();
         }
 
         function updateTheme() {
             const root = document.documentElement;
             const palettes = {
-                sage: { hue: 80, sat: 20, acc: '#a3b18a', hov: '#588157' },
-                ocean: { hue: 200, sat: 25, acc: '#72a1b1', hov: '#457b9d' },
-                crimson: { hue: 0, sat: 25, acc: '#b17272', hov: '#8a4a4a' },
-                amber: { hue: 35, sat: 25, acc: '#b19672', hov: '#8a704a' },
-                lavender: { hue: 260, sat: 20, acc: '#8c72b1', hov: '#5b4a8a' }
+                gray: { h: 240, s: 5, acc: '#52525b', hov: '#18181b' },
+                red: { h: 0, s: 45, acc: '#ef4444', hov: '#991b1b' },
+                purple: { h: 270, s: 45, acc: '#a855f7', hov: '#6b21a8' },
+                blue: { h: 210, s: 50, acc: '#3b82f6', hov: '#1d4ed8' },
+                green: { h: 145, s: 40, acc: '#10b981', hov: '#065f46' }
             };
             const p = palettes[STATE.palette];
             
             let b, c, s, t, sec, brd;
+            // Calibrated ramp to prevent white-out at levels 4-5
             switch(STATE.brightness) {
                 case 1: 
-                    b = `hsl(${p.hue}, ${p.sat}%, 6%)`; c = `hsl(${p.hue}, ${p.sat}%, 10%)`; s = `hsl(${p.hue}, ${p.sat}%, 14%)`;
-                    t = '#ffffff'; sec = '#888888'; brd = 'rgba(255,255,255,0.1)'; break;
+                    b = `hsl(${p.h}, ${p.s}%, 5%)`; c = `hsl(${p.h}, ${p.s}%, 9%)`; s = `hsl(${p.h}, ${p.s}%, 13%)`;
+                    t = '#ffffff'; sec = '#94a3b8'; brd = 'rgba(255,255,255,0.12)'; break;
                 case 2:
-                    b = `hsl(${p.hue}, ${p.sat}%, 18%)`; c = `hsl(${p.hue}, ${p.sat}%, 22%)`; s = `hsl(${p.hue}, ${p.sat}%, 26%)`;
-                    t = '#e2e8f0'; sec = '#94a3b8'; brd = 'rgba(255,255,255,0.06)'; break;
+                    b = `hsl(${p.h}, ${p.s}%, 15%)`; c = `hsl(${p.h}, ${p.s}%, 19%)`; s = `hsl(${p.h}, ${p.s}%, 23%)`;
+                    t = '#f8fafc'; sec = '#94a3b8'; brd = 'rgba(255,255,255,0.08)'; break;
                 case 3: 
-                    b = `hsl(${p.hue}, ${p.sat}%, 38%)`; c = `hsl(${p.hue}, ${p.sat}%, 44%)`; s = `hsl(${p.hue}, ${p.sat}%, 48%)`;
-                    t = '#ffffff'; sec = '#cbd5e1'; brd = 'rgba(255,255,255,0.15)'; break;
+                    b = `hsl(${p.h}, ${p.s}%, 45%)`; c = `hsl(${p.h}, ${p.s}%, 52%)`; s = `hsl(${p.h}, ${p.s}%, 56%)`;
+                    t = '#ffffff'; sec = '#cbd5e1'; brd = 'rgba(255,255,255,0.2)'; break;
                 case 4:
-                    b = `hsl(${p.hue}, ${p.sat}%, 68%)`; c = `hsl(${p.hue}, ${p.sat}%, 96%)`; s = `hsl(${p.hue}, ${p.sat}%, 82%)`;
-                    t = '#4a4641'; sec = '#8a847c'; brd = 'rgba(0,0,0,0.1)'; break;
+                    b = `hsl(${p.h}, ${p.s}%, 78%)`; c = '#ffffff'; s = `hsl(${p.h}, ${p.s}%, 85%)`;
+                    t = '#0f172a'; sec = '#475569'; brd = 'rgba(0,0,0,0.12)'; break;
                 case 5:
-                    b = `hsl(${p.hue}, ${p.sat}%, 86%)`; c = '#ffffff'; s = '#fcfcfc';
-                    t = '#1e293b'; sec = '#64748b'; brd = 'rgba(0,0,0,0.06)'; break;
+                    b = `hsl(${p.h}, ${p.s}%, 92%)`; c = '#ffffff'; s = '#fcfcfc';
+                    t = '#000000'; sec = '#4b5563'; brd = 'rgba(0,0,0,0.15)'; break;
             }
 
             root.style.setProperty('--bg-body', b);
@@ -671,7 +678,7 @@
             STATE.tiers.forEach(t => tags.push({ id: 'tier-'+t, val: `Tier ${t}` }));
             STATE.profs.forEach(p => tags.push({ id: 'prof-'+p, val: p }));
             container.innerHTML = tags.map(t => `
-                <div class="flex items-center gap-3 px-5 py-2.5 bg-[var(--accent)]/10 text-[var(--accent-hover)] border border-[var(--accent)]/20 rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-sm">
+                <div class="flex items-center gap-3 px-5 py-2.5 bg-[var(--accent)]/15 text-[var(--text-primary)] border border-[var(--border)] rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-sm">
                     ${t.val}
                     <button onclick="removeFilter('${t.id}')" class="hover:opacity-50 transition-opacity"><i class="fas fa-times"></i></button>
                 </div>
@@ -700,7 +707,7 @@
             else if (id === 'coords') { STATE.coordsOnly = false; document.getElementById('coordsToggle').classList.remove('active'); }
             else if (id.startsWith('tier-')) { STATE.tiers.delete(id.split('-')[1]); document.querySelectorAll('.tier-btn').forEach(b => { if(b.dataset.tier == id.split('-')[1]) b.classList.remove('active'); }); }
             else if (id.startsWith('prof-')) { STATE.profs.delete(id.split('-')[1]); document.querySelectorAll('.prof-chip').forEach(b => { if(b.dataset.prof == id.split('-')[1]) b.classList.remove('active'); }); }
-            render();
+            render(); renderActiveTags();
         }
 
         function clearAllFilters() {
@@ -708,23 +715,23 @@
             document.getElementById('globalSearch').value = "";
             document.querySelectorAll('.active').forEach(e => { if(!e.classList.contains('preset-dot') && !e.classList.contains('brightness-dot')) e.classList.remove('active'); });
             document.querySelectorAll('input[type="number"]').forEach(i => i.value = "");
-            render();
+            render(); renderActiveTags();
         }
 
         document.getElementById('toggleFilters').addEventListener('click', () => { document.getElementById('filterSidebar').classList.add('open'); document.getElementById('sidebarOverlay').classList.replace('opacity-0', 'opacity-100'); document.getElementById('sidebarOverlay').classList.remove('pointer-events-none'); });
         document.getElementById('closeSidebar').addEventListener('click', () => { document.getElementById('filterSidebar').classList.remove('open'); document.getElementById('sidebarOverlay').classList.replace('opacity-100', 'opacity-0'); document.getElementById('sidebarOverlay').classList.add('pointer-events-none'); });
         document.getElementById('sidebarOverlay').addEventListener('click', () => { document.getElementById('filterSidebar').classList.remove('open'); document.getElementById('sidebarOverlay').classList.replace('opacity-100', 'opacity-0'); document.getElementById('sidebarOverlay').classList.add('pointer-events-none'); });
-        document.getElementById('brightnessPresets').addEventListener('click', e => { const btn = e.target.closest('button'); if(!btn) return; STATE.brightness = parseInt(btn.dataset.level); updateTheme(); });
-        document.getElementById('palettePresets').addEventListener('click', e => { const btn = e.target.closest('button'); if(!btn) return; STATE.palette = btn.dataset.palette; updateTheme(); });
-        document.getElementById('globalSearch').addEventListener('input', debounce(e => { STATE.search = e.target.value; render(); }, 250));
-        document.getElementById('minLevel').addEventListener('input', e => { STATE.minLv = Number(e.target.value) || 0; render(); });
-        document.getElementById('maxLevel').addEventListener('input', e => { STATE.maxLv = Number(e.target.value) || 115; render(); });
+        document.getElementById('brightnessPresets').addEventListener('click', e => { const btn = e.target.closest('button'); if(!btn) return; STATE.brightness = parseInt(btn.dataset.level); updateTheme(); render(); });
+        document.getElementById('palettePresets').addEventListener('click', e => { const btn = e.target.closest('button'); if(!btn) return; STATE.palette = btn.dataset.palette; updateTheme(); render(); });
+        document.getElementById('globalSearch').addEventListener('input', debounce(e => { STATE.search = e.target.value; render(); renderActiveTags(); }, 250));
+        document.getElementById('minLevel').addEventListener('input', e => { STATE.minLv = Number(e.target.value) || 0; render(); renderActiveTags(); });
+        document.getElementById('maxLevel').addEventListener('input', e => { STATE.maxLv = Number(e.target.value) || 115; render(); renderActiveTags(); });
         document.getElementById('posStat1').addEventListener('change', e => { STATE.posStat1 = e.target.value; render(); });
         document.getElementById('negStat1').addEventListener('change', e => { STATE.negStat1 = e.target.value; render(); });
-        document.querySelectorAll('.tier-btn').forEach(b => b.addEventListener('click', () => { const t = b.dataset.tier; if (STATE.tiers.has(t)) STATE.tiers.delete(t); else STATE.tiers.add(t); b.classList.toggle('active'); render(); }));
-        document.getElementById('professionFilters').addEventListener('click', e => { const b = e.target.closest('.prof-chip'); if (!b) return; const p = b.dataset.prof; if (STATE.profs.has(p)) STATE.profs.delete(p); else STATE.profs.add(p); b.classList.toggle('active'); render(); });
-        document.getElementById('interestToggle').addEventListener('click', e => { STATE.interestOnly = !STATE.interestOnly; e.currentTarget.classList.toggle('active'); render(); });
-        document.getElementById('coordsToggle').addEventListener('click', e => { STATE.coordsOnly = !STATE.coordsOnly; e.currentTarget.classList.toggle('active'); render(); });
+        document.querySelectorAll('.tier-btn').forEach(b => b.addEventListener('click', () => { const t = b.dataset.tier; if (STATE.tiers.has(t)) STATE.tiers.delete(t); else STATE.tiers.add(t); b.classList.toggle('active'); render(); renderActiveTags(); }));
+        document.getElementById('professionFilters').addEventListener('click', e => { const b = e.target.closest('.prof-chip'); if (!b) return; const p = b.dataset.prof; if (STATE.profs.has(p)) STATE.profs.delete(p); else STATE.profs.add(p); b.classList.toggle('active'); render(); renderActiveTags(); });
+        document.getElementById('interestToggle').addEventListener('click', e => { STATE.interestOnly = !STATE.interestOnly; e.currentTarget.classList.toggle('active'); render(); renderActiveTags(); });
+        document.getElementById('coordsToggle').addEventListener('click', e => { STATE.coordsOnly = !STATE.coordsOnly; e.currentTarget.classList.toggle('active'); render(); renderActiveTags(); });
 
         window.onload = () => { loadShopData(); updateTheme(); };
     </script>
