@@ -7,105 +7,126 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap');
 
         :root {
-            --bg-body: #070709;
-            --bg-row: #0f0f13;
-            --bg-surface: #16161c;
-            --text-primary: #f8fafc;
-            --text-secondary: #64748b;
-            --accent: #6366f1;
-            --accent-soft: rgba(99, 102, 241, 0.1);
-            --border: rgba(255, 255, 255, 0.05);
+            --bg-body: #1e2128;
+            --bg-card: #252932;
+            --bg-surface: #2d323d;
+            --text-primary: #e2e8f0;
+            --text-secondary: #94a3b8;
+            --accent: #818cf8;
+            --accent-soft: rgba(129, 140, 248, 0.1);
+            --border: rgba(255, 255, 255, 0.04);
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
         }
 
         body.light {
             --bg-body: #f1f5f9;
-            --bg-row: #ffffff;
-            --bg-surface: #e2e8f0;
-            --text-primary: #0f172a;
-            --text-secondary: #475569;
-            --accent: #4f46e5;
-            --accent-soft: rgba(79, 70, 229, 0.08);
-            --border: rgba(0, 0, 0, 0.08);
+            --bg-card: #ffffff;
+            --bg-surface: #f8fafc;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --accent: #6366f1;
+            --accent-soft: rgba(99, 102, 241, 0.08);
+            --border: rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 15px -3px rgba(0, 0, 0, 0.05);
         }
 
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: var(--bg-body);
             color: var(--text-primary);
-            transition: background 0.3s ease;
+            transition: all 0.4s ease;
             overflow-x: hidden;
         }
 
         .mono { font-family: 'JetBrains Mono', monospace; }
 
-        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: var(--bg-body); }
-        ::-webkit-scrollbar-thumb { background: var(--bg-surface); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb { background: var(--bg-surface); border-radius: 10px; }
 
-        /* Tactical Row Layout */
-        .source-row {
-            background: var(--bg-row);
-            border-bottom: 1px solid var(--border);
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        .archive-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
         }
 
-        .source-row:hover {
-            background: var(--accent-soft);
+        .archive-card:hover {
+            transform: translateY(-5px);
             border-color: var(--accent);
-            z-index: 10;
         }
 
         .input-base {
             background: var(--bg-surface);
             border: 1px solid var(--border);
             color: var(--text-primary);
+            border-radius: 12px;
             transition: all 0.2s;
         }
 
         .input-base:focus {
             border-color: var(--accent);
             outline: none;
+            box-shadow: 0 0 0 3px var(--accent-soft);
         }
 
         .btn-primary {
             background: var(--accent);
             color: white;
+            border-radius: 12px;
         }
 
-        .tactical-btn {
-            background: #ef4444;
-            color: white;
-            border: 1px solid #f87171;
+        .coord-btn {
+            background: var(--bg-surface);
+            color: var(--accent);
+            border: 1px solid var(--border);
             transition: all 0.2s;
-            font-size: 9px;
+            font-size: 10px;
             font-weight: 700;
-            padding: 4px 10px;
-            border-radius: 4px;
+            padding: 6px 12px;
+            border-radius: 8px;
         }
         
-        .tactical-btn:hover {
-            background: #dc2626;
-            filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.4));
+        .coord-btn:hover {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
         }
 
         #filterSidebar {
-            background: var(--bg-row);
+            background: var(--bg-card);
             border-left: 1px solid var(--border);
             transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         #filterSidebar.open { transform: translateX(0); }
 
-        .stat-badge {
-            font-size: 10px;
-            font-weight: 700;
-            padding: 2px 6px;
-            border-radius: 4px;
+        .loot-pill {
             background: var(--bg-surface);
             border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 12px;
+            margin-bottom: 10px;
+            transition: background 0.2s;
+        }
+
+        .loot-pill:hover {
+            background: var(--accent-soft);
+        }
+
+        .stat-badge {
+            font-size: 10px;
+            font-weight: 600;
+            padding: 2px 6px;
+            border-radius: 6px;
+            background: rgba(0,0,0,0.1);
         }
 
         .toggle-btn.active {
@@ -115,127 +136,138 @@
 
         #toast {
             position: fixed;
-            bottom: 2rem;
+            bottom: 2.5rem;
             left: 50%;
             transform: translateX(-50%) translateY(100px);
-            background: #1e293b;
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
-            font-weight: 700;
-            font-size: 13px;
+            background: var(--bg-surface);
+            color: var(--text-primary);
+            padding: 0.8rem 1.8rem;
+            border-radius: 14px;
+            font-weight: 600;
+            font-size: 14px;
             z-index: 1000;
-            transition: transform 0.3s;
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
             border: 1px solid var(--accent);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
         }
         #toast.show { transform: translateX(-50%) translateY(0); }
     </style>
 </head>
 <body class="min-h-screen">
 
-    <div id="toast">Initializing Archive...</div>
+    <div id="toast">Ready</div>
 
-    <header class="sticky top-0 z-40 w-full bg-[var(--bg-body)]/90 backdrop-blur-lg border-b border-[var(--border)]">
-        <div class="max-w-[1600px] mx-auto px-6 h-16 flex items-center justify-between">
+    <!-- Smooth Header -->
+    <header class="sticky top-0 z-40 w-full bg-[var(--bg-body)]/80 backdrop-blur-xl border-b border-[var(--border)]">
+        <div class="max-w-[1400px] mx-auto px-6 h-20 flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <i class="fas fa-database text-indigo-500 text-lg"></i>
-                <h1 class="text-sm font-black uppercase tracking-[0.2em]">Imperial <span class="text-indigo-500">Archive</span></h1>
+                <div class="w-10 h-10 bg-indigo-500 rounded-xl flex items-center justify-center text-white shadow-lg shadow-indigo-500/20">
+                    <i class="fas fa-atlas"></i>
+                </div>
+                <div>
+                    <h1 class="text-base font-extrabold tracking-tight">Library of <span class="text-indigo-400">Imperial</span></h1>
+                    <p class="text-[10px] text-[var(--text-secondary)] font-bold tracking-[0.1em] uppercase">Tactical Inventory Matrix</p>
+                </div>
             </div>
 
-            <div class="hidden md:flex flex-1 max-w-2xl mx-12 relative">
-                <i class="fas fa-terminal absolute left-4 top-1/2 -translate-y-1/2 text-indigo-500/50 text-xs"></i>
+            <div class="hidden md:flex flex-1 max-w-xl mx-8 relative">
+                <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-[var(--text-secondary)]"></i>
                 <input 
                     type="text" id="globalSearch" 
-                    placeholder="ENTER QUERY PARAMETERS..."
-                    class="w-full input-base rounded-md py-2 pl-10 pr-6 text-xs mono tracking-wider"
+                    placeholder="Search sources or specific drops..."
+                    class="w-full input-base py-2.5 pl-11 pr-6 text-sm"
                 >
             </div>
 
-            <div class="flex items-center gap-2">
-                <button id="themeToggle" class="input-base w-8 h-8 rounded flex items-center justify-center">
-                    <i class="fas fa-circle-half-stroke" id="themeIcon"></i>
+            <div class="flex items-center gap-3">
+                <button id="themeToggle" class="input-base w-10 h-10 flex items-center justify-center text-[var(--text-secondary)]">
+                    <i class="fas fa-leaf" id="themeIcon"></i>
                 </button>
-                <button id="toggleFilters" class="btn-primary px-4 py-1.5 rounded text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
-                    <i class="fas fa-filter"></i> Matrix
+                <button id="toggleFilters" class="btn-primary px-5 py-2.5 text-xs font-bold uppercase tracking-widest flex items-center gap-2 shadow-lg shadow-indigo-500/20">
+                    <i class="fas fa-sliders"></i> Matrix
                 </button>
             </div>
         </div>
     </header>
 
-    <main class="max-w-[1600px] mx-auto">
-        <div class="px-6 py-4 flex items-center justify-between border-b border-[var(--border)] bg-[var(--bg-body)]">
-            <div id="activeTags" class="flex flex-wrap gap-2"></div>
-            <div id="resultsInfo" class="text-[10px] mono font-bold text-[var(--text-secondary)] uppercase">
-                Awaiting Data Input...
-            </div>
+    <main class="max-w-[1400px] mx-auto px-6 py-8">
+        <div id="activeTags" class="flex flex-wrap gap-2 mb-8 min-h-[32px]"></div>
+
+        <div class="flex items-center justify-between mb-8">
+            <h2 id="resultsInfo" class="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-widest">
+                Scanning Records...
+            </h2>
         </div>
 
-        <div id="sourceGrid" class="flex flex-col"></div>
+        <div id="sourceGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
 
         <div id="emptyState" class="hidden py-40 flex flex-col items-center text-center">
-            <i class="fas fa-ghost text-4xl opacity-10 mb-4"></i>
-            <h3 class="text-sm font-black uppercase tracking-widest opacity-40">Zero Results In Current Sector</h3>
-            <button onclick="clearAllFilters()" class="mt-4 text-indigo-500 font-bold uppercase text-[10px] tracking-widest hover:underline">Flush Archive Buffer</button>
+            <div class="w-16 h-16 bg-[var(--bg-surface)] rounded-2xl flex items-center justify-center mb-6 opacity-50">
+                <i class="fas fa-binoculars text-2xl"></i>
+            </div>
+            <h3 class="text-lg font-bold">No Records Found</h3>
+            <p class="text-[var(--text-secondary)] text-sm mb-6">Matrix initialization returned zero matches in this sector.</p>
+            <button onclick="clearAllFilters()" class="text-indigo-400 font-bold uppercase text-xs tracking-widest hover:underline">Flush Archive</button>
         </div>
     </main>
 
-    <!-- Sidebar Filter -->
-    <div id="sidebarOverlay" class="fixed inset-0 bg-black/60 z-[50] opacity-0 pointer-events-none transition-opacity duration-300"></div>
-    <aside id="filterSidebar" class="fixed top-0 right-0 h-full w-[380px] z-[60] transform translate-x-full shadow-2xl flex flex-col">
+    <!-- Matrix Sidebar -->
+    <div id="sidebarOverlay" class="fixed inset-0 bg-black/50 z-[50] opacity-0 pointer-events-none transition-opacity duration-300"></div>
+    <aside id="filterSidebar" class="fixed top-0 right-0 h-full w-[360px] z-[60] transform translate-x-full shadow-2xl flex flex-col">
         <div class="p-6 border-b border-[var(--border)] flex items-center justify-between">
-            <h2 class="font-black text-xs uppercase tracking-widest">Protocol Matrix</h2>
-            <button id="closeSidebar" class="text-[var(--text-secondary)]"><i class="fas fa-times"></i></button>
+            <h2 class="font-bold text-sm uppercase tracking-widest">Archive Matrix</h2>
+            <button id="closeSidebar" class="text-[var(--text-secondary)] hover:text-[var(--text-primary)]"><i class="fas fa-times"></i></button>
         </div>
 
         <div class="flex-1 overflow-y-auto p-6 space-y-8 custom-scrollbar">
             <section class="space-y-4">
-                <label class="text-[9px] font-black uppercase tracking-widest text-[var(--text-secondary)]">Classification</label>
-                <div class="grid grid-cols-4 gap-1" id="tierFilters">
-                    <button data-tier="0" class="tier-btn input-base py-2 rounded text-[10px] font-bold">T0</button>
-                    <button data-tier="1" class="tier-btn input-base py-2 rounded text-[10px] font-bold">T1</button>
-                    <button data-tier="2" class="tier-btn input-base py-2 rounded text-[10px] font-bold">T2</button>
-                    <button data-tier="3" class="tier-btn input-base py-2 rounded text-[10px] font-bold">T3</button>
+                <label class="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest">Quality Classification</label>
+                <div class="grid grid-cols-4 gap-2" id="tierFilters">
+                    <button data-tier="0" class="tier-btn input-base py-2 text-xs font-bold">T0</button>
+                    <button data-tier="1" class="tier-btn input-base py-2 text-xs font-bold">T1</button>
+                    <button data-tier="2" class="tier-btn input-base py-2 text-xs font-bold">T2</button>
+                    <button data-tier="3" class="tier-btn input-base py-2 text-xs font-bold">T3</button>
                 </div>
             </section>
 
             <section class="space-y-3">
-                <label class="text-[9px] font-black uppercase tracking-widest text-[var(--text-secondary)]">Active Protocols</label>
-                <button id="interestToggle" class="toggle-btn input-base w-full py-2.5 rounded text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2">
-                    <i class="fas fa-bolt text-yellow-500"></i> High Priority Loot
+                <label class="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest">Active Search Protocols</label>
+                <button id="interestToggle" class="toggle-btn input-base w-full py-3 text-[10px] font-bold uppercase tracking-widest flex items-center justify-center gap-2">
+                    <i class="fas fa-star text-amber-400"></i> High Interest Only
                 </button>
-                <button id="coordsToggle" class="toggle-btn input-base w-full py-2.5 rounded text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2">
-                    <i class="fas fa-crosshairs text-red-500"></i> Localized Data Only
+                <button id="coordsToggle" class="toggle-btn input-base w-full py-3 text-[10px] font-bold uppercase tracking-widest flex items-center justify-center gap-2">
+                    <i class="fas fa-crosshairs text-indigo-400"></i> Localized Data Only
                 </button>
             </section>
 
             <section class="space-y-4">
-                <label class="text-[9px] font-black uppercase tracking-widest text-[var(--text-secondary)]">Loot Threshold</label>
-                <div class="flex items-center gap-2">
-                    <input type="number" id="minLevel" placeholder="MIN" class="w-full input-base rounded py-2 px-3 text-[10px] font-bold mono">
-                    <span class="opacity-30">-</span>
-                    <input type="number" id="maxLevel" placeholder="MAX" class="w-full input-base rounded py-2 px-3 text-[10px] font-bold mono">
+                <label class="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest">Level Parameters</label>
+                <div class="flex items-center gap-3">
+                    <input type="number" id="minLevel" placeholder="0" class="w-full input-base px-3 py-2 text-sm font-bold">
+                    <span class="text-[var(--text-secondary)] opacity-50 font-bold">-</span>
+                    <input type="number" id="maxLevel" placeholder="115" class="w-full input-base px-3 py-2 text-sm font-bold">
                 </div>
             </section>
 
             <section class="space-y-6">
                 <div>
-                    <label class="block text-[9px] font-black text-emerald-500 uppercase tracking-widest mb-2">Primary Buff</label>
-                    <select id="posStat1" class="w-full input-base rounded px-3 py-2 text-[10px] font-bold outline-none"></select>
+                    <label class="block text-[10px] font-bold text-emerald-400 uppercase tracking-widest mb-3">Buff Preference</label>
+                    <select id="posStat1" class="w-full input-base px-3 py-2 text-xs font-bold outline-none"></select>
                 </div>
                 <div>
-                    <label class="block text-[9px] font-black text-rose-500 uppercase tracking-widest mb-2">Primary Debuff</label>
-                    <select id="negStat1" class="w-full input-base rounded px-3 py-2 text-[10px] font-bold outline-none"></select>
+                    <label class="block text-[10px] font-bold text-rose-400 uppercase tracking-widest mb-3">Debuff Preference</label>
+                    <select id="negStat1" class="w-full input-base px-3 py-2 text-xs font-bold outline-none"></select>
                 </div>
             </section>
 
             <section class="space-y-4 pb-12">
-                <label class="text-[9px] font-black uppercase tracking-widest text-[var(--text-secondary)]">Authorized Professions</label>
-                <div id="professionFilters" class="flex flex-wrap gap-1"></div>
+                <label class="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest">Authorized Professions</label>
+                <div id="professionFilters" class="flex flex-wrap gap-2"></div>
             </section>
         </div>
 
-        <div class="p-4 border-t border-[var(--border)]">
-            <button onclick="clearAllFilters()" class="w-full py-3 rounded text-[10px] font-black uppercase tracking-widest bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all">Emergency Matrix Reset</button>
+        <div class="p-6 border-t border-[var(--border)]">
+            <button onclick="clearAllFilters()" class="w-full py-3 rounded-xl text-[10px] font-bold uppercase tracking-widest bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white transition-all">Clear All Constraints</button>
         </div>
     </aside>
 
@@ -281,7 +313,7 @@
                     fetch('htoi.json').then(r => r.ok ? r.json() : [])
                 ]);
                 ingredients = resI; drops = resD; htoi = resH;
-            } catch (e) { console.error("Data Fetch Error", e); }
+            } catch (e) { console.error("Archive Buffer Offline", e); }
             processJsonData(ingredients, drops, htoi);
         }
 
@@ -301,9 +333,7 @@
                 arr.forEach(c => {
                     if (isNum(c.x) && isNum(c.z)) {
                         const nx = Number(c.x), ny = isNum(c.y) ? Number(c.y) : 0, nz = Number(c.z);
-                        // Filter out 0,0,0
-                        if (Math.abs(nx) + Math.abs(ny) + Math.abs(nz) === 0) return;
-
+                        if (Math.abs(nx) + Math.abs(ny) + Math.abs(nz) === 0) return; // Ignore 0,0,0
                         const obj = { x: nx, y: isNum(c.y) ? ny : null, z: nz };
                         if (!globalMobCoords[key].some(ex => ex.x === obj.x && ex.z === obj.z)) globalMobCoords[key].push(obj);
                     }
@@ -327,7 +357,7 @@
             const registerSource = (mobName, location, screenshot, itemName) => {
                 if (!mobName) return;
                 const sName = mobName.trim();
-                const sLoc = location?.trim() || "UNDISCLOSED_SECTOR";
+                const sLoc = location?.trim() || "Undisclosed Sector";
                 const sourceKey = `${sName.toLowerCase()}|${sLoc.toLowerCase()}`;
 
                 if (!sourceRegistry[sourceKey]) {
@@ -369,7 +399,6 @@
                         stats: info.stats || []
                     };
                 });
-
                 const searchStr = [src.name, src.location, ...lootDetails.map(l => l.name)].join(' ').toLowerCase();
                 return { ...src, loot: lootDetails, searchStr, screenshots: Array.from(src.screenshots) };
             });
@@ -385,9 +414,9 @@
             STATE.allPosStats = [...new Set(allItems.flatMap(i => (i.stats || []).filter(s => s.pos).map(s => s.label)))].sort();
             STATE.allNegStats = [...new Set(allItems.flatMap(i => (i.stats || []).filter(s => !s.pos).map(s => s.label)))].sort();
             
-            document.getElementById('posStat1').innerHTML = '<option value="">IGNORE</option>' + STATE.allPosStats.map(s => `<option value="${s}">${s}</option>`).join('');
-            document.getElementById('negStat1').innerHTML = '<option value="">IGNORE</option>' + STATE.allNegStats.map(s => `<option value="${s}">${s}</option>`).join('');
-            document.getElementById('professionFilters').innerHTML = STATE.allProfs.map(p => `<button data-prof="${p}" class="prof-chip input-base px-2 py-1 rounded text-[8px] font-black uppercase tracking-wider">${p}</button>`).join('');
+            document.getElementById('posStat1').innerHTML = '<option value="">All Attributes</option>' + STATE.allPosStats.map(s => `<option value="${s}">${s}</option>`).join('');
+            document.getElementById('negStat1').innerHTML = '<option value="">All Attributes</option>' + STATE.allNegStats.map(s => `<option value="${s}">${s}</option>`).join('');
+            document.getElementById('professionFilters').innerHTML = STATE.allProfs.map(p => `<button data-prof="${p}" class="prof-chip input-base px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider">${p}</button>`).join('');
         }
 
         function filterData() {
@@ -407,7 +436,6 @@
 
                 const anyLootFilters = STATE.minLv > 0 || STATE.maxLv < 115 || STATE.tiers.size > 0 || STATE.profs.size > 0 || STATE.posStat1 || STATE.negStat1;
                 if (anyLootFilters && !hasMatchingLoot) return false;
-
                 return true;
             }).sort((a,b) => a.name.localeCompare(b.name));
         }
@@ -415,9 +443,9 @@
         function render() {
             const grid = document.getElementById('sourceGrid'), info = document.getElementById('resultsInfo');
             const data = filterData();
-            const view = data.slice(0, 80);
+            const view = data.slice(0, 60);
             
-            info.textContent = data.length > 0 ? `RECORDS_RETRIEVED: ${data.length}` : "STATUS: NULL_DATA";
+            info.textContent = data.length > 0 ? `${data.length} Strategic Sources Retrieved` : "Database Out of Sync: Null Results";
             
             if (view.length === 0) {
                 grid.innerHTML = "";
@@ -428,44 +456,55 @@
                     const coordsHtml = src.coords.map(c => {
                         const hasY = isNum(c.y);
                         const label = hasY ? `${c.x}, ${c.y}, ${c.z}` : `${c.x}, ${c.z}`;
-                        return `<button onclick="copyToClipboard('${c.x}','${c.y}','${c.z}')" class="tactical-btn mono">${label}</button>`;
+                        return `<button onclick="copyToClipboard('${c.x}','${c.y}','${c.z}')" class="coord-btn mono">${label}</button>`;
                     }).join('');
 
-                    const lootRows = src.loot.map(l => `
-                        <div class="flex items-center gap-6 py-2 border-t border-[var(--border)] border-dashed last:border-0">
-                            <div class="w-1/4">
-                                <div class="text-[11px] font-black uppercase text-indigo-400 truncate">${l.name}</div>
-                                <div class="flex items-center gap-2 mt-1">
-                                    <span class="mono text-[8px] font-bold opacity-50">Lv.${l.level}</span>
-                                    <span class="text-[7px] text-yellow-500">${l.tier >= 0 ? Array(l.tier).fill('★').join('') : ''}</span>
+                    const lootHtml = src.loot.map(l => `
+                        <div class="loot-pill">
+                            <div class="flex justify-between items-start mb-2">
+                                <div class="overflow-hidden">
+                                    <h4 class="text-[11px] font-bold uppercase truncate">${l.name}</h4>
+                                    <div class="flex items-center gap-2 mt-0.5">
+                                        <span class="mono text-[8px] font-bold text-indigo-400">Lv.${l.level}</span>
+                                        <div class="flex gap-0.5 text-amber-400 text-[8px]">
+                                            ${l.tier >= 0 ? Array(l.tier).fill('★').join('') : ''}
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="flex-1 flex flex-wrap gap-2">
-                                ${l.stats.slice(0, 8).map(s => `
-                                    <div class="stat-badge mono ${s.pos ? 'stat-positive' : 'stat-negative'}">
+                            <div class="flex flex-wrap gap-1.5 mt-2">
+                                ${l.stats.slice(0, 4).map(s => `
+                                    <span class="stat-badge ${s.pos ? 'text-emerald-400' : 'text-rose-400'}">
                                         ${s.label}: ${s.value}
-                                    </div>
+                                    </span>
                                 `).join('')}
                             </div>
                         </div>
                     `).join('');
 
                     return `
-                    <div class="source-row px-6 py-5 flex gap-8">
-                        <div class="w-1/4 flex flex-col justify-center">
-                            <div class="flex items-center gap-3">
-                                <h3 class="text-sm font-black uppercase text-white tracking-tight">${src.name}</h3>
-                                ${src.screenshots.length > 0 ? `<a href="${src.screenshots[0].split(',')[0]}" target="_blank" class="text-indigo-500 hover:text-white"><i class="fas fa-camera text-[10px]"></i></a>` : ''}
+                    <div class="archive-card p-6">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="flex-1 overflow-hidden">
+                                <h3 class="text-base font-black tracking-tight truncate uppercase pr-2">${src.name}</h3>
+                                <div class="flex items-center gap-2 mt-1">
+                                    <i class="fas fa-map-marker-alt text-[var(--text-secondary)] text-[10px]"></i>
+                                    <p class="text-[10px] font-bold text-[var(--text-secondary)] truncate uppercase tracking-wider">${src.location}</p>
+                                </div>
                             </div>
-                            <p class="text-[9px] mono text-[var(--text-secondary)] mt-1 uppercase tracking-widest">${src.location}</p>
+                            ${src.screenshots.length > 0 ? `<a href="${src.screenshots[0].split(',')[0]}" target="_blank" class="w-9 h-9 flex items-center justify-center rounded-xl bg-[var(--bg-surface)] text-indigo-400 hover:bg-indigo-500 hover:text-white transition-all"><i class="fas fa-camera text-xs"></i></a>` : ''}
                         </div>
 
-                        <div class="w-1/5 flex flex-wrap items-center gap-1">
-                            ${coordsHtml || '<span class="text-[9px] mono opacity-10 uppercase tracking-tighter">no_loc_data</span>'}
+                        <div class="mb-6">
+                            <p class="text-[9px] font-bold uppercase tracking-[0.2em] text-[var(--text-secondary)] mb-3 opacity-60">Geolocation Records</p>
+                            <div class="flex flex-wrap gap-2">
+                                ${coordsHtml || '<span class="text-[10px] font-medium opacity-20 uppercase">Data Missing</span>'}
+                            </div>
                         </div>
 
-                        <div class="flex-1 space-y-1">
-                            ${lootRows}
+                        <div class="flex-1 overflow-y-auto max-h-[320px] custom-scrollbar pr-1">
+                            <p class="text-[9px] font-bold uppercase tracking-[0.2em] text-[var(--text-secondary)] mb-3 opacity-60">Linked Artifacts (${src.loot.length})</p>
+                            ${lootHtml}
                         </div>
                     </div>
                 `}).join('');
@@ -477,13 +516,13 @@
             const container = document.getElementById('activeTags');
             const tags = [];
             if (STATE.search) tags.push({ id: 'search', val: STATE.search });
-            if (STATE.interestOnly) tags.push({ id: 'interest', val: 'TARGET_PRIORITY' });
-            if (STATE.coordsOnly) tags.push({ id: 'coords', val: 'LOCALIZED_ONLY' });
-            STATE.tiers.forEach(t => tags.push({ id: 'tier-'+t, val: `TIER_${t}` }));
+            if (STATE.interestOnly) tags.push({ id: 'interest', val: 'Priority Targets' });
+            if (STATE.coordsOnly) tags.push({ id: 'coords', val: 'Geolocated Sources' });
+            STATE.tiers.forEach(t => tags.push({ id: 'tier-'+t, val: `Tier ${t}` }));
             STATE.profs.forEach(p => tags.push({ id: 'prof-'+p, val: p }));
 
             container.innerHTML = tags.map(t => `
-                <div class="flex items-center gap-2 px-3 py-1 bg-indigo-500/10 text-indigo-500 border border-indigo-500/20 rounded-md text-[9px] font-black mono uppercase">
+                <div class="flex items-center gap-2 px-3 py-1.5 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded-xl text-[10px] font-bold uppercase tracking-wider">
                     ${t.val}
                     <button onclick="removeFilter('${t.id}')" class="hover:text-white transition-colors"><i class="fas fa-times"></i></button>
                 </div>
@@ -499,9 +538,9 @@
             try {
                 document.execCommand('copy'); 
                 const t = document.getElementById('toast'); 
-                t.textContent = "UPLINK: " + cmd; 
+                t.textContent = "COPIED: " + cmd; 
                 t.classList.add('show');
-                setTimeout(() => t.classList.remove('show'), 2000);
+                setTimeout(() => t.classList.remove('show'), 2500);
             } catch(e) {}
             document.body.removeChild(el);
         }
@@ -561,12 +600,8 @@
         });
 
         document.getElementById('themeToggle').addEventListener('click', () => {
-            const body = document.body; const icon = document.getElementById('themeIcon');
-            if (body.classList.contains('light')) {
-                body.classList.remove('light'); icon.classList.replace('fa-circle-half-stroke', 'fa-circle-half-stroke');
-            } else {
-                body.classList.add('light');
-            }
+            const body = document.body;
+            body.classList.toggle('light');
         });
 
         window.onload = loadShopData;
