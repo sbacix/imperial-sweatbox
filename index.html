@@ -3,41 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Imperial Archives | Library</title>
+    <title>Library of Imperial</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap');
 
         :root {
-            --bg-body: #1e2128;
-            --bg-card: #252932;
-            --bg-surface: #2d323d;
-            --text-primary: #e2e8f0;
-            --text-secondary: #94a3b8;
-            --accent: #818cf8;
-            --accent-soft: rgba(129, 140, 248, 0.1);
-            --border: rgba(255, 255, 255, 0.04);
-            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
-        }
-
-        body.light {
-            --bg-body: #f1f5f9;
+            --bg-body: #f5f2ed; /* Warm Beige */
             --bg-card: #ffffff;
-            --bg-surface: #f8fafc;
-            --text-primary: #1e293b;
-            --text-secondary: #64748b;
-            --accent: #6366f1;
-            --accent-soft: rgba(99, 102, 241, 0.08);
-            --border: rgba(0, 0, 0, 0.05);
-            --shadow: 0 4px 15px -3px rgba(0, 0, 0, 0.05);
+            --bg-surface: #faf8f5;
+            --text-primary: #4a4641;
+            --text-secondary: #8a847c;
+            --accent: #a3b18a; /* Sage Green */
+            --accent-hover: #588157;
+            --border: rgba(0, 0, 0, 0.06);
+            --shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+            
+            /* Status Colors */
+            --status-red: #e07a5f;
+            --status-orange: #f2cc8f;
+            --status-green: #81b29a;
         }
 
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: var(--bg-body);
             color: var(--text-primary);
-            transition: all 0.4s ease;
+            transition: background 0.4s ease;
             overflow-x: hidden;
         }
 
@@ -45,53 +38,59 @@
 
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: var(--bg-body); }
-        ::-webkit-scrollbar-thumb { background: var(--bg-surface); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #dcd7cf; border-radius: 10px; }
 
         .archive-card {
             background: var(--bg-card);
             border: 1px solid var(--border);
-            border-radius: 20px;
+            border-radius: 24px;
             box-shadow: var(--shadow);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s;
             display: flex;
             flex-direction: column;
             overflow: hidden;
         }
 
         .archive-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-6px);
             border-color: var(--accent);
         }
 
         .input-base {
-            background: var(--bg-surface);
+            background: var(--bg-card);
             border: 1px solid var(--border);
             color: var(--text-primary);
-            border-radius: 12px;
+            border-radius: 14px;
             transition: all 0.2s;
         }
 
         .input-base:focus {
             border-color: var(--accent);
             outline: none;
-            box-shadow: 0 0 0 3px var(--accent-soft);
+            box-shadow: 0 0 0 4px rgba(163, 177, 138, 0.15);
         }
 
         .btn-primary {
             background: var(--accent);
             color: white;
-            border-radius: 12px;
+            border-radius: 14px;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-hover);
+            transform: scale(1.02);
         }
 
         .coord-btn {
             background: var(--bg-surface);
-            color: var(--accent);
+            color: var(--text-primary);
             border: 1px solid var(--border);
             transition: all 0.2s;
             font-size: 10px;
             font-weight: 700;
             padding: 6px 12px;
-            border-radius: 8px;
+            border-radius: 10px;
         }
         
         .coord-btn:hover {
@@ -111,27 +110,24 @@
         .loot-pill {
             background: var(--bg-surface);
             border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 12px;
-            margin-bottom: 10px;
-            transition: background 0.2s;
-        }
-
-        .loot-pill:hover {
-            background: var(--accent-soft);
+            border-radius: 16px;
+            padding: 14px;
+            margin-bottom: 12px;
         }
 
         .stat-badge {
             font-size: 10px;
-            font-weight: 600;
-            padding: 2px 6px;
-            border-radius: 6px;
-            background: rgba(0,0,0,0.1);
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 8px;
+            background: white;
+            border: 1px solid var(--border);
         }
 
         .toggle-btn.active {
             background: var(--accent);
             color: white !important;
+            border-color: var(--accent);
         }
 
         #toast {
@@ -139,135 +135,147 @@
             bottom: 2.5rem;
             left: 50%;
             transform: translateX(-50%) translateY(100px);
-            background: var(--bg-surface);
+            background: white;
             color: var(--text-primary);
-            padding: 0.8rem 1.8rem;
-            border-radius: 14px;
-            font-weight: 600;
+            padding: 1rem 2rem;
+            border-radius: 18px;
+            font-weight: 700;
             font-size: 14px;
             z-index: 1000;
             transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
             border: 1px solid var(--accent);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
         }
         #toast.show { transform: translateX(-50%) translateY(0); }
+
+        /* API Status Dot */
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 6px;
+        }
+        .status-loading { background-color: var(--status-orange); box-shadow: 0 0 8px var(--status-orange); }
+        .status-success { background-color: var(--status-green); box-shadow: 0 0 8px var(--status-green); }
+        .status-error { background-color: var(--status-red); box-shadow: 0 0 8px var(--status-red); }
     </style>
 </head>
 <body class="min-h-screen">
 
-    <div id="toast">Ready</div>
+    <div id="toast">Database Ready</div>
 
-    <!-- Smooth Header -->
+    <!-- Soft Header -->
     <header class="sticky top-0 z-40 w-full bg-[var(--bg-body)]/80 backdrop-blur-xl border-b border-[var(--border)]">
-        <div class="max-w-[1400px] mx-auto px-6 h-20 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-indigo-500 rounded-xl flex items-center justify-center text-white shadow-lg shadow-indigo-500/20">
-                    <i class="fas fa-atlas"></i>
+        <div class="max-w-[1400px] mx-auto px-6 h-24 flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-[#a3b18a] rounded-2xl flex items-center justify-center text-white shadow-lg shadow-[#a3b18a]/20">
+                    <i class="fas fa-dragon text-xl"></i>
                 </div>
                 <div>
-                    <h1 class="text-base font-extrabold tracking-tight">Library of <span class="text-indigo-400">Imperial</span></h1>
-                    <p class="text-[10px] text-[var(--text-secondary)] font-bold tracking-[0.1em] uppercase">Tactical Inventory Matrix</p>
+                    <h1 class="text-lg font-extrabold tracking-tight">Library of <span class="text-[#8a9a5b]">Imperial</span></h1>
+                    <div class="flex items-center mt-0.5">
+                        <span id="apiStatusDot" class="status-dot status-loading"></span>
+                        <p id="apiStatusText" class="text-[9px] text-[var(--text-secondary)] font-bold tracking-[0.1em] uppercase">Uplinking Live Archive...</p>
+                    </div>
                 </div>
             </div>
 
-            <div class="hidden md:flex flex-1 max-w-xl mx-8 relative">
-                <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-[var(--text-secondary)]"></i>
+            <div class="hidden md:flex flex-1 max-w-xl mx-10 relative">
+                <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-[var(--text-secondary)] opacity-40"></i>
                 <input 
                     type="text" id="globalSearch" 
-                    placeholder="Search sources or specific drops..."
-                    class="w-full input-base py-2.5 pl-11 pr-6 text-sm"
+                    placeholder="Search by mob, location, or artifact name..."
+                    class="w-full input-base py-3 pl-12 pr-6 text-sm placeholder:opacity-50"
                 >
             </div>
 
-            <div class="flex items-center gap-3">
-                <button id="themeToggle" class="input-base w-10 h-10 flex items-center justify-center text-[var(--text-secondary)]">
-                    <i class="fas fa-leaf" id="themeIcon"></i>
-                </button>
-                <button id="toggleFilters" class="btn-primary px-5 py-2.5 text-xs font-bold uppercase tracking-widest flex items-center gap-2 shadow-lg shadow-indigo-500/20">
-                    <i class="fas fa-sliders"></i> Matrix
+            <div class="flex items-center gap-4">
+                <button id="toggleFilters" class="btn-primary px-6 py-3 text-xs font-black uppercase tracking-widest flex items-center gap-2 shadow-lg shadow-[#a3b18a]/20">
+                    <i class="fas fa-sliders-h"></i> Matrix
                 </button>
             </div>
         </div>
     </header>
 
-    <main class="max-w-[1400px] mx-auto px-6 py-8">
-        <div id="activeTags" class="flex flex-wrap gap-2 mb-8 min-h-[32px]"></div>
+    <main class="max-w-[1400px] mx-auto px-6 py-10">
+        <div id="activeTags" class="flex flex-wrap gap-2 mb-10 min-h-[32px]"></div>
 
-        <div class="flex items-center justify-between mb-8">
-            <h2 id="resultsInfo" class="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-widest">
-                Scanning Records...
+        <div class="flex items-center justify-between mb-10">
+            <h2 id="resultsInfo" class="text-xs font-black text-[var(--text-secondary)] uppercase tracking-[0.2em] opacity-60">
+                Initializing Strategic Records...
             </h2>
         </div>
 
-        <div id="sourceGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+        <div id="sourceGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10"></div>
 
-        <div id="emptyState" class="hidden py-40 flex flex-col items-center text-center">
-            <div class="w-16 h-16 bg-[var(--bg-surface)] rounded-2xl flex items-center justify-center mb-6 opacity-50">
-                <i class="fas fa-binoculars text-2xl"></i>
+        <div id="emptyState" class="hidden py-48 flex flex-col items-center text-center">
+            <div class="w-20 h-20 bg-[var(--bg-surface)] rounded-3xl flex items-center justify-center mb-6 opacity-30">
+                <i class="fas fa-feather text-3xl"></i>
             </div>
-            <h3 class="text-lg font-bold">No Records Found</h3>
-            <p class="text-[var(--text-secondary)] text-sm mb-6">Matrix initialization returned zero matches in this sector.</p>
-            <button onclick="clearAllFilters()" class="text-indigo-400 font-bold uppercase text-xs tracking-widest hover:underline">Flush Archive</button>
+            <h3 class="text-xl font-bold opacity-70">No Artifacts Located</h3>
+            <p class="text-[var(--text-secondary)] text-sm mb-8">The matrix returned zero results for this sector.</p>
+            <button onclick="clearAllFilters()" class="text-[#8a9a5b] font-black uppercase text-xs tracking-widest hover:underline">Reset Matrix</button>
         </div>
     </main>
 
-    <!-- Matrix Sidebar -->
-    <div id="sidebarOverlay" class="fixed inset-0 bg-black/50 z-[50] opacity-0 pointer-events-none transition-opacity duration-300"></div>
-    <aside id="filterSidebar" class="fixed top-0 right-0 h-full w-[360px] z-[60] transform translate-x-full shadow-2xl flex flex-col">
-        <div class="p-6 border-b border-[var(--border)] flex items-center justify-between">
-            <h2 class="font-bold text-sm uppercase tracking-widest">Archive Matrix</h2>
+    <!-- Side Sidebar -->
+    <div id="sidebarOverlay" class="fixed inset-0 bg-black/30 z-[50] opacity-0 pointer-events-none transition-opacity duration-300"></div>
+    <aside id="filterSidebar" class="fixed top-0 right-0 h-full w-[380px] z-[60] transform translate-x-full shadow-2xl flex flex-col">
+        <div class="p-8 border-b border-[var(--border)] flex items-center justify-between">
+            <h2 class="font-black text-sm uppercase tracking-widest">Filter Matrix</h2>
             <button id="closeSidebar" class="text-[var(--text-secondary)] hover:text-[var(--text-primary)]"><i class="fas fa-times"></i></button>
         </div>
 
-        <div class="flex-1 overflow-y-auto p-6 space-y-8 custom-scrollbar">
-            <section class="space-y-4">
-                <label class="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest">Quality Classification</label>
+        <div class="flex-1 overflow-y-auto p-8 space-y-10 custom-scrollbar">
+            <section class="space-y-5">
+                <label class="text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest opacity-60">Quality Classification</label>
                 <div class="grid grid-cols-4 gap-2" id="tierFilters">
-                    <button data-tier="0" class="tier-btn input-base py-2 text-xs font-bold">T0</button>
-                    <button data-tier="1" class="tier-btn input-base py-2 text-xs font-bold">T1</button>
-                    <button data-tier="2" class="tier-btn input-base py-2 text-xs font-bold">T2</button>
-                    <button data-tier="3" class="tier-btn input-base py-2 text-xs font-bold">T3</button>
+                    <button data-tier="0" class="tier-btn input-base py-3 text-xs font-bold">T0</button>
+                    <button data-tier="1" class="tier-btn input-base py-3 text-xs font-bold">T1</button>
+                    <button data-tier="2" class="tier-btn input-base py-3 text-xs font-bold">T2</button>
+                    <button data-tier="3" class="tier-btn input-base py-3 text-xs font-bold">T3</button>
                 </div>
-            </section>
-
-            <section class="space-y-3">
-                <label class="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest">Active Search Protocols</label>
-                <button id="interestToggle" class="toggle-btn input-base w-full py-3 text-[10px] font-bold uppercase tracking-widest flex items-center justify-center gap-2">
-                    <i class="fas fa-star text-amber-400"></i> High Interest Only
-                </button>
-                <button id="coordsToggle" class="toggle-btn input-base w-full py-3 text-[10px] font-bold uppercase tracking-widest flex items-center justify-center gap-2">
-                    <i class="fas fa-crosshairs text-indigo-400"></i> Localized Data Only
-                </button>
             </section>
 
             <section class="space-y-4">
-                <label class="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest">Level Parameters</label>
-                <div class="flex items-center gap-3">
-                    <input type="number" id="minLevel" placeholder="0" class="w-full input-base px-3 py-2 text-sm font-bold">
-                    <span class="text-[var(--text-secondary)] opacity-50 font-bold">-</span>
-                    <input type="number" id="maxLevel" placeholder="115" class="w-full input-base px-3 py-2 text-sm font-bold">
+                <label class="text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest opacity-60">Search Protocols</label>
+                <button id="interestToggle" class="toggle-btn input-base w-full py-4 text-[11px] font-black uppercase tracking-widest flex items-center justify-center gap-2">
+                    <i class="fas fa-dragon text-amber-500"></i> High Interest
+                </button>
+                <button id="coordsToggle" class="toggle-btn input-base w-full py-4 text-[11px] font-black uppercase tracking-widest flex items-center justify-center gap-2">
+                    <i class="fas fa-location-arrow text-[#8a9a5b]"></i> Geolocated Only
+                </button>
+            </section>
+
+            <section class="space-y-5">
+                <label class="text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest opacity-60">Level Parameters</label>
+                <div class="flex items-center gap-4">
+                    <input type="number" id="minLevel" placeholder="0" class="w-full input-base px-4 py-3 text-sm font-bold">
+                    <span class="text-[var(--text-secondary)] font-bold opacity-30">-</span>
+                    <input type="number" id="maxLevel" placeholder="115" class="w-full input-base px-4 py-3 text-sm font-bold">
                 </div>
             </section>
 
-            <section class="space-y-6">
+            <section class="space-y-8">
                 <div>
-                    <label class="block text-[10px] font-bold text-emerald-400 uppercase tracking-widest mb-3">Buff Preference</label>
-                    <select id="posStat1" class="w-full input-base px-3 py-2 text-xs font-bold outline-none"></select>
+                    <label class="block text-[10px] font-black text-[#8a9a5b] uppercase tracking-widest mb-4">Positive Attribute</label>
+                    <select id="posStat1" class="w-full input-base px-4 py-3 text-xs font-bold outline-none cursor-pointer"></select>
                 </div>
                 <div>
-                    <label class="block text-[10px] font-bold text-rose-400 uppercase tracking-widest mb-3">Debuff Preference</label>
-                    <select id="negStat1" class="w-full input-base px-3 py-2 text-xs font-bold outline-none"></select>
+                    <label class="block text-[10px] font-black text-[#e07a5f] uppercase tracking-widest mb-4">Negative Attribute</label>
+                    <select id="negStat1" class="w-full input-base px-4 py-3 text-xs font-bold outline-none cursor-pointer"></select>
                 </div>
             </section>
 
-            <section class="space-y-4 pb-12">
-                <label class="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest">Authorized Professions</label>
+            <section class="space-y-5 pb-16">
+                <label class="text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest opacity-60">Associated Professions</label>
                 <div id="professionFilters" class="flex flex-wrap gap-2"></div>
             </section>
         </div>
 
-        <div class="p-6 border-t border-[var(--border)]">
-            <button onclick="clearAllFilters()" class="w-full py-3 rounded-xl text-[10px] font-bold uppercase tracking-widest bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white transition-all">Clear All Constraints</button>
+        <div class="p-8 border-t border-[var(--border)]">
+            <button onclick="clearAllFilters()" class="w-full py-4 rounded-2xl text-[11px] font-black uppercase tracking-widest bg-[#e07a5f]/10 text-[#e07a5f] hover:bg-[#e07a5f] hover:text-white transition-all">Clear Filters</button>
         </div>
     </aside>
 
@@ -295,7 +303,7 @@
         let GLOBAL_ITEM_LOOKUP = {};
         const STATE = {
             search: "", minLv: 0, maxLv: 115, tiers: new Set(), profs: new Set(),
-            posStat1: "", negStat1: "", interestOnly: false, coordsOnly: false, theme: "dark",
+            posStat1: "", negStat1: "", interestOnly: false, coordsOnly: false,
             allProfs: [], allPosStats: [], allNegStats: []
         };
 
@@ -304,25 +312,83 @@
             let timeout; return function(...args) { clearTimeout(timeout); timeout = setTimeout(() => func.apply(this, args), wait); };
         }
 
+        function setApiStatus(state) {
+            const dot = document.getElementById('apiStatusDot');
+            const text = document.getElementById('apiStatusText');
+            dot.className = "status-dot";
+            
+            if (state === 'loading') {
+                dot.classList.add('status-loading');
+                text.textContent = "Uplinking Live Archive...";
+            } else if (state === 'success') {
+                dot.classList.add('status-success');
+                text.textContent = "Live Sync Active";
+            } else if (state === 'error') {
+                dot.classList.add('status-error');
+                text.textContent = "Offline (Local Backup)";
+            }
+        }
+
         async function loadShopData() {
-            let ingredients = {}, drops = {}, htoi = [];
+            let ingredients = {}, drops = {}, htoi = [], wynnItems = {};
+            setApiStatus('loading');
+            
             try {
+                // Always try to load local data first for immediate functionality
                 const [resI, resD, resH] = await Promise.all([
                     fetch('ingredients.json').then(r => r.ok ? r.json() : {}),
                     fetch('drops.json').then(r => r.ok ? r.json() : {}),
                     fetch('htoi.json').then(r => r.ok ? r.json() : [])
                 ]);
                 ingredients = resI; drops = resD; htoi = resH;
-            } catch (e) { console.error("Archive Buffer Offline", e); }
-            processJsonData(ingredients, drops, htoi);
+
+                // Attempt live API with timeout
+                try {
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 8000);
+                    const wynnRes = await fetch('https://api.wynncraft.com/v3/item/database?fullResult', { signal: controller.signal });
+                    clearTimeout(timeoutId);
+                    if (wynnRes.ok) {
+                        wynnItems = await wynnRes.json();
+                        setApiStatus('success');
+                    } else {
+                        setApiStatus('error');
+                    }
+                } catch(apiErr) {
+                    console.warn("API Offline", apiErr);
+                    setApiStatus('error');
+                }
+            } catch (e) { 
+                console.error("Critical Data Load Error", e);
+                setApiStatus('error');
+            }
+            processJsonData(ingredients, drops, htoi, wynnItems);
         }
 
-        function processJsonData(ingredients, dropsMap, htoiArray) {
+        function processJsonData(ingredients, dropsMap, htoiArray, wynnItems) {
             GLOBAL_ITEM_LOOKUP = {};
+            // Base local ingredients
             Object.keys(ingredients).forEach(k => {
                 const lower = k.trim().toLowerCase();
                 GLOBAL_ITEM_LOOKUP[lower] = { ...ingredients[k], originalName: k };
             });
+
+            // Merge in Wynn API data for new items
+            if (wynnItems) {
+                Object.keys(wynnItems).forEach(k => {
+                    const lower = k.trim().toLowerCase();
+                    if (!GLOBAL_ITEM_LOOKUP[lower]) {
+                        const item = wynnItems[k];
+                        GLOBAL_ITEM_LOOKUP[lower] = {
+                            originalName: item.name || k,
+                            lvl: item.level || 0,
+                            tier: item.tier || 0,
+                            profs: item.professions || [],
+                            stats: [] 
+                        };
+                    }
+                });
+            }
 
             const globalMobCoords = {};
             const addMobCoords = (mobName, coords) => {
@@ -333,7 +399,7 @@
                 arr.forEach(c => {
                     if (isNum(c.x) && isNum(c.z)) {
                         const nx = Number(c.x), ny = isNum(c.y) ? Number(c.y) : 0, nz = Number(c.z);
-                        if (Math.abs(nx) + Math.abs(ny) + Math.abs(nz) === 0) return; // Ignore 0,0,0
+                        if (Math.abs(nx) + Math.abs(ny) + Math.abs(nz) === 0) return; // Strict 0,0,0 filter
                         const obj = { x: nx, y: isNum(c.y) ? ny : null, z: nz };
                         if (!globalMobCoords[key].some(ex => ex.x === obj.x && ex.z === obj.z)) globalMobCoords[key].push(obj);
                     }
@@ -416,7 +482,7 @@
             
             document.getElementById('posStat1').innerHTML = '<option value="">All Attributes</option>' + STATE.allPosStats.map(s => `<option value="${s}">${s}</option>`).join('');
             document.getElementById('negStat1').innerHTML = '<option value="">All Attributes</option>' + STATE.allNegStats.map(s => `<option value="${s}">${s}</option>`).join('');
-            document.getElementById('professionFilters').innerHTML = STATE.allProfs.map(p => `<button data-prof="${p}" class="prof-chip input-base px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider">${p}</button>`).join('');
+            document.getElementById('professionFilters').innerHTML = STATE.allProfs.map(p => `<button data-prof="${p}" class="prof-chip input-base px-3 py-2 rounded-lg text-[10px] font-bold uppercase tracking-wider">${p}</button>`).join('');
         }
 
         function filterData() {
@@ -445,7 +511,7 @@
             const data = filterData();
             const view = data.slice(0, 60);
             
-            info.textContent = data.length > 0 ? `${data.length} Strategic Sources Retrieved` : "Database Out of Sync: Null Results";
+            info.textContent = data.length > 0 ? `${data.length} Strategic Sources Retrieved` : "Database Buffer: No Matches";
             
             if (view.length === 0) {
                 grid.innerHTML = "";
@@ -461,20 +527,20 @@
 
                     const lootHtml = src.loot.map(l => `
                         <div class="loot-pill">
-                            <div class="flex justify-between items-start mb-2">
+                            <div class="flex justify-between items-start mb-3">
                                 <div class="overflow-hidden">
-                                    <h4 class="text-[11px] font-bold uppercase truncate">${l.name}</h4>
-                                    <div class="flex items-center gap-2 mt-0.5">
-                                        <span class="mono text-[8px] font-bold text-indigo-400">Lv.${l.level}</span>
-                                        <div class="flex gap-0.5 text-amber-400 text-[8px]">
+                                    <h4 class="text-[11px] font-black uppercase truncate text-[#5c5c5c]">${l.name}</h4>
+                                    <div class="flex items-center gap-2 mt-1">
+                                        <span class="mono text-[8px] font-bold text-[#8a9a5b]">Lv.${l.level}</span>
+                                        <div class="flex gap-0.5 text-[#e9c46a] text-[8px]">
                                             ${l.tier >= 0 ? Array(l.tier).fill('★').join('') : ''}
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="flex flex-wrap gap-1.5 mt-2">
+                            <div class="flex flex-wrap gap-2">
                                 ${l.stats.slice(0, 4).map(s => `
-                                    <span class="stat-badge ${s.pos ? 'text-emerald-400' : 'text-rose-400'}">
+                                    <span class="stat-badge ${s.pos ? 'text-[#81b29a]' : 'text-[#e07a5f]'}">
                                         ${s.label}: ${s.value}
                                     </span>
                                 `).join('')}
@@ -483,27 +549,27 @@
                     `).join('');
 
                     return `
-                    <div class="archive-card p-6">
-                        <div class="flex justify-between items-start mb-4">
+                    <div class="archive-card p-8">
+                        <div class="flex justify-between items-start mb-6">
                             <div class="flex-1 overflow-hidden">
                                 <h3 class="text-base font-black tracking-tight truncate uppercase pr-2">${src.name}</h3>
-                                <div class="flex items-center gap-2 mt-1">
-                                    <i class="fas fa-map-marker-alt text-[var(--text-secondary)] text-[10px]"></i>
-                                    <p class="text-[10px] font-bold text-[var(--text-secondary)] truncate uppercase tracking-wider">${src.location}</p>
+                                <div class="flex items-center gap-2 mt-1.5 opacity-60">
+                                    <i class="fas fa-map-marker-alt text-[10px]"></i>
+                                    <p class="text-[10px] font-bold truncate uppercase tracking-widest">${src.location}</p>
                                 </div>
                             </div>
-                            ${src.screenshots.length > 0 ? `<a href="${src.screenshots[0].split(',')[0]}" target="_blank" class="w-9 h-9 flex items-center justify-center rounded-xl bg-[var(--bg-surface)] text-indigo-400 hover:bg-indigo-500 hover:text-white transition-all"><i class="fas fa-camera text-xs"></i></a>` : ''}
+                            ${src.screenshots.length > 0 ? `<a href="${src.screenshots[0].split(',')[0]}" target="_blank" class="w-10 h-10 flex items-center justify-center rounded-2xl bg-[#a3b18a]/10 text-[#8a9a5b] hover:bg-[#a3b18a] hover:text-white transition-all shadow-sm"><i class="fas fa-camera text-xs"></i></a>` : ''}
                         </div>
 
-                        <div class="mb-6">
-                            <p class="text-[9px] font-bold uppercase tracking-[0.2em] text-[var(--text-secondary)] mb-3 opacity-60">Geolocation Records</p>
-                            <div class="flex flex-wrap gap-2">
-                                ${coordsHtml || '<span class="text-[10px] font-medium opacity-20 uppercase">Data Missing</span>'}
+                        <div class="mb-8">
+                            <p class="text-[9px] font-black uppercase tracking-[0.2em] text-[var(--text-secondary)] mb-4 opacity-40">Tactical Geolocation</p>
+                            <div class="flex flex-wrap gap-2.5">
+                                ${coordsHtml || '<span class="text-[10px] font-bold opacity-10 uppercase italic">Coordinates Unlisted</span>'}
                             </div>
                         </div>
 
-                        <div class="flex-1 overflow-y-auto max-h-[320px] custom-scrollbar pr-1">
-                            <p class="text-[9px] font-bold uppercase tracking-[0.2em] text-[var(--text-secondary)] mb-3 opacity-60">Linked Artifacts (${src.loot.length})</p>
+                        <div class="flex-1 overflow-y-auto max-h-[340px] custom-scrollbar pr-2">
+                            <p class="text-[9px] font-black uppercase tracking-[0.2em] text-[var(--text-secondary)] mb-4 opacity-40">Associated Artifacts (${src.loot.length})</p>
                             ${lootHtml}
                         </div>
                     </div>
@@ -522,9 +588,9 @@
             STATE.profs.forEach(p => tags.push({ id: 'prof-'+p, val: p }));
 
             container.innerHTML = tags.map(t => `
-                <div class="flex items-center gap-2 px-3 py-1.5 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded-xl text-[10px] font-bold uppercase tracking-wider">
+                <div class="flex items-center gap-3 px-4 py-2 bg-[#a3b18a]/10 text-[#588157] border border-[#a3b18a]/20 rounded-xl text-[10px] font-black uppercase tracking-wider">
                     ${t.val}
-                    <button onclick="removeFilter('${t.id}')" class="hover:text-white transition-colors"><i class="fas fa-times"></i></button>
+                    <button onclick="removeFilter('${t.id}')" class="hover:text-[#4a4a4a] transition-colors"><i class="fas fa-times"></i></button>
                 </div>
             `).join('');
         }
@@ -564,6 +630,14 @@
             render();
         }
 
+        function showToast(msg) {
+            const t = document.getElementById("toast");
+            t.textContent = msg;
+            t.classList.add("show");
+            setTimeout(() => t.classList.remove("show"), 2500);
+        }
+
+        // Sidebar Controls
         document.getElementById('toggleFilters').addEventListener('click', () => {
             document.getElementById('filterSidebar').classList.add('open');
             document.getElementById('sidebarOverlay').classList.replace('opacity-0', 'opacity-100');
@@ -574,7 +648,13 @@
             document.getElementById('sidebarOverlay').classList.replace('opacity-100', 'opacity-0');
             document.getElementById('sidebarOverlay').classList.add('pointer-events-none');
         });
-        document.getElementById('sidebarOverlay').addEventListener('click', () => document.getElementById('closeSidebar').click());
+        document.getElementById('sidebarOverlay').addEventListener('click', () => {
+            document.getElementById('filterSidebar').classList.remove('open');
+            document.getElementById('sidebarOverlay').classList.replace('opacity-100', 'opacity-0');
+            document.getElementById('sidebarOverlay').classList.add('pointer-events-none');
+        });
+
+        // Search & Filter Events
         document.getElementById('globalSearch').addEventListener('input', debounce(e => { STATE.search = e.target.value; render(); }, 250));
         document.getElementById('minLevel').addEventListener('input', e => { STATE.minLv = Number(e.target.value) || 0; render(); });
         document.getElementById('maxLevel').addEventListener('input', e => { STATE.maxLv = Number(e.target.value) || 115; render(); });
@@ -597,11 +677,6 @@
         });
         document.getElementById('coordsToggle').addEventListener('click', e => {
             STATE.coordsOnly = !STATE.coordsOnly; e.currentTarget.classList.toggle('active'); render();
-        });
-
-        document.getElementById('themeToggle').addEventListener('click', () => {
-            const body = document.body;
-            body.classList.toggle('light');
         });
 
         window.onload = loadShopData;
