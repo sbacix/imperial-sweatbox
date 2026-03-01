@@ -62,17 +62,6 @@
             box-shadow: 0 12px 30px -10px var(--accent-glow);
         }
 
-        .archive-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; height: 2px;
-            background: linear-gradient(90deg, transparent, var(--accent), transparent);
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .archive-card:hover::before { opacity: 1; }
-
         /* Inputs & Buttons */
         .input-base {
             background: var(--bg-surface);
@@ -110,6 +99,24 @@
             border-color: var(--accent);
         }
 
+        /* Tactical Coord Button */
+        .tactical-coord-btn {
+            background: #ef4444;
+            color: white;
+            border: 1px solid #f87171;
+            transition: all 0.2s;
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-width: 50px;
+            padding: 4px;
+        }
+        .tactical-coord-btn:hover {
+            background: #dc2626;
+            transform: scale(1.05);
+        }
+
         /* Sidebar Logic */
         #filterSidebar {
             background: var(--bg-card);
@@ -123,25 +130,25 @@
         .stat-positive { color: #10b981; }
         .stat-negative { color: #ef4444; }
 
-        /* Tooltips/Toast */
+        /* Toast */
         #toast {
             position: fixed;
             bottom: 2rem;
             left: 50%;
             transform: translateX(-50%) translateY(100px);
-            background: var(--accent);
+            background: #1e293b;
             color: white;
             padding: 0.75rem 1.5rem;
-            border-radius: 9999px;
-            font-weight: 600;
+            border-radius: 12px;
+            font-weight: 700;
             font-size: 0.875rem;
             z-index: 1000;
             transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3);
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.5);
+            border: 1px solid var(--accent);
         }
         #toast.show { transform: translateX(-50%) translateY(0); }
 
-        /* Toggle States */
         .toggle-btn.active {
             background: var(--accent);
             border-color: var(--accent);
@@ -151,18 +158,18 @@
 </head>
 <body class="min-h-screen">
 
-    <div id="toast">Coordinates Copied to Clipboard</div>
+    <div id="toast">Initializing...</div>
 
     <!-- Header -->
     <header class="sticky top-0 z-40 w-full bg-[var(--bg-body)]/80 backdrop-blur-md border-b border-[var(--border)]">
         <div class="max-w-[1600px] mx-auto px-6 h-20 flex items-center justify-between">
             <div class="flex items-center gap-4">
                 <div class="w-10 h-10 bg-indigo-600 rounded-lg flex items-center justify-center text-white shadow-lg shadow-indigo-500/20">
-                    <i class="fas fa-book-atlas text-xl"></i>
+                    <i class="fas fa-dragon text-xl"></i>
                 </div>
                 <div>
                     <h1 class="text-lg font-extrabold tracking-tight uppercase">Library of <span class="text-indigo-500">Imperial</span></h1>
-                    <p class="text-[10px] text-[var(--text-secondary)] font-bold tracking-[0.2em] uppercase opacity-60">Global Inventory Database</p>
+                    <p class="text-[10px] text-[var(--text-secondary)] font-bold tracking-[0.2em] uppercase opacity-60">Strategic Archive</p>
                 </div>
             </div>
 
@@ -170,7 +177,7 @@
                 <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-[var(--text-secondary)] opacity-50"></i>
                 <input 
                     type="text" id="globalSearch" 
-                    placeholder="Search artifacts, drops, or properties..."
+                    placeholder="Search database..."
                     class="w-full input-base rounded-full py-2.5 pl-11 pr-6 text-sm"
                 >
             </div>
@@ -181,47 +188,41 @@
                 </button>
                 <button id="toggleFilters" class="btn-primary px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-2">
                     <i class="fas fa-sliders-h"></i>
-                    <span>Controls</span>
+                    <span>Matrix</span>
                 </button>
             </div>
         </div>
     </header>
 
-    <!-- Main Content -->
     <main class="max-w-[1600px] mx-auto px-6 py-10">
-        <!-- Breadcrumbs / Active Tags -->
         <div id="activeTags" class="flex flex-wrap gap-2 mb-8 min-h-[32px]"></div>
 
-        <!-- Meta Info -->
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
             <div id="resultsInfo" class="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-widest bg-[var(--bg-surface)] px-4 py-2 rounded-lg inline-block border border-[var(--border)]">
-                Initializing Archive...
+                Accessing Core Records...
             </div>
             <div class="flex items-center gap-4">
-                <span class="text-[10px] font-bold text-[var(--text-secondary)] uppercase">Sort By:</span>
-                <select id="sortBy" class="input-base text-[10px] font-bold uppercase px-3 py-1.5 rounded-lg outline-none cursor-pointer">
+                <span class="text-[10px] font-bold text-[var(--text-secondary)] uppercase">Order:</span>
+                <select id="sortBy" class="input-base text-[10px] font-bold uppercase px-3 py-1.5 rounded-lg cursor-pointer">
                     <option value="name">Alphanumeric</option>
-                    <option value="level">Level (Descending)</option>
-                    <option value="tier">Quality Tier</option>
+                    <option value="level">Level</option>
+                    <option value="tier">Tier</option>
                 </select>
             </div>
         </div>
 
-        <!-- Grid -->
         <div id="ingredientGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
 
-        <!-- Empty State -->
         <div id="emptyState" class="hidden py-32 flex flex-col items-center text-center">
             <div class="w-20 h-20 bg-[var(--bg-surface)] rounded-3xl flex items-center justify-center mb-6 border border-[var(--border)]">
-                <i class="fas fa-folder-open text-3xl opacity-20"></i>
+                <i class="fas fa-skull text-3xl opacity-20"></i>
             </div>
-            <h3 class="text-xl font-bold mb-2">No Matches Found</h3>
-            <p class="text-[var(--text-secondary)] text-sm mb-6">Your query did not return any records from the imperial database.</p>
-            <button onclick="clearAllFilters()" class="text-indigo-500 font-bold uppercase text-xs tracking-widest hover:underline">Reset Archives</button>
+            <h3 class="text-xl font-bold mb-2">No Records Found</h3>
+            <p class="text-[var(--text-secondary)] text-sm mb-6">Matrix initialization returned null results.</p>
+            <button onclick="clearAllFilters()" class="text-indigo-500 font-bold uppercase text-xs tracking-widest hover:underline">Re-link Archives</button>
         </div>
     </main>
 
-    <!-- Sidebar Filter -->
     <div id="sidebarOverlay" class="fixed inset-0 bg-black/40 z-[50] opacity-0 pointer-events-none transition-opacity duration-300"></div>
     <aside id="filterSidebar" class="fixed top-0 right-0 h-full w-[350px] z-[60] transform translate-x-full shadow-2xl flex flex-col">
         <div class="p-6 border-b border-[var(--border)] flex items-center justify-between">
@@ -230,9 +231,8 @@
         </div>
 
         <div class="flex-1 overflow-y-auto p-6 space-y-8 custom-scrollbar">
-            <!-- Tiers -->
             <section class="space-y-4">
-                <label class="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-[0.2em]">Quality Tier</label>
+                <label class="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest">Tier Level</label>
                 <div class="grid grid-cols-4 gap-2" id="tierFilters">
                     <button data-tier="0" class="tier-btn input-base py-2 rounded-lg text-xs font-bold">T0</button>
                     <button data-tier="1" class="tier-btn input-base py-2 rounded-lg text-xs font-bold">T1</button>
@@ -241,57 +241,50 @@
                 </div>
             </section>
 
-            <!-- Shortcuts -->
             <section class="space-y-4">
-                <label class="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-[0.2em]">Priority Toggles</label>
+                <label class="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest">Priority Protocols</label>
                 <div class="space-y-2">
                     <button id="interestToggle" class="toggle-btn btn-secondary w-full py-3 rounded-xl text-[10px] font-bold uppercase tracking-wider flex items-center justify-center gap-2">
-                        <i class="fas fa-bookmark text-amber-500"></i> High Interest
+                        <i class="fas fa-star text-amber-500"></i> Targeted Interest
                     </button>
                     <button id="coordsToggle" class="toggle-btn btn-secondary w-full py-3 rounded-xl text-[10px] font-bold uppercase tracking-wider flex items-center justify-center gap-2">
-                        <i class="fas fa-location-crosshairs text-indigo-500"></i> Has Coordinates
+                        <i class="fas fa-crosshairs text-red-500"></i> Geolocation Logs
                     </button>
                 </div>
             </section>
 
-            <!-- Level Range -->
             <section class="space-y-4">
-                <label class="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-[0.2em]">Level Parameters</label>
+                <label class="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest">Range Parameters</label>
                 <div class="flex items-center gap-3">
                     <input type="number" id="minLevel" placeholder="MIN" class="w-full input-base rounded-lg px-3 py-2 text-sm font-bold">
-                    <div class="h-[1px] w-4 bg-[var(--border)]"></div>
+                    <span class="opacity-20">/</span>
                     <input type="number" id="maxLevel" placeholder="MAX" class="w-full input-base rounded-lg px-3 py-2 text-sm font-bold">
                 </div>
             </section>
 
-            <!-- Stat Selects -->
             <section class="space-y-6">
                 <div>
-                    <label class="block text-[10px] font-bold text-emerald-500 uppercase tracking-widest mb-3">Positive Affinity</label>
+                    <label class="block text-[10px] font-bold text-emerald-500 uppercase tracking-widest mb-3">Buff Affinity</label>
                     <select id="posStat1" class="w-full input-base rounded-lg px-3 py-2 text-xs font-bold outline-none"></select>
                 </div>
                 <div>
-                    <label class="block text-[10px] font-bold text-rose-500 uppercase tracking-widest mb-3">Negative Affinity</label>
+                    <label class="block text-[10px] font-bold text-rose-500 uppercase tracking-widest mb-3">Debuff Affinity</label>
                     <select id="negStat1" class="w-full input-base rounded-lg px-3 py-2 text-xs font-bold outline-none"></select>
                 </div>
             </section>
 
-            <!-- Professions -->
             <section class="space-y-4 pb-12">
-                <label class="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest">Authorized Professions</label>
+                <label class="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest">Profession Authority</label>
                 <div id="professionFilters" class="flex flex-wrap gap-2"></div>
             </section>
         </div>
 
         <div class="p-6 border-t border-[var(--border)]">
-            <button onclick="clearAllFilters()" class="w-full py-3 rounded-xl text-xs font-bold uppercase tracking-widest bg-rose-500/10 text-rose-500 border border-rose-500/20 hover:bg-rose-500 hover:text-white transition-all">
-                Clear Matrix
-            </button>
+            <button onclick="clearAllFilters()" class="w-full py-3 rounded-xl text-xs font-bold uppercase tracking-widest bg-rose-500/10 text-rose-500 border border-rose-500/20 hover:bg-rose-500 hover:text-white transition-all">Flush Settings</button>
         </div>
     </aside>
 
     <script>
-        // DATA & STATE
         const MANUAL_INTEREST_LIST = [
             "Adamastor's Faceplate", "Ancient Heart", "Archaic Medallion", "Bat Heart", "Borange Fluff",
             "Cat Food", "Cataratite", "Coalescence", "Colossus' Shard", "Contraband Absinthe",
@@ -324,7 +317,7 @@
         }
 
         async function loadShopData() {
-            let ingredients = {}, drops = {}, htoi = [], wynnItems = {};
+            let ingredients = {}, drops = {}, htoi = [];
             try {
                 const [resI, resD, resH] = await Promise.all([
                     fetch('ingredients.json').then(r => r.ok ? r.json() : {}),
@@ -332,48 +325,97 @@
                     fetch('htoi.json').then(r => r.ok ? r.json() : [])
                 ]);
                 ingredients = resI; drops = resD; htoi = resH;
-                const wynnRes = await fetch('https://api.wynncraft.com/v3/item/database?fullResult');
-                if (wynnRes.ok) wynnItems = await wynnRes.json();
             } catch (e) { console.error("Data Fetch Error", e); }
-            processJsonData(ingredients, drops, htoi, wynnItems);
+            processJsonData(ingredients, drops, htoi);
         }
 
-        function processJsonData(ingredients, dropsMap, htoiArray, wynnItems) {
+        function processJsonData(ingredients, dropsMap, htoiArray) {
             const processed = [];
-            const normIngredients = {};
-            Object.keys(ingredients).forEach(k => normIngredients[k.trim().toLowerCase()] = { ...ingredients[k], originalName: k });
             
+            // Step 1: Global Telemetry Mapping (Shared Coords across all mobs with same name)
             const sharedTelemetry = {};
-            Object.values(dropsMap).forEach(dropArray => {
-                if (!Array.isArray(dropArray)) return;
-                dropArray.forEach(d => {
-                    const mobKey = d.name?.toLowerCase();
-                    if (!mobKey) return;
-                    if (!sharedTelemetry[mobKey]) sharedTelemetry[mobKey] = [];
-                    const coords = Array.isArray(d.details?.coords) ? d.details.coords : [d.details?.coords].filter(x => x);
-                    coords.forEach(c => {
-                        if (isNum(c.x) && isNum(c.z)) {
-                            const coordObj = { x: Number(c.x), y: isNum(c.y) ? Number(c.y) : null, z: Number(c.z) };
-                            if (!sharedTelemetry[mobKey].some(ex => ex.x === coordObj.x && ex.z === coordObj.z)) sharedTelemetry[mobKey].push(coordObj);
+            const addTelemetry = (name, rawCoords) => {
+                if (!name) return;
+                const key = name.toLowerCase().trim();
+                if (!sharedTelemetry[key]) sharedTelemetry[key] = [];
+                
+                const coordsArr = Array.isArray(rawCoords) ? rawCoords : [rawCoords].filter(x => x);
+                coordsArr.forEach(c => {
+                    if (isNum(c.x) && isNum(c.z)) {
+                        const coordObj = { x: Number(c.x), y: isNum(c.y) ? Number(c.y) : null, z: Number(c.z) };
+                        // Prevent duplicates
+                        if (!sharedTelemetry[key].some(ex => ex.x === coordObj.x && ex.z === coordObj.z && ex.y === coordObj.y)) {
+                            sharedTelemetry[key].push(coordObj);
                         }
-                    });
+                    }
+                });
+            };
+
+            // Gather telemetry from drops.json
+            Object.values(dropsMap).forEach(arr => {
+                if (Array.isArray(arr)) arr.forEach(d => addTelemetry(d.name, d.details?.coords));
+            });
+
+            // Gather telemetry from htoi.json (iterating through all JSON fields)
+            htoiArray.forEach(item => {
+                Object.keys(item).forEach(prop => {
+                    if (['name', 'id', 'level'].includes(prop)) return;
+                    try {
+                        const parsed = JSON.parse(item[prop]);
+                        if (Array.isArray(parsed)) {
+                            parsed.forEach(e => addTelemetry(e.name || e.description, e.location_coords || e.coords));
+                        }
+                    } catch(e) {}
                 });
             });
 
+            // Step 2: Build Combined Registry
+            const normIngredients = {};
+            Object.keys(ingredients).forEach(k => normIngredients[k.trim().toLowerCase()] = { ...ingredients[k], originalName: k });
+            
             const allKeys = new Set([...Object.keys(normIngredients), ...Object.keys(dropsMap).map(k => k.toLowerCase())]);
+            htoiArray.forEach(h => { if(h.name) allKeys.add(h.name.toLowerCase()); });
+
             for (const key of allKeys) {
                 const ing = normIngredients[key] || {};
-                const drps = (dropsMap[key] || []).concat((htoiArray.find(h => h.name?.toLowerCase() === key)?.drops || []));
+                const hData = htoiArray.find(h => h.name?.toLowerCase() === key) || {};
+                
+                const combinedDrops = new Map();
+                const registerDrop = (name, loc, ss) => {
+                    if (!name) return;
+                    const dKey = `${name.toLowerCase()}|${loc?.toLowerCase()}`;
+                    if (!combinedDrops.has(dKey)) {
+                        combinedDrops.set(dKey, { 
+                            name: name.trim(), 
+                            location: loc?.trim() || "Undisclosed Area",
+                            screenshots: ss || ""
+                        });
+                    }
+                };
+
+                // Add drops from drops.json
+                (dropsMap[key] || []).forEach(d => registerDrop(d.name, d.details?.location, d.details?.screenshots));
+                
+                // Add drops from htoi.json fields
+                Object.keys(hData).forEach(prop => {
+                    if (['name', 'id', 'level'].includes(prop)) return;
+                    try {
+                        const parsed = JSON.parse(hData[prop]);
+                        if (Array.isArray(parsed)) {
+                            parsed.forEach(e => registerDrop(e.name || e.description || prop.toUpperCase(), e.location, e.screenshots));
+                        }
+                    } catch(e) {}
+                });
+
                 const item = {
-                    name: ing.originalName || key.toUpperCase(),
-                    level: Number(ing.lvl) || 0,
+                    name: ing.originalName || hData.name || key.toUpperCase(),
+                    level: Number(ing.lvl || hData.level) || 0,
                     tier: ing.tier !== undefined ? Number(ing.tier) : -1,
                     professions: ing.profs || [],
                     stats: ing.stats || [],
-                    drops: drps.map(d => ({
-                        name: d.name || "Unknown",
-                        location: d.details?.location || "Unknown",
-                        coords: sharedTelemetry[d.name?.toLowerCase()] || []
+                    drops: Array.from(combinedDrops.values()).map(d => ({
+                        ...d,
+                        coords: sharedTelemetry[d.name.toLowerCase()] || []
                     })),
                     searchStr: key
                 };
@@ -390,10 +432,9 @@
             STATE.allPosStats = [...new Set(RAW_DATA.flatMap(i => i.stats.filter(s => s.pos).map(s => s.label)))].sort();
             STATE.allNegStats = [...new Set(RAW_DATA.flatMap(i => i.stats.filter(s => !s.pos).map(s => s.label)))].sort();
             
-            const ps = document.getElementById('posStat1'), ns = document.getElementById('negStat1'), pf = document.getElementById('professionFilters');
-            ps.innerHTML = '<option value="">All Attributes</option>' + STATE.allPosStats.map(s => `<option value="${s}">${s}</option>`).join('');
-            ns.innerHTML = '<option value="">All Attributes</option>' + STATE.allNegStats.map(s => `<option value="${s}">${s}</option>`).join('');
-            pf.innerHTML = STATE.allProfs.map(p => `<button data-prof="${p}" class="prof-chip input-base px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider">${p}</button>`).join('');
+            document.getElementById('posStat1').innerHTML = '<option value="">All Attributes</option>' + STATE.allPosStats.map(s => `<option value="${s}">${s}</option>`).join('');
+            document.getElementById('negStat1').innerHTML = '<option value="">All Attributes</option>' + STATE.allNegStats.map(s => `<option value="${s}">${s}</option>`).join('');
+            document.getElementById('professionFilters').innerHTML = STATE.allProfs.map(p => `<button data-prof="${p}" class="prof-chip input-base px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider">${p}</button>`).join('');
         }
 
         function filterData() {
@@ -412,7 +453,6 @@
             if (STATE.sortBy === "level") data.sort((a,b) => b.level - a.level);
             else if (STATE.sortBy === "tier") data.sort((a,b) => b.tier - a.tier);
             else data.sort((a,b) => a.name.localeCompare(b.name));
-
             return data;
         }
 
@@ -421,22 +461,24 @@
             const data = filterData();
             const view = data.slice(0, 100);
             
-            info.textContent = data.length > 0 ? `${data.length} Archive Records Retrieved` : "No Records Match Current Matrix";
+            info.textContent = data.length > 0 ? `${data.length} Archive Records Retrieved` : "Database Sync Failed: Null Results";
             
             if (view.length === 0) {
                 grid.innerHTML = "";
                 document.getElementById('emptyState').classList.remove('hidden');
             } else {
                 document.getElementById('emptyState').classList.add('hidden');
-                grid.innerHTML = view.map(item => `
+                grid.innerHTML = view.map(item => {
+                    const cardCoordRegistry = new Set();
+                    return `
                     <div class="archive-card rounded-2xl p-5 flex flex-col gap-5">
                         <div class="flex justify-between items-start">
-                            <div class="flex-1">
+                            <div class="flex-1 overflow-hidden">
                                 <h3 class="text-sm font-bold tracking-tight mb-1 truncate pr-2 uppercase">${item.name}</h3>
                                 <div class="flex items-center gap-2">
                                     <span class="mono text-[9px] font-bold bg-indigo-500/10 text-indigo-500 px-1.5 py-0.5 rounded">LV.${item.level}</span>
                                     <div class="flex gap-0.5 text-amber-500 text-[8px]">
-                                        ${item.tier > 0 ? Array(item.tier).fill('<i class="fas fa-star"></i>').join('') : '<span class="opacity-30 uppercase font-black">Common</span>'}
+                                        ${item.tier >= 0 ? Array(item.tier).fill('<i class="fas fa-star"></i>').join('') : '<span class="opacity-30 uppercase font-black text-[7px]">Unknown</span>'}
                                     </div>
                                 </div>
                             </div>
@@ -444,8 +486,8 @@
 
                         <div class="space-y-4">
                             <div class="space-y-1.5">
-                                ${item.stats.length === 0 ? '<div class="h-12 flex items-center text-[10px] text-[var(--text-secondary)] opacity-40 italic">No statistical deviations.</div>' : 
-                                    item.stats.slice(0, 4).map(s => `
+                                ${item.stats.length === 0 ? '<div class="h-10 flex items-center text-[10px] text-[var(--text-secondary)] opacity-30 italic">Passive Entry.</div>' : 
+                                    item.stats.slice(0, 6).map(s => `
                                     <div class="flex justify-between text-[11px] font-medium border-b border-[var(--border)] pb-1">
                                         <span class="text-[var(--text-secondary)] truncate pr-4">${s.label}</span>
                                         <span class="${s.pos ? 'stat-positive' : 'stat-negative'} mono font-bold">${s.value}</span>
@@ -454,21 +496,37 @@
                             </div>
 
                             <div class="space-y-3">
-                                <p class="text-[9px] font-black uppercase tracking-widest text-[var(--text-secondary)] opacity-60">Field Reports</p>
-                                ${item.drops.length === 0 ? '<p class="text-[10px] text-[var(--text-secondary)] opacity-30 italic">No sighting logs.</p>' : 
-                                    item.drops.slice(0, 1).map(d => `
-                                    <div class="bg-[var(--bg-surface)] p-3 rounded-xl border border-[var(--border)]">
-                                        <p class="text-[11px] font-bold mb-1 truncate">${d.name}</p>
-                                        <p class="text-[9px] text-[var(--text-secondary)] mb-2"><i class="fas fa-map-marker-alt mr-1"></i> ${d.location}</p>
-                                        <div class="flex flex-wrap gap-1">
-                                            ${d.coords.slice(0, 3).map(c => `
-                                                <button onclick="copyToClipboard('${c.x}','${c.y}','${c.z}')" class="btn-secondary px-2 py-1 rounded-md text-[8px] mono font-bold hover:!bg-indigo-500 hover:!text-white">
-                                                    ${c.x}, ${c.z}
+                                <p class="text-[9px] font-black uppercase tracking-[0.2em] text-[var(--text-secondary)] opacity-50">Intelligence Logs</p>
+                                ${item.drops.length === 0 ? '<p class="text-[10px] text-[var(--text-secondary)] opacity-20 italic">No telemetry data.</p>' : 
+                                    item.drops.map(d => {
+                                        const coordsHtml = d.coords.map(c => {
+                                            const key = `${c.x}|${c.y}|${c.z}`;
+                                            if (cardCoordRegistry.has(key)) return '';
+                                            cardCoordRegistry.add(key);
+                                            const hasY = isNum(c.y);
+                                            const label = hasY ? `${c.x}, ${c.y}, ${c.z}` : `${c.x}, ${c.z}`;
+                                            return `
+                                                <button onclick="copyToClipboard('${c.x}','${c.y}','${c.z}')" class="tactical-coord-btn rounded-md shadow-sm" title="Target: ${label}">
+                                                    <i class="fas fa-crosshairs text-[10px]"></i>
+                                                    <span class="text-[6px] font-black mt-0.5">${label}</span>
                                                 </button>
-                                            `).join('')}
+                                            `;
+                                        }).join('');
+
+                                        return `
+                                        <div class="bg-[var(--bg-surface)] p-3 rounded-xl border border-[var(--border)] space-y-2">
+                                            <div class="flex justify-between items-start gap-2">
+                                                <div class="flex-1 min-w-0">
+                                                    <p class="text-[11px] font-bold truncate">${d.name}</p>
+                                                    <p class="text-[9px] text-[var(--text-secondary)] opacity-70 italic truncate">${d.location}</p>
+                                                </div>
+                                                ${d.screenshots ? `<a href="${d.screenshots.split(',')[0]}" target="_blank" class="w-6 h-6 flex items-center justify-center rounded bg-indigo-500/20 text-indigo-500 hover:bg-indigo-500 hover:text-white transition-all"><i class="fas fa-image text-[10px]"></i></a>` : ''}
+                                            </div>
+                                            <div class="flex flex-wrap gap-1">
+                                                ${coordsHtml}
+                                            </div>
                                         </div>
-                                    </div>
-                                `).join('')}
+                                    `;}).join('')}
                             </div>
                         </div>
 
@@ -476,7 +534,7 @@
                             ${item.professions.map(p => `<span class="text-[8px] font-bold uppercase tracking-tighter bg-[var(--bg-surface)] text-[var(--text-secondary)] px-2 py-1 rounded border border-[var(--border)]">${p}</span>`).join('')}
                         </div>
                     </div>
-                `).join('');
+                `}).join('');
             }
             renderActiveTags();
         }
@@ -485,8 +543,8 @@
             const container = document.getElementById('activeTags');
             const tags = [];
             if (STATE.search) tags.push({ id: 'search', val: `Query: ${STATE.search}` });
-            if (STATE.interestOnly) tags.push({ id: 'interest', val: 'Featured' });
-            if (STATE.coordsOnly) tags.push({ id: 'coords', val: 'Localized' });
+            if (STATE.interestOnly) tags.push({ id: 'interest', val: 'Targeted' });
+            if (STATE.coordsOnly) tags.push({ id: 'coords', val: 'Geolocated' });
             STATE.tiers.forEach(t => tags.push({ id: 'tier-'+t, val: `Tier ${t}` }));
             STATE.profs.forEach(p => tags.push({ id: 'prof-'+p, val: p }));
 
@@ -498,6 +556,25 @@
             `).join('');
         }
 
+        function copyToClipboard(x, y, z) {
+            const hasY = isNum(y) && y !== 'null' && y !== 'undefined';
+            const cmd = hasY ? `/compass ${x}, ${y}, ${z}` : `/compass ${x}, ${z}`;
+            const el = document.createElement('textarea'); 
+            el.value = cmd; 
+            el.style.position = "fixed"; 
+            el.style.left = "-9999px"; 
+            document.body.appendChild(el); 
+            el.select();
+            try {
+                document.execCommand('copy'); 
+                const t = document.getElementById('toast'); 
+                t.textContent = "COPIED: " + cmd; 
+                t.classList.add('show');
+                setTimeout(() => t.classList.remove('show'), 2500);
+            } catch(e) {}
+            document.body.removeChild(el);
+        }
+
         function removeFilter(id) {
             if (id === 'search') { STATE.search = ""; document.getElementById('globalSearch').value = ""; }
             else if (id === 'interest') { STATE.interestOnly = false; document.getElementById('interestToggle').classList.remove('active'); }
@@ -505,14 +582,6 @@
             else if (id.startsWith('tier-')) { STATE.tiers.delete(id.split('-')[1]); document.querySelectorAll('.tier-btn').forEach(b => { if(b.dataset.tier == id.split('-')[1]) b.classList.remove('active'); }); }
             else if (id.startsWith('prof-')) { STATE.profs.delete(id.split('-')[1]); document.querySelectorAll('.prof-chip').forEach(b => { if(b.dataset.prof == id.split('-')[1]) b.classList.remove('active'); }); }
             render();
-        }
-
-        function copyToClipboard(x, y, z) {
-            const cmd = y !== 'null' ? `/compass ${x} ${y} ${z}` : `/compass ${x} ${z}`;
-            const el = document.createElement('textarea'); el.value = cmd; document.body.appendChild(el); el.select();
-            document.execCommand('copy'); document.body.removeChild(el);
-            const t = document.getElementById('toast'); t.textContent = "COPIED: " + cmd; t.classList.add('show');
-            setTimeout(() => t.classList.remove('show'), 2000);
         }
 
         function clearAllFilters() {
@@ -525,7 +594,6 @@
             render();
         }
 
-        // EVENT LISTENERS
         document.getElementById('toggleFilters').addEventListener('click', () => {
             document.getElementById('filterSidebar').classList.add('open');
             document.getElementById('sidebarOverlay').classList.replace('opacity-0', 'opacity-100');
@@ -537,7 +605,6 @@
             document.getElementById('sidebarOverlay').classList.add('pointer-events-none');
         });
         document.getElementById('sidebarOverlay').addEventListener('click', () => document.getElementById('closeSidebar').click());
-
         document.getElementById('globalSearch').addEventListener('input', debounce(e => { STATE.search = e.target.value; render(); }, 250));
         document.getElementById('sortBy').addEventListener('change', e => { STATE.sortBy = e.target.value; render(); });
         document.getElementById('minLevel').addEventListener('input', e => { STATE.minLv = Number(e.target.value) || 0; render(); });
