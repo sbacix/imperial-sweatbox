@@ -3,328 +3,295 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Library of Imperial</title>
+    <title>Imperial Archives | Library</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap');
 
         :root {
-            --bg-main: #0c0c0e; 
-            --bg-card: #16161a; 
-            --bg-input: #050506;
-            --text-main: #f0f0f2;
-            --text-dim: #636370;
-            --border-main: #242429;
-            
-            --zest-indigo: rgba(99, 102, 241, 0.5);
-            --zest-purple: rgba(168, 85, 247, 0.5);
-            --zest-cyan: rgba(34, 211, 238, 0.5);
+            --bg-body: #0a0a0c;
+            --bg-card: #121216;
+            --bg-surface: #1a1a20;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent: #6366f1;
+            --accent-glow: rgba(99, 102, 241, 0.15);
+            --border: rgba(255, 255, 255, 0.06);
         }
 
         body.light {
-            --bg-main: #f8f8fa; 
-            --bg-card: #ffffff; 
-            --bg-input: #f0f0f3;
-            --text-main: #121214;
-            --text-dim: #9494a3;
-            --border-main: #e2e2e9;
-            
-            --zest-indigo: rgba(99, 102, 241, 0.2);
-            --zest-purple: rgba(168, 85, 247, 0.2);
-            --zest-cyan: rgba(34, 211, 238, 0.2);
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --bg-surface: #f1f5f9;
+            --text-primary: #0f172a;
+            --text-secondary: #64748b;
+            --accent: #4f46e5;
+            --accent-glow: rgba(79, 70, 229, 0.1);
+            --border: rgba(0, 0, 0, 0.08);
         }
 
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: var(--bg-main);
-            color: var(--text-main);
-            transition: background-color 0.4s ease;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+            overflow-x: hidden;
         }
 
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: var(--bg-main); }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: var(--border-main); border-radius: 10px; }
+        .mono { font-family: 'JetBrains Mono', monospace; }
 
-        .stat-pos { color: #10b981; }
-        .stat-neg { color: #fb7185; }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-body); }
+        ::-webkit-scrollbar-thumb { background: var(--bg-surface); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
 
-        @keyframes glowCycle {
-            0% { box-shadow: 0 15px 35px -10px var(--zest-indigo); border-color: #6366f1; }
-            33% { box-shadow: 0 15px 35px -10px var(--zest-purple); border-color: #a855f7; }
-            66% { box-shadow: 0 15px 35px -10px var(--zest-cyan); border-color: #22d3ee; }
-            100% { box-shadow: 0 15px 35px -10px var(--zest-indigo); border-color: #6366f1; }
-        }
-
-        @keyframes titleCycle {
-            0% { color: #ef4444; text-shadow: 0 0 10px rgba(239, 68, 68, 0.3); } 
-            25% { color: #f97316; text-shadow: 0 0 15px rgba(249, 115, 22, 0.4); } 
-            50% { color: #facc15; text-shadow: 0 0 10px rgba(250, 204, 21, 0.3); } 
-            75% { color: #f97316; text-shadow: 0 0 15px rgba(249, 115, 22, 0.4); }
-            100% { color: #ef4444; text-shadow: 0 0 10px rgba(239, 68, 68, 0.3); } 
-        }
-
-        @keyframes fireBreath {
-            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; filter: blur(25px); }
-            50% { transform: translate(-50%, -50%) scale(1.15); opacity: 0.8; filter: blur(35px); }
-        }
-
-        @keyframes fireFlicker {
-            0%, 100% { opacity: 0.8; transform: translate(-50%, -50%) scale(1); }
-            50% { opacity: 1; transform: translate(-50%, -52%) scale(1.05); }
-        }
-
-        .zest-card {
+        /* Card Stylings */
+        .archive-card {
             background: var(--bg-card);
-            border: 1px solid var(--border-main);
-            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+            border: 1px solid var(--border);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
+            overflow: hidden;
         }
 
-        .zest-card:hover {
-            transform: translateY(-8px);
-            animation: glowCycle 4s infinite linear;
-            z-index: 10;
+        .archive-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent);
+            box-shadow: 0 12px 30px -10px var(--accent-glow);
         }
 
-        .fiery-text {
-            animation: titleCycle 6s infinite ease-in-out;
-        }
-
-        .logo-fire-aura {
+        .archive-card::before {
+            content: '';
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 140px;
-            height: 140px;
-            background: radial-gradient(circle, #ef4444 0%, #f97316 40%, transparent 70%);
-            border-radius: 50%;
-            z-index: 0;
-            animation: fireBreath 4s infinite ease-in-out;
+            top: 0; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
         }
 
-        .logo-fire-flicker {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 90px;
-            height: 90px;
-            background: radial-gradient(circle, #facc15 0%, #f97316 50%, transparent 80%);
-            border-radius: 50%;
-            z-index: 1;
-            filter: blur(10px);
-            animation: fireFlicker 0.2s infinite alternate;
+        .archive-card:hover::before { opacity: 1; }
+
+        /* Inputs & Buttons */
+        .input-base {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            transition: all 0.2s;
         }
 
-        #filterSidebar {
-            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        .input-base:focus {
+            border-color: var(--accent);
+            outline: none;
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+            transition: all 0.2s;
+        }
+
+        .btn-primary:hover {
+            filter: brightness(1.1);
+            transform: scale(1.02);
+        }
+
+        .btn-secondary {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+
+        .btn-secondary:hover {
             background: var(--bg-card);
+            color: var(--text-primary);
+            border-color: var(--accent);
+        }
+
+        /* Sidebar Logic */
+        #filterSidebar {
+            background: var(--bg-card);
+            border-left: 1px solid var(--border);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         #filterSidebar.open { transform: translateX(0); }
 
-        input[type="number"]::-webkit-inner-spin-button,
-        input[type="number"]::-webkit-outer-spin-button {
-            -webkit-appearance: none; margin: 0;
-        }
+        /* Stats Coloring */
+        .stat-positive { color: #10b981; }
+        .stat-negative { color: #ef4444; }
 
-        select {
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2371717a'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 0.75rem center;
-            background-size: 1rem;
-        }
-
+        /* Tooltips/Toast */
         #toast {
-            visibility: hidden;
-            min-width: 280px;
-            background: var(--bg-card);
-            color: var(--text-main);
-            text-align: center;
-            border-radius: 12px;
-            padding: 16px;
             position: fixed;
-            z-index: 1000;
+            bottom: 2rem;
             left: 50%;
-            transform: translateX(-50%);
-            bottom: 40px;
-            font-size: 14px;
-            font-weight: 800;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-            border: 1px solid #ef4444;
-            opacity: 0;
-            transition: opacity 0.3s, bottom 0.3s;
-        }
-
-        #toast.show {
-            visibility: visible;
-            opacity: 1;
-            bottom: 50px;
-        }
-
-        .zest-btn {
-            background-color: var(--bg-input);
-            border: 1px solid var(--border-main);
-            color: var(--text-main);
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .zest-btn:hover {
-            filter: brightness(1.1);
-            transform: scale(1.02);
-            border-color: #ef4444;
-        }
-
-        .interest-toggle.active, .coords-toggle.active {
-            background-color: #ef4444;
-            border-color: #f97316;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--accent);
             color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            z-index: 1000;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3);
         }
+        #toast.show { transform: translateX(-50%) translateY(0); }
 
-        .bg-custom-main { background-color: var(--bg-main); }
-        .bg-custom-card { background-color: var(--bg-card); }
-        .bg-custom-input { background-color: var(--bg-input); }
-        .border-custom { border-color: var(--border-main); }
-        .text-custom-main { color: var(--text-main); }
-        .text-custom-dim { color: var(--text-dim); }
-
-        /* Compact Tactical Overrides */
-        .tactical-coord-btn {
-            width: 48px;
-            height: 48px;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
+        /* Toggle States */
+        .toggle-btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white !important;
         }
     </style>
 </head>
-<body class="min-h-screen custom-scrollbar pb-32">
+<body class="min-h-screen">
 
-    <div id="toast">Copied Tactical Coordinates!</div>
+    <div id="toast">Coordinates Copied to Clipboard</div>
 
-    <!-- Sidebar Overlay -->
-    <div id="sidebarOverlay" class="fixed inset-0 bg-black/60 z-40 opacity-0 pointer-events-none"></div>
-
-    <!-- Slide-out Sidebar Dashboard -->
-    <aside id="filterSidebar" class="fixed inset-y-0 left-0 w-80 md:w-96 z-50 transform -translate-x-full border-r border-custom shadow-2xl flex flex-col">
-        <div class="p-6 border-b border-custom flex justify-between items-center bg-custom-input/20">
-            <h2 class="text-xs font-black uppercase tracking-[0.3em] text-red-500">Command Console</h2>
-            <button id="closeSidebar" class="p-2 hover:text-red-500"><i class="fas fa-times"></i></button>
-        </div>
-        <div class="flex-1 overflow-y-auto p-6 space-y-10 custom-scrollbar">
-            <div class="space-y-4">
-                <label class="block text-[11px] font-black text-custom-dim uppercase tracking-[0.2em]">Quality Tiering</label>
-                <div class="flex gap-2" id="tierFilters">
-                    <button data-tier="0" class="tier-btn flex-1 py-3 rounded-xl border border-custom bg-custom-input text-xs font-black">T0</button>
-                    <button data-tier="1" class="tier-btn flex-1 py-3 rounded-xl border border-custom bg-custom-input text-xs font-black">T1</button>
-                    <button data-tier="2" class="tier-btn flex-1 py-3 rounded-xl border border-custom bg-custom-input text-xs font-black">T2</button>
-                    <button data-tier="3" class="tier-btn flex-1 py-3 rounded-xl border border-custom bg-custom-input text-xs font-black">T3</button>
+    <!-- Header -->
+    <header class="sticky top-0 z-40 w-full bg-[var(--bg-body)]/80 backdrop-blur-md border-b border-[var(--border)]">
+        <div class="max-w-[1600px] mx-auto px-6 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 bg-indigo-600 rounded-lg flex items-center justify-center text-white shadow-lg shadow-indigo-500/20">
+                    <i class="fas fa-book-atlas text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-extrabold tracking-tight uppercase">Library of <span class="text-indigo-500">Imperial</span></h1>
+                    <p class="text-[10px] text-[var(--text-secondary)] font-bold tracking-[0.2em] uppercase opacity-60">Global Inventory Database</p>
                 </div>
             </div>
 
-            <div class="space-y-4">
-                <label class="block text-[11px] font-black text-red-500 uppercase tracking-[0.2em]">Priority Protocols</label>
-                <div class="flex flex-col gap-3">
-                    <button id="interestToggle" class="interest-toggle zest-btn w-full py-4 rounded-xl text-[10px] font-black uppercase tracking-widest text-center">
-                        <i class="fas fa-star mr-2"></i> Targeted Interest
-                    </button>
-                    <button id="coordsToggle" class="coords-toggle zest-btn w-full py-4 rounded-xl text-[10px] font-black uppercase tracking-widest text-center">
-                        <i class="fas fa-crosshairs mr-2"></i> Geolocation Only
-                    </button>
-                </div>
-            </div>
-
-            <div class="space-y-4">
-                <label class="block text-[11px] font-black text-custom-dim uppercase tracking-[0.2em]">Level Range Parameters</label>
-                <div class="flex items-center gap-4">
-                    <input type="number" id="minLevel" value="0" class="w-full bg-custom-input border border-custom rounded-xl py-3 px-4 text-sm font-bold outline-none focus:border-red-500">
-                    <span class="text-custom-dim font-bold text-lg opacity-30">/</span>
-                    <input type="number" id="maxLevel" value="115" class="w-full bg-custom-input border border-custom rounded-xl py-3 px-4 text-sm font-bold outline-none focus:border-red-500">
-                </div>
-            </div>
-
-            <div class="space-y-6">
-                <div class="space-y-4">
-                    <label class="block text-[11px] font-black text-emerald-500 uppercase tracking-[0.2em]">Buff Affinity</label>
-                    <select id="posStat1" class="w-full bg-custom-input border border-custom rounded-xl py-3 px-4 text-xs font-black text-emerald-500 outline-none"><option value="">Select Protocol</option></select>
-                </div>
-                <div class="space-y-4">
-                    <label class="block text-[11px] font-black text-rose-500 uppercase tracking-[0.2em]">De-Buff Affinity</label>
-                    <select id="negStat1" class="w-full bg-custom-input border border-custom rounded-xl py-3 px-4 text-xs font-black text-rose-500 outline-none"><option value="">Select Protocol</option></select>
-                </div>
-            </div>
-
-            <div class="space-y-4 pb-10">
-                <label class="block text-[11px] font-black text-custom-dim uppercase tracking-[0.2em]">Authorized Professions</label>
-                <div id="professionFilters" class="flex flex-wrap gap-2"></div>
-            </div>
-        </div>
-        <div class="p-6 border-t border-custom bg-custom-input/20">
-            <button onclick="clearAllFilters()" class="w-full py-3 rounded-xl border border-rose-500/30 text-rose-500 text-[10px] font-black uppercase tracking-[0.3em] hover:bg-rose-500/10 transition-all">Flush Settings</button>
-        </div>
-    </aside>
-
-    <!-- Header Section -->
-    <header class="max-w-[1700px] mx-auto px-6 pt-12 pb-8">
-        <div class="flex justify-between items-center mb-10 px-4">
-            <div class="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-600">
-                <span class="fiery-text">Slopcoded</span> for your sake by <span class="fiery-text">Sbacix</span>
-            </div>
-            <button id="themeToggle" class="zest-btn flex items-center justify-center w-10 h-10 rounded-full text-red-500 shadow-sm" title="Toggle Theme">
-                <i class="fas fa-moon" id="themeIcon"></i>
-            </button>
-        </div>
-
-        <div class="flex flex-col items-center text-center mb-16 relative">
-            <div class="relative w-40 h-40 flex items-center justify-center mb-4">
-                <div class="logo-fire-aura"></div>
-                <div class="logo-fire-flicker"></div>
-                <i class="fas fa-dragon text-white text-7xl relative z-10 drop-shadow-[0_0_20px_rgba(239,68,68,1)]"></i>
-            </div>
-            <h1 class="text-4xl lg:text-7xl font-black tracking-tighter leading-tight text-custom-main uppercase">
-                Library of <span class="fiery-text">Imperial</span>
-            </h1>
-            <p class="text-[14px] font-black text-zinc-500 uppercase tracking-[0.6em] mt-3">Work In Progress</p>
-        </div>
-
-        <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-4">
-            <button id="toggleFilters" class="zest-btn flex items-center justify-center gap-4 py-4 rounded-2xl font-black text-xs uppercase tracking-widest order-2 md:order-1">
-                <i class="fas fa-sliders-h text-red-500"></i>
-                <span>Filters</span>
-            </button>
-            <div class="md:col-span-3 relative order-1 md:order-2">
-                <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-zinc-500 text-lg"></i>
+            <div class="hidden md:flex flex-1 max-w-xl mx-12 relative">
+                <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-[var(--text-secondary)] opacity-50"></i>
                 <input 
-                    type="text" 
-                    id="globalSearch"
-                    placeholder="Search database records..."
-                    class="w-full bg-custom-input border border-custom rounded-2xl py-4 pl-14 pr-6 focus:outline-none focus:ring-4 focus:ring-red-500/10 transition-all text-sm text-custom-main placeholder:text-zinc-600 font-medium"
+                    type="text" id="globalSearch" 
+                    placeholder="Search artifacts, drops, or properties..."
+                    class="w-full input-base rounded-full py-2.5 pl-11 pr-6 text-sm"
                 >
+            </div>
+
+            <div class="flex items-center gap-3">
+                <button id="themeToggle" class="btn-secondary w-10 h-10 rounded-full flex items-center justify-center">
+                    <i class="fas fa-moon" id="themeIcon"></i>
+                </button>
+                <button id="toggleFilters" class="btn-primary px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-2">
+                    <i class="fas fa-sliders-h"></i>
+                    <span>Controls</span>
+                </button>
             </div>
         </div>
     </header>
 
-    <main class="max-w-[1700px] mx-auto px-6">
-        <div id="activeTags" class="flex flex-wrap gap-3 mb-8 min-h-[30px] px-2 justify-center"></div>
-        <div id="resultsInfo" class="mb-8 px-6 text-[11px] font-black uppercase tracking-[0.3em] text-red-500 hidden border-l-4 border-red-500 bg-red-500/5 py-3"></div>
+    <!-- Main Content -->
+    <main class="max-w-[1600px] mx-auto px-6 py-10">
+        <!-- Breadcrumbs / Active Tags -->
+        <div id="activeTags" class="flex flex-wrap gap-2 mb-8 min-h-[32px]"></div>
 
-        <div id="ingredientGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"></div>
-
-        <div id="emptyState" class="hidden flex flex-col items-center justify-center py-64 text-custom-dim">
-            <div class="w-24 h-24 bg-custom-input rounded-[2.5rem] flex items-center justify-center mb-8 shadow-2xl border border-custom">
-                <i class="fas fa-search-minus text-4xl opacity-20"></i>
+        <!-- Meta Info -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+            <div id="resultsInfo" class="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-widest bg-[var(--bg-surface)] px-4 py-2 rounded-lg inline-block border border-[var(--border)]">
+                Initializing Archive...
             </div>
-            <p class="text-2xl font-black uppercase tracking-[0.3em] mb-4">Null Records Found</p>
-            <button onclick="clearAllFilters()" class="text-red-500 hover:text-red-400 text-[11px] font-black uppercase tracking-[0.5em] underline">Re-Initialize Inventory</button>
+            <div class="flex items-center gap-4">
+                <span class="text-[10px] font-bold text-[var(--text-secondary)] uppercase">Sort By:</span>
+                <select id="sortBy" class="input-base text-[10px] font-bold uppercase px-3 py-1.5 rounded-lg outline-none cursor-pointer">
+                    <option value="name">Alphanumeric</option>
+                    <option value="level">Level (Descending)</option>
+                    <option value="tier">Quality Tier</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Grid -->
+        <div id="ingredientGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
+
+        <!-- Empty State -->
+        <div id="emptyState" class="hidden py-32 flex flex-col items-center text-center">
+            <div class="w-20 h-20 bg-[var(--bg-surface)] rounded-3xl flex items-center justify-center mb-6 border border-[var(--border)]">
+                <i class="fas fa-folder-open text-3xl opacity-20"></i>
+            </div>
+            <h3 class="text-xl font-bold mb-2">No Matches Found</h3>
+            <p class="text-[var(--text-secondary)] text-sm mb-6">Your query did not return any records from the imperial database.</p>
+            <button onclick="clearAllFilters()" class="text-indigo-500 font-bold uppercase text-xs tracking-widest hover:underline">Reset Archives</button>
         </div>
     </main>
 
+    <!-- Sidebar Filter -->
+    <div id="sidebarOverlay" class="fixed inset-0 bg-black/40 z-[50] opacity-0 pointer-events-none transition-opacity duration-300"></div>
+    <aside id="filterSidebar" class="fixed top-0 right-0 h-full w-[350px] z-[60] transform translate-x-full shadow-2xl flex flex-col">
+        <div class="p-6 border-b border-[var(--border)] flex items-center justify-between">
+            <h2 class="font-black text-sm uppercase tracking-widest">Filter Matrix</h2>
+            <button id="closeSidebar" class="text-[var(--text-secondary)] hover:text-[var(--text-primary)]"><i class="fas fa-times"></i></button>
+        </div>
+
+        <div class="flex-1 overflow-y-auto p-6 space-y-8 custom-scrollbar">
+            <!-- Tiers -->
+            <section class="space-y-4">
+                <label class="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-[0.2em]">Quality Tier</label>
+                <div class="grid grid-cols-4 gap-2" id="tierFilters">
+                    <button data-tier="0" class="tier-btn input-base py-2 rounded-lg text-xs font-bold">T0</button>
+                    <button data-tier="1" class="tier-btn input-base py-2 rounded-lg text-xs font-bold">T1</button>
+                    <button data-tier="2" class="tier-btn input-base py-2 rounded-lg text-xs font-bold">T2</button>
+                    <button data-tier="3" class="tier-btn input-base py-2 rounded-lg text-xs font-bold">T3</button>
+                </div>
+            </section>
+
+            <!-- Shortcuts -->
+            <section class="space-y-4">
+                <label class="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-[0.2em]">Priority Toggles</label>
+                <div class="space-y-2">
+                    <button id="interestToggle" class="toggle-btn btn-secondary w-full py-3 rounded-xl text-[10px] font-bold uppercase tracking-wider flex items-center justify-center gap-2">
+                        <i class="fas fa-bookmark text-amber-500"></i> High Interest
+                    </button>
+                    <button id="coordsToggle" class="toggle-btn btn-secondary w-full py-3 rounded-xl text-[10px] font-bold uppercase tracking-wider flex items-center justify-center gap-2">
+                        <i class="fas fa-location-crosshairs text-indigo-500"></i> Has Coordinates
+                    </button>
+                </div>
+            </section>
+
+            <!-- Level Range -->
+            <section class="space-y-4">
+                <label class="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-[0.2em]">Level Parameters</label>
+                <div class="flex items-center gap-3">
+                    <input type="number" id="minLevel" placeholder="MIN" class="w-full input-base rounded-lg px-3 py-2 text-sm font-bold">
+                    <div class="h-[1px] w-4 bg-[var(--border)]"></div>
+                    <input type="number" id="maxLevel" placeholder="MAX" class="w-full input-base rounded-lg px-3 py-2 text-sm font-bold">
+                </div>
+            </section>
+
+            <!-- Stat Selects -->
+            <section class="space-y-6">
+                <div>
+                    <label class="block text-[10px] font-bold text-emerald-500 uppercase tracking-widest mb-3">Positive Affinity</label>
+                    <select id="posStat1" class="w-full input-base rounded-lg px-3 py-2 text-xs font-bold outline-none"></select>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-rose-500 uppercase tracking-widest mb-3">Negative Affinity</label>
+                    <select id="negStat1" class="w-full input-base rounded-lg px-3 py-2 text-xs font-bold outline-none"></select>
+                </div>
+            </section>
+
+            <!-- Professions -->
+            <section class="space-y-4 pb-12">
+                <label class="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest">Authorized Professions</label>
+                <div id="professionFilters" class="flex flex-wrap gap-2"></div>
+            </section>
+        </div>
+
+        <div class="p-6 border-t border-[var(--border)]">
+            <button onclick="clearAllFilters()" class="w-full py-3 rounded-xl text-xs font-bold uppercase tracking-widest bg-rose-500/10 text-rose-500 border border-rose-500/20 hover:bg-rose-500 hover:text-white transition-all">
+                Clear Matrix
+            </button>
+        </div>
+    </aside>
+
     <script>
+        // DATA & STATE
         const MANUAL_INTEREST_LIST = [
             "Adamastor's Faceplate", "Ancient Heart", "Archaic Medallion", "Bat Heart", "Borange Fluff",
             "Cat Food", "Cataratite", "Coalescence", "Colossus' Shard", "Contraband Absinthe",
@@ -342,13 +309,13 @@
             "Smokebomb", "Soulbound Cinders", "Tentacle", "Throbbing Avos Heart", "Unicorn Horn",
             "Watery Aura", "Windy Aura", "World Illuminator"
         ];
-
         const INTEREST_NAMES = new Set(MANUAL_INTEREST_LIST.map(n => n.trim().toLowerCase()));
+        
         let RAW_DATA = [];
         const STATE = {
             search: "", minLv: 0, maxLv: 115, tiers: new Set(), profs: new Set(),
             posStat1: "", negStat1: "", interestOnly: false, coordsOnly: false, theme: "dark",
-            allProfs: [], allPosStats: [], allNegStats: []
+            sortBy: "name", allProfs: [], allPosStats: [], allNegStats: []
         };
 
         const isNum = (v) => v !== null && v !== undefined && v !== "" && isFinite(Number(v));
@@ -358,360 +325,254 @@
 
         async function loadShopData() {
             let ingredients = {}, drops = {}, htoi = [], wynnItems = {};
-            
             try {
                 const [resI, resD, resH] = await Promise.all([
-                    fetch('ingredients.json'), 
-                    fetch('drops.json'),
-                    fetch('htoi.json')
+                    fetch('ingredients.json').then(r => r.ok ? r.json() : {}),
+                    fetch('drops.json').then(r => r.ok ? r.json() : {}),
+                    fetch('htoi.json').then(r => r.ok ? r.json() : [])
                 ]);
-                if (resI.ok) ingredients = await resI.json();
-                if (resD.ok) drops = await resD.json();
-                if (resH.ok) htoi = await resH.json();
-            } catch (error) { 
-                console.error("Local Files Error:", error);
-                showToast("System Buffer Offline");
-            }
-
-            try {
+                ingredients = resI; drops = resD; htoi = resH;
                 const wynnRes = await fetch('https://api.wynncraft.com/v3/item/database?fullResult');
-                if (wynnRes.ok) {
-                    wynnItems = await wynnRes.json();
-                } else {
-                    console.warn("Wynn API unreachable");
-                    showToast("External Link Unstable - Local Data Only");
-                }
-            } catch (error) {
-                console.warn("Wynn API CORS or Network Failure:", error);
-            }
-
+                if (wynnRes.ok) wynnItems = await wynnRes.json();
+            } catch (e) { console.error("Data Fetch Error", e); }
             processJsonData(ingredients, drops, htoi, wynnItems);
         }
-
-        const getCoordKey = (c) => `${Number(c.x)}|${isNum(c.y) ? Number(c.y) : 'N'}|${Number(c.z)}`;
 
         function processJsonData(ingredients, dropsMap, htoiArray, wynnItems) {
             const processed = [];
             const normIngredients = {};
             Object.keys(ingredients).forEach(k => normIngredients[k.trim().toLowerCase()] = { ...ingredients[k], originalName: k });
-            const normDrops = {};
-            Object.keys(dropsMap).forEach(k => normDrops[k.trim().toLowerCase()] = dropsMap[k]);
             
-            const normHtoi = {};
-            if (Array.isArray(htoiArray)) {
-                htoiArray.forEach(item => { if (item.name) normHtoi[item.name.trim().toLowerCase()] = item; });
-            }
-
-            const sharedTelemetry = {}; 
+            const sharedTelemetry = {};
             Object.values(dropsMap).forEach(dropArray => {
                 if (!Array.isArray(dropArray)) return;
                 dropArray.forEach(d => {
-                    if (!d.name) return;
-                    const mobKey = d.name.trim().toLowerCase();
+                    const mobKey = d.name?.toLowerCase();
+                    if (!mobKey) return;
                     if (!sharedTelemetry[mobKey]) sharedTelemetry[mobKey] = [];
-                    if (d.details && d.details.coords) {
-                        const rawCoords = d.details.coords;
-                        const isLegit = (c) => isNum(c.x) && isNum(c.z) && (Number(c.x) !== 0 || Number(c.z) !== 0);
-                        const addUniqueCoord = (c) => {
-                            if (isLegit(c)) {
-                                const coordObj = { x: Number(c.x), y: isNum(c.y) ? Number(c.y) : null, z: Number(c.z) };
-                                if (!sharedTelemetry[mobKey].some(ex => getCoordKey(ex) === getCoordKey(coordObj))) sharedTelemetry[mobKey].push(coordObj);
-                            }
-                        };
-                        if (Array.isArray(rawCoords)) rawCoords.forEach(addUniqueCoord); else addUniqueCoord(rawCoords);
-                    }
+                    const coords = Array.isArray(d.details?.coords) ? d.details.coords : [d.details?.coords].filter(x => x);
+                    coords.forEach(c => {
+                        if (isNum(c.x) && isNum(c.z)) {
+                            const coordObj = { x: Number(c.x), y: isNum(c.y) ? Number(c.y) : null, z: Number(c.z) };
+                            if (!sharedTelemetry[mobKey].some(ex => ex.x === coordObj.x && ex.z === coordObj.z)) sharedTelemetry[mobKey].push(coordObj);
+                        }
+                    });
                 });
             });
 
-            const wynnKeys = (wynnItems && typeof wynnItems === 'object') ? Object.keys(wynnItems).map(k => k.trim().toLowerCase()) : [];
-
-            const allKeys = new Set([
-                ...Object.keys(normIngredients), 
-                ...Object.keys(normDrops), 
-                ...Object.keys(normHtoi),
-                ...wynnKeys
-            ]);
-
+            const allKeys = new Set([...Object.keys(normIngredients), ...Object.keys(dropsMap).map(k => k.toLowerCase())]);
             for (const key of allKeys) {
-                const ingData = normIngredients[key] || {};
-                const dropEntries = normDrops[key] || [];
-                const hData = normHtoi[key] || {};
-                
-                let wData = {};
-                if (wynnItems && typeof wynnItems === 'object') {
-                    const originalWynnKey = Object.keys(wynnItems).find(wk => wk.trim().toLowerCase() === key);
-                    if (originalWynnKey) wData = wynnItems[originalWynnKey];
-                }
-
+                const ing = normIngredients[key] || {};
+                const drps = (dropsMap[key] || []).concat((htoiArray.find(h => h.name?.toLowerCase() === key)?.drops || []));
                 const item = {
-                    name: ingData.originalName || wData.name || hData.name || key,
-                    tier: ingData.tier !== undefined ? Number(ingData.tier) : -1,
-                    level: Number(ingData.lvl || wData.level || hData.level) || 0,
-                    professions: ingData.profs || [],
-                    stats: ingData.stats || [],
-                    drops: [], searchStr: "" 
+                    name: ing.originalName || key.toUpperCase(),
+                    level: Number(ing.lvl) || 0,
+                    tier: ing.tier !== undefined ? Number(ing.tier) : -1,
+                    professions: ing.profs || [],
+                    stats: ing.stats || [],
+                    drops: drps.map(d => ({
+                        name: d.name || "Unknown",
+                        location: d.details?.location || "Unknown",
+                        coords: sharedTelemetry[d.name?.toLowerCase()] || []
+                    })),
+                    searchStr: key
                 };
-
-                if (wData.identifications) {
-                    Object.entries(wData.identifications).forEach(([label, value]) => {
-                        if (value !== 0) {
-                            item.stats.push({ 
-                                label: label.replace(/([A-Z])/g, ' $1').trim(), 
-                                value: value > 0 ? `+${value}%` : `${value}%`, 
-                                pos: value > 0 
-                            });
-                        }
-                    });
-                }
-
-                const combinedSources = new Map();
-                if (Array.isArray(dropEntries)) {
-                    dropEntries.forEach(d => {
-                        const sName = (d.name || "Unknown Source").trim();
-                        const sLoc = (d.details ? d.details.location || "" : "").trim();
-                        const sKey = `${sName}|${sLoc}`;
-                        if (!combinedSources.has(sKey)) combinedSources.set(sKey, { name: sName, location: sLoc, mobKey: sName.toLowerCase(), screenshots: d.details ? (d.details.screenshots || "") : "" });
-                    });
-                }
-
-                const metaFields = ['id', 'name', 'level'];
-                Object.keys(hData).forEach(field => {
-                    if (!metaFields.includes(field) && hData[field]) {
-                        try {
-                            const entries = JSON.parse(hData[field]);
-                            if (Array.isArray(entries)) {
-                                entries.forEach(entry => {
-                                    const sName = (entry.name || entry.description || field.toUpperCase()).trim();
-                                    const sLoc = (entry.location || "").trim();
-                                    const sKey = `${sName}|${sLoc}`;
-                                    if (!combinedSources.has(sKey)) combinedSources.set(sKey, { name: sName, location: sLoc, mobKey: sName.toLowerCase(), screenshots: "" });
-                                });
-                            }
-                        } catch (e) {}
-                    }
-                });
-
-                item.drops = Array.from(combinedSources.values()).map(source => ({ ...source, allCoords: sharedTelemetry[source.mobKey] || [] }));
-                item.searchStr = [item.name, ...item.professions, ...item.stats.map(s => s.label), ...item.drops.map(d => d.name + ' ' + d.location)].join(' ').toLowerCase();
+                item.searchStr = [item.name, ...item.professions, ...item.stats.map(s => s.label)].join(' ').toLowerCase();
                 processed.push(item);
             }
             RAW_DATA = processed;
-            computeDynamicState();
-            initDynamicUI();
+            computeState();
             render();
         }
 
-        function computeDynamicState() {
+        function computeState() {
             STATE.allProfs = [...new Set(RAW_DATA.flatMap(i => i.professions))].sort();
             STATE.allPosStats = [...new Set(RAW_DATA.flatMap(i => i.stats.filter(s => s.pos).map(s => s.label)))].sort();
             STATE.allNegStats = [...new Set(RAW_DATA.flatMap(i => i.stats.filter(s => !s.pos).map(s => s.label)))].sort();
-        }
-
-        function initDynamicUI() {
-            const pc = document.getElementById('professionFilters');
-            pc.innerHTML = STATE.allProfs.map(p => `<button data-prof="${p}" class="prof-chip zest-btn px-3 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest whitespace-nowrap">${p}</button>`).join('');
-            const ps = document.getElementById('posStat1'), ns = document.getElementById('negStat1');
-            ps.innerHTML = '<option value="">Select Protocol</option>'; ns.innerHTML = '<option value="">Select Protocol</option>';
-            STATE.allPosStats.forEach(s => ps.innerHTML += `<option value="${s}">${s}</option>`);
-            STATE.allNegStats.forEach(s => ns.innerHTML += `<option value="${s}">${s}</option>`);
+            
+            const ps = document.getElementById('posStat1'), ns = document.getElementById('negStat1'), pf = document.getElementById('professionFilters');
+            ps.innerHTML = '<option value="">All Attributes</option>' + STATE.allPosStats.map(s => `<option value="${s}">${s}</option>`).join('');
+            ns.innerHTML = '<option value="">All Attributes</option>' + STATE.allNegStats.map(s => `<option value="${s}">${s}</option>`).join('');
+            pf.innerHTML = STATE.allProfs.map(p => `<button data-prof="${p}" class="prof-chip input-base px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider">${p}</button>`).join('');
         }
 
         function filterData() {
-            const query = STATE.search.toLowerCase().trim();
-            const filtered = RAW_DATA.filter(item => {
-                if (query && !item.searchStr.includes(query)) return false;
-                if (item.level < STATE.minLv || item.level > STATE.maxLv) return false;
-                if (STATE.tiers.size > 0 && !STATE.tiers.has(item.tier.toString())) return false;
-                if (STATE.profs.size > 0 && !item.professions.some(p => STATE.profs.has(p))) return false;
-                if (STATE.posStat1 && !item.stats.some(s => s.label === STATE.posStat1 && s.pos)) return false;
-                if (STATE.negStat1 && !item.stats.some(s => s.label === STATE.negStat1 && !s.pos)) return false;
-                if (STATE.interestOnly && !INTEREST_NAMES.has(item.name.trim().toLowerCase())) return false;
-                if (STATE.coordsOnly && !item.drops.some(d => d.allCoords.length > 0)) return false;
+            let data = RAW_DATA.filter(i => {
+                if (STATE.search && !i.searchStr.includes(STATE.search.toLowerCase())) return false;
+                if (i.level < STATE.minLv || i.level > STATE.maxLv) return false;
+                if (STATE.tiers.size && !STATE.tiers.has(i.tier.toString())) return false;
+                if (STATE.profs.size && !i.professions.some(p => STATE.profs.has(p))) return false;
+                if (STATE.interestOnly && !INTEREST_NAMES.has(i.name.toLowerCase())) return false;
+                if (STATE.coordsOnly && !i.drops.some(d => d.coords.length > 0)) return false;
+                if (STATE.posStat1 && !i.stats.some(s => s.label === STATE.posStat1 && s.pos)) return false;
+                if (STATE.negStat1 && !i.stats.some(s => s.label === STATE.negStat1 && !s.pos)) return false;
                 return true;
             });
-            const anyActive = query || STATE.tiers.size || STATE.profs.size || STATE.interestOnly || STATE.coordsOnly || STATE.minLv !== 0 || STATE.maxLv !== 115 || STATE.posStat1 || STATE.negStat1;
-            return !anyActive ? filtered.sort(() => 0.5 - Math.random()).slice(0, 50) : filtered.sort((a, b) => a.name.localeCompare(b.name));
+
+            if (STATE.sortBy === "level") data.sort((a,b) => b.level - a.level);
+            else if (STATE.sortBy === "tier") data.sort((a,b) => b.tier - a.tier);
+            else data.sort((a,b) => a.name.localeCompare(b.name));
+
+            return data;
         }
 
         function render() {
-            const grid = document.getElementById('ingredientGrid'), info = document.getElementById('resultsInfo'), rawResults = filterData();
-            const renderLimit = 160; const data = rawResults.slice(0, renderLimit);
-            if (rawResults.length > 0) {
-                info.classList.remove('hidden');
-                info.textContent = rawResults.length > renderLimit ? `Showing top ${renderLimit} of ${rawResults.length} records` : `${rawResults.length} records retrieved`;
-            } else info.classList.add('hidden');
-
-            if (data.length === 0) { grid.innerHTML = ""; document.getElementById('emptyState').classList.remove('hidden'); }
-            else {
+            const grid = document.getElementById('ingredientGrid'), info = document.getElementById('resultsInfo');
+            const data = filterData();
+            const view = data.slice(0, 100);
+            
+            info.textContent = data.length > 0 ? `${data.length} Archive Records Retrieved` : "No Records Match Current Matrix";
+            
+            if (view.length === 0) {
+                grid.innerHTML = "";
+                document.getElementById('emptyState').classList.remove('hidden');
+            } else {
                 document.getElementById('emptyState').classList.add('hidden');
-                grid.innerHTML = data.map((item) => {
-                    const cardCoordsRegistry = new Set();
-                    return `
-                    <div class="zest-card rounded-[1.5rem] p-4 flex flex-col gap-4 shadow-xl">
+                grid.innerHTML = view.map(item => `
+                    <div class="archive-card rounded-2xl p-5 flex flex-col gap-5">
                         <div class="flex justify-between items-start">
-                            <div class="overflow-hidden">
-                                <h3 class="text-sm font-black text-custom-main leading-tight uppercase tracking-tight mb-1 truncate">${item.name}</h3>
+                            <div class="flex-1">
+                                <h3 class="text-sm font-bold tracking-tight mb-1 truncate pr-2 uppercase">${item.name}</h3>
                                 <div class="flex items-center gap-2">
-                                    <span class="text-[9px] font-black text-red-500 bg-red-500/10 px-1.5 py-0.5 rounded leading-none">LV ${item.level}</span>
-                                    <div class="flex gap-0.5 text-amber-500">
-                                        ${item.tier >= 0 ? Array(item.tier).fill(0).map(() => `<i class="fas fa-star text-[8px]"></i>`).join('') : '<span class="text-[7px] text-zinc-600 font-bold tracking-tighter leading-none">UNRANKED</span>'}
+                                    <span class="mono text-[9px] font-bold bg-indigo-500/10 text-indigo-500 px-1.5 py-0.5 rounded">LV.${item.level}</span>
+                                    <div class="flex gap-0.5 text-amber-500 text-[8px]">
+                                        ${item.tier > 0 ? Array(item.tier).fill('<i class="fas fa-star"></i>').join('') : '<span class="opacity-30 uppercase font-black">Common</span>'}
                                     </div>
                                 </div>
                             </div>
                         </div>
 
                         <div class="space-y-4">
-                            <div class="space-y-1">
-                                <p class="text-[8px] font-black text-custom-dim uppercase tracking-[0.2em] border-b border-custom pb-1 mb-1">Properties</p>
-                                ${item.stats.length === 0 ? '<p class="text-[10px] italic text-zinc-700 opacity-50">Passive Record.</p>' : item.stats.map(s => `
-                                    <div class="flex justify-between text-[11px] font-bold py-0.5 last:border-0">
-                                        <span class="text-custom-dim truncate pr-2 font-medium">${s.label}</span>
-                                        <span class="${s.pos ? 'stat-pos' : 'stat-neg'} shrink-0 font-bold">${s.value}</span>
+                            <div class="space-y-1.5">
+                                ${item.stats.length === 0 ? '<div class="h-12 flex items-center text-[10px] text-[var(--text-secondary)] opacity-40 italic">No statistical deviations.</div>' : 
+                                    item.stats.slice(0, 4).map(s => `
+                                    <div class="flex justify-between text-[11px] font-medium border-b border-[var(--border)] pb-1">
+                                        <span class="text-[var(--text-secondary)] truncate pr-4">${s.label}</span>
+                                        <span class="${s.pos ? 'stat-positive' : 'stat-negative'} mono font-bold">${s.value}</span>
                                     </div>
                                 `).join('')}
                             </div>
 
-                            <div class="space-y-2">
-                                <p class="text-[8px] font-black text-custom-dim uppercase tracking-[0.2em] border-b border-custom pb-1 mb-1">Last Seen</p>
-                                ${item.drops.length === 0 ? `<p class="text-[10px] italic text-custom-dim opacity-40">No telemetry logs.</p>` : item.drops.map(drop => {
-                                    const mainScreenshot = drop.screenshots ? drop.screenshots.split(',')[0].trim() : null;
-                                    const coordsHtml = drop.allCoords.map(c => {
-                                        const key = getCoordKey(c);
-                                        if (cardCoordsRegistry.has(key)) return '';
-                                        cardCoordsRegistry.add(key);
-                                        const hasY = isNum(c.y);
-                                        const displayLabel = hasY ? `${c.x}, ${c.y}, ${c.z}` : `${c.x}, ${c.z}`;
-                                        return `
-                                            <button 
-                                                onclick="copyToClipboard('${c.x}', ${hasY ? c.y : 'null'}, '${c.z}')" 
-                                                class="tactical-coord-btn zest-btn rounded-lg bg-red-600 !border-red-400 !text-white hover:bg-red-500 shadow-sm" 
-                                                title="Target: ${displayLabel}"
-                                            >
-                                                <i class="fas fa-crosshairs text-xs"></i>
-                                                <span class="text-[6px] font-black uppercase mt-0.5 truncate max-w-full px-0.5">${displayLabel}</span>
-                                            </button>
-                                        `;
-                                    }).join('');
-
-                                    return `
-                                    <div class="space-y-2 bg-custom-main bg-opacity-40 p-3 rounded-xl border border-custom border-opacity-30">
-                                        <div class="flex justify-between items-center gap-2">
-                                            <div class="flex-1 min-w-0">
-                                                <p class="text-custom-main font-black text-[11px] leading-tight break-words font-semibold">${drop.name}</p>
-                                                <div class="flex items-center gap-1 text-custom-dim text-[9px] font-bold mt-1">
-                                                    <i class="fas fa-map-marker-alt text-red-500/50"></i>
-                                                    <span class="break-words leading-none">${drop.location || 'Undisclosed Area'}</span>
-                                                </div>
-                                            </div>
-                                            ${mainScreenshot ? `<a href="${mainScreenshot}" target="_blank" class="zest-btn w-8 h-8 flex items-center justify-center rounded-lg !bg-red-500/10 !text-red-500 !border-red-500/30 hover:!bg-red-500 hover:!text-white transition-all shadow-sm shrink-0" title="Intel Feed"><i class="fas fa-image text-xs"></i></a>` : ''}
-                                        </div>
-                                        <div class="flex flex-wrap gap-1.5 pt-1">
-                                            ${coordsHtml}
+                            <div class="space-y-3">
+                                <p class="text-[9px] font-black uppercase tracking-widest text-[var(--text-secondary)] opacity-60">Field Reports</p>
+                                ${item.drops.length === 0 ? '<p class="text-[10px] text-[var(--text-secondary)] opacity-30 italic">No sighting logs.</p>' : 
+                                    item.drops.slice(0, 1).map(d => `
+                                    <div class="bg-[var(--bg-surface)] p-3 rounded-xl border border-[var(--border)]">
+                                        <p class="text-[11px] font-bold mb-1 truncate">${d.name}</p>
+                                        <p class="text-[9px] text-[var(--text-secondary)] mb-2"><i class="fas fa-map-marker-alt mr-1"></i> ${d.location}</p>
+                                        <div class="flex flex-wrap gap-1">
+                                            ${d.coords.slice(0, 3).map(c => `
+                                                <button onclick="copyToClipboard('${c.x}','${c.y}','${c.z}')" class="btn-secondary px-2 py-1 rounded-md text-[8px] mono font-bold hover:!bg-indigo-500 hover:!text-white">
+                                                    ${c.x}, ${c.z}
+                                                </button>
+                                            `).join('')}
                                         </div>
                                     </div>
-                                `;}).join('')}
+                                `).join('')}
                             </div>
                         </div>
 
-                        <div class="mt-auto pt-2 border-t border-custom border-opacity-50 flex flex-wrap gap-1">
-                            ${item.professions.length === 0 ? '<span class="text-[7px] text-zinc-800 font-bold uppercase tracking-widest">Generic</span>' : item.professions.map(p => `
-                                <span class="text-[7px] text-custom-dim font-black px-1.5 py-0.5 rounded-md bg-custom-input border border-custom uppercase tracking-tighter leading-none">${p}</span>
-                            `).join('')}
+                        <div class="mt-auto flex flex-wrap gap-1.5 pt-4 border-t border-[var(--border)]">
+                            ${item.professions.map(p => `<span class="text-[8px] font-bold uppercase tracking-tighter bg-[var(--bg-surface)] text-[var(--text-secondary)] px-2 py-1 rounded border border-[var(--border)]">${p}</span>`).join('')}
                         </div>
                     </div>
-                `;}).join('');
+                `).join('');
             }
-            renderTags();
+            renderActiveTags();
         }
 
-        function renderTags() {
-            const container = document.getElementById('activeTags'), tags = [];
-            if (STATE.search) tags.push({ id: 'search', label: `QUERY: ${STATE.search}` });
-            if (STATE.interestOnly) tags.push({ id: 'interest', label: `★ TARGETED` });
-            if (STATE.coordsOnly) tags.push({ id: 'coords', label: `⌖ GEOLOCATED` });
-            if (STATE.minLv > 0 || STATE.maxLv < 115) tags.push({ id: 'lv', label: `LV RANGE ${STATE.minLv}-${STATE.maxLv}` });
-            STATE.tiers.forEach(t => tags.push({ id: `tier-${t}`, label: `TIER ${t}` }));
-            STATE.profs.forEach(p => tags.push({ id: `prof-${p}`, label: p }));
-            container.innerHTML = tags.map(t => `<div class="flex items-center gap-3 px-4 py-2 bg-custom-card border border-custom text-custom-main rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg">${t.label}<button onclick="removeFilter('${t.id}')" class="hover:text-red-400 transition-colors"><i class="fas fa-times"></i></button></div>`).join('');
-        }
+        function renderActiveTags() {
+            const container = document.getElementById('activeTags');
+            const tags = [];
+            if (STATE.search) tags.push({ id: 'search', val: `Query: ${STATE.search}` });
+            if (STATE.interestOnly) tags.push({ id: 'interest', val: 'Featured' });
+            if (STATE.coordsOnly) tags.push({ id: 'coords', val: 'Localized' });
+            STATE.tiers.forEach(t => tags.push({ id: 'tier-'+t, val: `Tier ${t}` }));
+            STATE.profs.forEach(p => tags.push({ id: 'prof-'+p, val: p }));
 
-        function copyToClipboard(x, y, z) {
-            const command = (isNum(y)) ? `/compass ${x}, ${y}, ${z}` : `/compass ${x}, ${z}`;
-            const ta = document.createElement("textarea"); ta.value = command; ta.style.position = "fixed"; ta.style.left = "-9999px";
-            document.body.appendChild(ta); ta.select();
-            try { document.execCommand('copy'); showToast(`COPIED: ${command}`); } catch (err) {}
-            document.body.removeChild(ta);
-        }
-
-        function showToast(msg) {
-            const t = document.getElementById("toast"); t.textContent = msg; t.classList.add("show");
-            setTimeout(() => t.classList.remove("show"), 2500);
-        }
-
-        function toggleTheme() {
-            const icon = document.getElementById('themeIcon');
-            if (STATE.theme === "dark") { STATE.theme = "light"; document.body.classList.add('light'); icon.classList.replace('fa-moon', 'fa-sun'); }
-            else { STATE.theme = "dark"; document.body.classList.remove('light'); icon.classList.replace('fa-sun', 'fa-moon'); }
-        }
-
-        function toggleSidebar(open) {
-            const sidebar = document.getElementById('filterSidebar'), overlay = document.getElementById('sidebarOverlay');
-            if (open) { sidebar.classList.add('open'); overlay.classList.replace('opacity-0', 'opacity-100'); overlay.classList.remove('pointer-events-none'); }
-            else { sidebar.classList.remove('open'); overlay.classList.replace('opacity-100', 'opacity-0'); overlay.classList.add('pointer-events-none'); }
+            container.innerHTML = tags.map(t => `
+                <div class="flex items-center gap-2 px-3 py-1 bg-indigo-500/10 text-indigo-500 border border-indigo-500/20 rounded-full text-[10px] font-bold uppercase">
+                    ${t.val}
+                    <button onclick="removeFilter('${t.id}')" class="hover:text-white transition-colors"><i class="fas fa-times"></i></button>
+                </div>
+            `).join('');
         }
 
         function removeFilter(id) {
             if (id === 'search') { STATE.search = ""; document.getElementById('globalSearch').value = ""; }
             else if (id === 'interest') { STATE.interestOnly = false; document.getElementById('interestToggle').classList.remove('active'); }
             else if (id === 'coords') { STATE.coordsOnly = false; document.getElementById('coordsToggle').classList.remove('active'); }
-            else if (id === 'lv') { STATE.minLv = 0; STATE.maxLv = 115; document.getElementById('minLevel').value = 0; document.getElementById('maxLevel').value = 115; }
-            else if (id.startsWith('tier-')) { const t = id.split('-')[1]; STATE.tiers.delete(t); const btn = document.querySelector(`.tier-btn[data-tier="${t}"]`); if (btn) btn.classList.remove('bg-red-600', 'text-white'); }
-            else if (id.startsWith('prof-')) { const p = id.split('-')[1]; STATE.profs.delete(p); const chip = document.querySelector(`.prof-chip[data-prof="${p}"]`); if (chip) chip.classList.remove('bg-red-600', 'text-white'); }
+            else if (id.startsWith('tier-')) { STATE.tiers.delete(id.split('-')[1]); document.querySelectorAll('.tier-btn').forEach(b => { if(b.dataset.tier == id.split('-')[1]) b.classList.remove('active'); }); }
+            else if (id.startsWith('prof-')) { STATE.profs.delete(id.split('-')[1]); document.querySelectorAll('.prof-chip').forEach(b => { if(b.dataset.prof == id.split('-')[1]) b.classList.remove('active'); }); }
             render();
+        }
+
+        function copyToClipboard(x, y, z) {
+            const cmd = y !== 'null' ? `/compass ${x} ${y} ${z}` : `/compass ${x} ${z}`;
+            const el = document.createElement('textarea'); el.value = cmd; document.body.appendChild(el); el.select();
+            document.execCommand('copy'); document.body.removeChild(el);
+            const t = document.getElementById('toast'); t.textContent = "COPIED: " + cmd; t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 2000);
         }
 
         function clearAllFilters() {
-            STATE.search = ""; STATE.minLv = 0; STATE.maxLv = 115; STATE.interestOnly = false; STATE.coordsOnly = false;
-            STATE.tiers.clear(); STATE.profs.clear(); STATE.posStat1 = ""; STATE.negStat1 = "";
+            STATE.search = ""; STATE.tiers.clear(); STATE.profs.clear(); 
+            STATE.interestOnly = false; STATE.coordsOnly = false;
+            STATE.minLv = 0; STATE.maxLv = 115;
             document.getElementById('globalSearch').value = "";
-            document.getElementById('interestToggle').classList.remove('active'); document.getElementById('coordsToggle').classList.remove('active');
-            document.querySelectorAll('.tier-btn, .prof-chip').forEach(el => el.classList.remove('bg-red-600', 'text-white'));
-            document.querySelectorAll('select').forEach(s => s.value = "");
+            document.querySelectorAll('.active').forEach(e => e.classList.remove('active'));
+            document.querySelectorAll('input[type="number"]').forEach(i => i.value = "");
             render();
         }
 
-        window.addEventListener('DOMContentLoaded', () => {
-            loadShopData();
-            document.getElementById('themeToggle').addEventListener('click', toggleTheme);
-            document.querySelectorAll('#toggleFilters').forEach(btn => btn.addEventListener('click', () => toggleSidebar(true)));
-            document.getElementById('closeSidebar').addEventListener('click', () => toggleSidebar(false));
-            document.getElementById('sidebarOverlay').addEventListener('click', () => toggleSidebar(false));
-            const performSearch = debounce((val) => { STATE.search = val; render(); }, 250);
-            document.getElementById('globalSearch').addEventListener('input', e => performSearch(e.target.value));
-            document.getElementById('minLevel').addEventListener('input', e => { STATE.minLv = parseInt(e.target.value || 0); render(); });
-            document.getElementById('maxLevel').addEventListener('input', e => { STATE.maxLv = parseInt(e.target.value || 115); render(); });
-            document.getElementById('posStat1').addEventListener('change', e => { STATE.posStat1 = e.target.value; render(); });
-            document.getElementById('negStat1').addEventListener('change', e => { STATE.negStat1 = e.target.value; render(); });
-            document.getElementById('interestToggle').addEventListener('click', e => {
-                STATE.interestOnly = !STATE.interestOnly;
-                e.target.classList.toggle('active', STATE.interestOnly);
-                render();
-            });
-            document.getElementById('coordsToggle').addEventListener('click', e => {
-                STATE.coordsOnly = !STATE.coordsOnly;
-                e.target.classList.toggle('active', STATE.coordsOnly);
-                render();
-            });
-            document.querySelectorAll('.tier-btn').forEach(b => b.addEventListener('click', () => {
-                const t = b.dataset.tier; if (STATE.tiers.has(t)) STATE.tiers.delete(t); else STATE.tiers.add(t);
-                b.classList.toggle('bg-red-600'); b.classList.toggle('text-white'); render();
-            }));
-            document.getElementById('professionFilters').addEventListener('click', e => {
-                const b = e.target.closest('.prof-chip'); if (!b) return;
-                const p = b.dataset.prof; if (STATE.profs.has(p)) STATE.profs.delete(p); else STATE.profs.add(p);
-                b.classList.toggle('bg-red-600'); b.classList.toggle('text-white'); render();
-            });
+        // EVENT LISTENERS
+        document.getElementById('toggleFilters').addEventListener('click', () => {
+            document.getElementById('filterSidebar').classList.add('open');
+            document.getElementById('sidebarOverlay').classList.replace('opacity-0', 'opacity-100');
+            document.getElementById('sidebarOverlay').classList.remove('pointer-events-none');
         });
+        document.getElementById('closeSidebar').addEventListener('click', () => {
+            document.getElementById('filterSidebar').classList.remove('open');
+            document.getElementById('sidebarOverlay').classList.replace('opacity-100', 'opacity-0');
+            document.getElementById('sidebarOverlay').classList.add('pointer-events-none');
+        });
+        document.getElementById('sidebarOverlay').addEventListener('click', () => document.getElementById('closeSidebar').click());
+
+        document.getElementById('globalSearch').addEventListener('input', debounce(e => { STATE.search = e.target.value; render(); }, 250));
+        document.getElementById('sortBy').addEventListener('change', e => { STATE.sortBy = e.target.value; render(); });
+        document.getElementById('minLevel').addEventListener('input', e => { STATE.minLv = Number(e.target.value) || 0; render(); });
+        document.getElementById('maxLevel').addEventListener('input', e => { STATE.maxLv = Number(e.target.value) || 115; render(); });
+        document.getElementById('posStat1').addEventListener('change', e => { STATE.posStat1 = e.target.value; render(); });
+        document.getElementById('negStat1').addEventListener('change', e => { STATE.negStat1 = e.target.value; render(); });
+        
+        document.querySelectorAll('.tier-btn').forEach(b => b.addEventListener('click', () => {
+            const t = b.dataset.tier; if (STATE.tiers.has(t)) STATE.tiers.delete(t); else STATE.tiers.add(t);
+            b.classList.toggle('active'); render();
+        }));
+
+        document.getElementById('professionFilters').addEventListener('click', e => {
+            const b = e.target.closest('.prof-chip'); if (!b) return;
+            const p = b.dataset.prof; if (STATE.profs.has(p)) STATE.profs.delete(p); else STATE.profs.add(p);
+            b.classList.toggle('active'); render();
+        });
+
+        document.getElementById('interestToggle').addEventListener('click', e => {
+            STATE.interestOnly = !STATE.interestOnly; e.currentTarget.classList.toggle('active'); render();
+        });
+        document.getElementById('coordsToggle').addEventListener('click', e => {
+            STATE.coordsOnly = !STATE.coordsOnly; e.currentTarget.classList.toggle('active'); render();
+        });
+
+        document.getElementById('themeToggle').addEventListener('click', () => {
+            const body = document.body; const icon = document.getElementById('themeIcon');
+            if (body.classList.contains('light')) {
+                body.classList.remove('light'); icon.classList.replace('fa-sun', 'fa-moon');
+            } else {
+                body.classList.add('light'); icon.classList.replace('fa-moon', 'fa-sun');
+            }
+        });
+
+        window.onload = loadShopData;
     </script>
 </body>
 </html>
