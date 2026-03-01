@@ -387,7 +387,6 @@
                 ingredients = resI; drops = resD; htoi = resH;
 
                 try {
-                    // Optimized CORS bypass using a reliable provider
                     const wynnRes = await fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent('https://api.wynncraft.com/v3/item/database?fullResult'));
                     if (wynnRes.ok) {
                         wynnItems = await wynnRes.json();
@@ -414,14 +413,18 @@
                 });
             }
 
-            // STAGE 1: Aggressive Entity Normalization
-            // Logic: One card per Unique Entity Name. No duplicates allowed.
+            // STAGE 1: Ultra-Aggressive Entity Unification
             const entityRegistry = {};
+
+            const getSanitizedName = (name) => {
+                // Remove everything after a comma (Ancient Iboju Undead, etc) and trim
+                return name.split(',')[0].trim();
+            };
 
             const addCoordUnique = (entityKey, c) => {
                 if (!isNum(c.x) || !isNum(c.z)) return;
                 const nx = Number(c.x), ny = isNum(c.y) ? Number(c.y) : 0, nz = Number(c.z);
-                if (Math.abs(nx) + Math.abs(ny) + Math.abs(nz) === 0) return; // Block 0,0,0
+                if (Math.abs(nx) + Math.abs(ny) + Math.abs(nz) === 0) return;
                 
                 const coordObj = { x: nx, y: isNum(c.y) ? ny : null, z: nz };
                 const coordKey = `${coordObj.x}|${coordObj.y}|${coordObj.z}`;
@@ -433,7 +436,7 @@
             };
 
             const ensureEntity = (name) => {
-                const cleanName = name.trim();
+                const cleanName = getSanitizedName(name);
                 const key = cleanName.toLowerCase();
                 if (!entityRegistry[key]) {
                     entityRegistry[key] = {
@@ -448,7 +451,6 @@
                 return key;
             };
 
-            // Parse drops.json
             Object.keys(dropsMap).forEach(itemName => {
                 const drops = dropsMap[itemName];
                 if (!Array.isArray(drops)) return;
@@ -458,7 +460,6 @@
                     if (d.details?.location) entityRegistry[key].locations.add(d.details.location.trim());
                     if (d.details?.screenshots) entityRegistry[key].screenshots.add(d.details.screenshots);
                     entityRegistry[key].loot.add(itemName.trim().toLowerCase());
-                    
                     if (d.details?.coords) {
                         const cs = Array.isArray(d.details.coords) ? d.details.coords : [d.details.coords];
                         cs.forEach(c => addCoordUnique(key, c));
@@ -466,7 +467,6 @@
                 });
             });
 
-            // Parse htoi.json
             htoiArray.forEach(h => {
                 const itemName = h.name;
                 Object.keys(h).forEach(prop => {
@@ -478,9 +478,7 @@
                                 const name = e.name || e.description || prop.toUpperCase();
                                 const key = ensureEntity(name);
                                 if (e.location) entityRegistry[key].locations.add(e.location.trim());
-                                if (e.screenshots) entityRegistry[key].screenshots.add(e.screenshots);
                                 if (itemName) entityRegistry[key].loot.add(itemName.trim().toLowerCase());
-                                
                                 const cs = e.location_coords || e.coords;
                                 if (cs) {
                                     const csArr = Array.isArray(cs) ? cs : [cs];
@@ -492,26 +490,44 @@
                 });
             });
 
-            // STAGE 2: Flatten Registry into Source Data
-            SOURCE_DATA = Object.values(entityRegistry).map(ent => {
+            // STAGE 2: Secondary Stitching - Merge entities that share coordinates
+            let flattened = Object.values(entityRegistry);
+            let merged = true;
+            while(merged) {
+                merged = false;
+                for(let i = 0; i < flattened.length; i++) {
+                    for(let j = i + 1; j < flattened.length; j++) {
+                        // Check for coordinate overlap
+                        const overlap = [...flattened[i].uniqueCoords].some(c => flattened[j].uniqueCoords.has(c));
+                        if(overlap) {
+                            // Merge j into i
+                            flattened[i].locations = new Set([...flattened[i].locations, ...flattened[j].locations]);
+                            flattened[i].loot = new Set([...flattened[i].loot, ...flattened[j].loot]);
+                            flattened[j].coords.forEach(c => addCoordUnique(flattened[i].name.toLowerCase(), c));
+                            flattened.splice(j, 1);
+                            merged = true;
+                            break;
+                        }
+                    }
+                    if(merged) break;
+                }
+            }
+
+            SOURCE_DATA = flattened.map(ent => {
                 const lootDetails = Array.from(ent.loot).map(lootName => {
                     const info = GLOBAL_ITEM_LOOKUP[lootName] || { originalName: lootName, stats: [], lvl: 0, tier: -1, profs: [] };
                     return { name: info.originalName, level: Number(info.lvl) || 0, tier: info.tier !== undefined ? Number(info.tier) : -1, professions: info.profs || [], stats: info.stats || [] };
                 });
                 lootDetails.sort((a,b) => b.level - a.level);
-                
                 const locArr = Array.from(ent.locations);
                 const locationStr = locArr.length > 0 ? locArr.join(' | ') : "Undisclosed Sector";
-
-                const searchStr = [ent.name, locationStr, ...lootDetails.map(l => l.name)].join(' ').toLowerCase();
-                
                 return {
                     name: ent.name,
                     location: locationStr,
                     screenshots: Array.from(ent.screenshots).flatMap(s => s.split(',')).map(s => s.trim()),
                     loot: lootDetails,
                     coords: ent.coords,
-                    searchStr
+                    searchStr: [ent.name, locationStr, ...lootDetails.map(l => l.name)].join(' ').toLowerCase()
                 };
             });
 
@@ -615,38 +631,38 @@
             };
             const p = palettes[STATE.palette];
             
-            // Adjust semantic colors based on Luminance level (1-5)
+            // Re-calculated Linear Ramp for Luminance
             let b, c, s, t, sec, brd;
             switch(STATE.brightness) {
-                case 1: // Void
-                    b = `hsl(${p.hue}, ${p.sat}%, 4%)`;
+                case 1: // Void (Deepest Dark)
+                    b = `hsl(${p.hue}, ${p.sat}%, 5%)`;
                     c = `hsl(${p.hue}, ${p.sat}%, 8%)`;
                     s = `hsl(${p.hue}, ${p.sat}%, 12%)`;
-                    t = '#ffffff'; sec = '#717171'; brd = 'rgba(255,255,255,0.08)';
+                    t = '#ffffff'; sec = '#717171'; brd = 'rgba(255,255,255,0.1)';
                     break;
-                case 2: // Midnight
-                    b = `hsl(${p.hue}, ${p.sat}%, 12%)`;
-                    c = `hsl(${p.hue}, ${p.sat}%, 16%)`;
-                    s = `hsl(${p.hue}, ${p.sat}%, 20%)`;
-                    t = '#e0e0e0'; sec = '#9ca3af'; brd = 'rgba(255,255,255,0.05)';
+                case 2: // Midnight (Dim)
+                    b = `hsl(${p.hue}, ${p.sat}%, 18%)`;
+                    c = `hsl(${p.hue}, ${p.sat}%, 22%)`;
+                    s = `hsl(${p.hue}, ${p.sat}%, 28%)`;
+                    t = '#e0e0e0'; sec = '#9ca3af'; brd = 'rgba(255,255,255,0.06)';
                     break;
-                case 3: // Neutral (Standard)
-                    b = `hsl(${p.hue}, ${p.sat}%, 94%)`;
+                case 3: // Neutral (Mid-tone)
+                    b = `hsl(${p.hue}, ${p.sat}%, 50%)`;
+                    c = `hsl(${p.hue}, ${p.sat}%, 58%)`;
+                    s = `hsl(${p.hue}, ${p.sat}%, 62%)`;
+                    t = '#ffffff'; sec = '#e0e0e0'; brd = 'rgba(255,255,255,0.15)';
+                    break;
+                case 4: // Parchment (Soft Light)
+                    b = `hsl(${p.hue}, ${p.sat}%, 82%)`;
                     c = `#ffffff`;
-                    s = `hsl(${p.hue}, ${p.sat}%, 97%)`;
-                    t = '#4a4641'; sec = '#8a847c'; brd = 'rgba(0,0,0,0.08)';
+                    s = `hsl(${p.hue}, ${p.sat}%, 90%)`;
+                    t = '#4a4641'; sec = '#8a847c'; brd = 'rgba(0,0,0,0.1)';
                     break;
-                case 4: // Daylight
-                    b = `hsl(${p.hue}, ${p.sat}%, 97%)`;
+                case 5: // Ivory (Brightest)
+                    b = `hsl(${p.hue}, ${p.sat}%, 96%)`;
                     c = `#ffffff`;
-                    s = `#f9f9f9`;
-                    t = '#1f2937'; sec = '#6b7280'; brd = 'rgba(0,0,0,0.05)';
-                    break;
-                case 5: // Ivory
-                    b = `#fcfcfc`;
-                    c = `#ffffff`;
-                    s = `#ffffff`;
-                    t = '#000000'; sec = '#4b5563'; brd = 'rgba(0,0,0,0.03)';
+                    s = `#fcfcfc`;
+                    t = '#111111'; sec = '#555555'; brd = 'rgba(0,0,0,0.04)';
                     break;
             }
 
